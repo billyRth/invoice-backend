@@ -9,13 +9,20 @@ const PORT = process.env.PORT || 3000;
 const API_KEY = process.env.GROQ_API_KEY;
 
 function extractJSON(text) {
-  const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+  let cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
   const start = cleaned.indexOf('{');
   const end = cleaned.lastIndexOf('}');
   if (start === -1 || end === -1 || end <= start) {
     throw new Error('No JSON object found in AI response');
   }
-  return JSON.parse(cleaned.slice(start, end + 1));
+  let jsonStr = cleaned.slice(start, end + 1);
+  try {
+    return JSON.parse(jsonStr);
+  } catch (e) {
+    // Common model slip-ups: trailing commas before ] or }
+    const repaired = jsonStr.replace(/,(\s*[\]}])/g, '$1');
+    return JSON.parse(repaired);
+  }
 }
 
 app.post('/api/fill-invoice', async (req, res) => {
@@ -33,10 +40,10 @@ app.post('/api/fill-invoice', async (req, res) => {
       },
       body: JSON.stringify({
         model: 'openai/gpt-oss-120b',
-        max_tokens: 1000,
+        max_tokens: 1600,
         messages: [{
           role: 'user',
-          content: `You are an invoice-extraction engine for a business tool. Read the description below and return ONLY a raw JSON object — no markdown fences, no explanation, no questions.
+          content: `You are an invoice-extraction engine for a business tool. Read the description below and return ONLY a single raw JSON object — no markdown fences, no explanation, no questions, no comments, no trailing commas. The JSON must be strictly valid and parseable by JSON.parse().
 
 Rules:
 - ALWAYS return valid JSON matching the schema, even if the description is vague, terse, or incomplete. Invent sensible professional defaults for anything missing.
