@@ -47,6 +47,8 @@ Rules:
 - paymentSchedule: ONLY populate this if the description explicitly describes multiple payments, a deposit/balance split, installments, or milestone-based payments (e.g. "50% upfront, 50% on completion", "3 equal installments", "deposit now, rest in 30 days", "pay in 4 installments over 4 months"). Each entry: {"label": short name like "Deposit" or "Payment 1", "type": "percent"|"flat" (percent of the FINAL total including charges), "value": number, "when": short human description of timing, e.g. "Due at signing", "Due in 30 days", "Due on completion"}.
 - If the description does NOT mention any installment/deposit/milestone structure, leave paymentSchedule as an empty array — this means it's a single lump-sum payment, which is the default and most common case. Simple payment terms like "net 15" or "net 30" alone do NOT count as a schedule — that's just a due date for one lump sum, not multiple payments.
 - If a payment schedule is used, the percentages (or flat amounts) should add up to roughly 100% of the total — split evenly unless the user specifies otherwise.
+- recurringPayment: use this ONLY for open-ended recurring billing by time interval — words like "per fortnight", "per week", "per month", "weekly", "biweekly", "monthly" describing HOW OFTEN payment happens, as opposed to a fixed one-time installment schedule. Set {"frequency": one of "Weekly"|"Biweekly"|"Monthly"|other short label, "installments": number of payments if the person specified a duration or count (e.g. "for 6 months" => 6, "over 4 fortnights" => 4), or null if they mentioned a frequency but NOT how many payments / how long it runs}. If no recurring frequency is mentioned at all, set recurringPayment to null.
+- warnings: an array of short, plain-English strings flagging anything important that's missing or ambiguous and would affect accuracy — e.g. if recurringPayment.installments is null, include a warning like "Payment frequency was mentioned (fortnightly) but not how many payments or the total duration — please specify for an accurate per-payment breakdown." Leave this an empty array if nothing is missing.
 
 Schema:
 {
@@ -55,6 +57,8 @@ Schema:
   "lineItems": [{"description": string, "qty": number, "rate": number}],
   "charges": [{"label": string, "type": "percent"|"flat", "value": number}],
   "paymentSchedule": [{"label": string, "type": "percent"|"flat", "value": number, "when": string}],
+  "recurringPayment": {"frequency": string, "installments": number|null} or null,
+  "warnings": [string],
   "notes": string
 }
 
