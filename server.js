@@ -36,18 +36,21 @@ app.post('/api/fill-invoice', async (req, res) => {
         max_tokens: 1000,
         messages: [{
           role: 'user',
-          content: `You are an invoice-extraction engine. Read the description below and return ONLY a raw JSON object — no markdown fences, no explanation, no questions.
+          content: `You are an invoice-extraction engine for a business tool. Read the description below and return ONLY a raw JSON object — no markdown fences, no explanation, no questions.
 
 Rules:
-- ALWAYS return valid JSON matching the schema, even if the description is vague or incomplete. Invent sensible professional defaults for anything missing.
+- ALWAYS return valid JSON matching the schema, even if the description is vague, terse, or incomplete. Invent sensible professional defaults for anything missing.
 - Never ask questions. Never refuse. Best-guess everything.
+- lineItems are ONLY actual products or services being billed (what was sold or done). Handle terse formats too, e.g. "5 Gummybear 3 dollar each" means qty=5, description="Gummybear", rate=3. "10 Pringles 1.5$ each" means qty=10, description="Pringles", rate=1.5.
+- charges are separate add-on amounts that are NOT products/services — things like tax, service fee, commission, discount, shipping fee, processing fee. NEVER put these in lineItems. Each charge has a type: "percent" (percentage of the item subtotal) or "flat" (a fixed dollar amount). If someone says "8% tax", that's {"label":"Tax","type":"percent","value":8} — value is the plain percentage number, NOT a decimal (write 8, not 0.08). If someone says "$20 shipping fee", that's {"label":"Shipping","type":"flat","value":20}.
+- A discount should be a charge with a negative value (e.g. "10% discount" => {"label":"Discount","type":"percent","value":-10}).
 
 Schema:
 {
   "fromName": string, "fromDetail": string,
   "toName": string, "toDetail": string,
   "lineItems": [{"description": string, "qty": number, "rate": number}],
-  "taxRate": number,
+  "charges": [{"label": string, "type": "percent"|"flat", "value": number}],
   "notes": string
 }
 
