@@ -1,12 +1,75 @@
 const express = require('express');
 const cors = require('cors');
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
 const PORT = process.env.PORT || 3000;
 const API_KEY = process.env.GROQ_API_KEY;
+
+// Comma-separated allowlist, e.g. "https://example.com,https://www.example.com".
+// Unset => allow any origin (convenient for local dev and the current prototypes).
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+// Guardrails on incoming requests.
+const MAX_BODY_BYTES = '64kb';
+const MAX_PROMPT_CHARS = 8000;
+
+// Simple in-memory rate limit. Good enough for a single Render instance; swap for
+// a shared store (Redis/Upstash) if this ever runs on more than one instance.
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 20;
+
+if (!API_KEY) {
+  console.warn('WARNING: GROQ_API_KEY is not set. AI endpoints will return 500 until it is configured.');
+}
+
+const app = express();
+app.set('trust proxy', 1); // Render sits behind a proxy; needed for correct client IPs.
+app.use(cors(ALLOWED_ORIGINS.length ? { origin: ALLOWED_ORIGINS } : {}));
+app.use(express.json({ limit: MAX_BODY_BYTES }));
+
+const rateLimitHits = new Map();
+
+function rateLimit(req, res, next) {
+  const now = Date.now();
+  const key = req.ip || 'unknown';
+  const hits = (rateLimitHits.get(key) || []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+
+  if (hits.length >= RATE_LIMIT_MAX_REQUESTS) {
+    const retryAfter = Math.ceil((RATE_LIMIT_WINDOW_MS - (now - hits[0])) / 1000);
+    res.set('Retry-After', String(retryAfter));
+    return res.status(429).json({ error: 'Too many requests. Please wait a moment and try again.' });
+  }
+
+  hits.push(now);
+  rateLimitHits.set(key, hits);
+  next();
+}
+
+// Drop stale rate-limit entries so the map does not grow forever.
+setInterval(() => {
+  const cutoff = Date.now() - RATE_LIMIT_WINDOW_MS;
+  for (const [key, hits] of rateLimitHits) {
+    const fresh = hits.filter((t) => t > cutoff);
+    if (fresh.length) rateLimitHits.set(key, fresh);
+    else rateLimitHits.delete(key);
+  }
+}, RATE_LIMIT_WINDOW_MS).unref();
+
+// Validates and returns the prompt, or sends the error response and returns null.
+function readPrompt(req, res) {
+  const { prompt } = req.body || {};
+  if (typeof prompt !== 'string' || !prompt.trim()) {
+    res.status(400).json({ error: 'Missing prompt' });
+    return null;
+  }
+  if (prompt.length > MAX_PROMPT_CHARS) {
+    res.status(413).json({ error: `Prompt is too long (max ${MAX_PROMPT_CHARS} characters).` });
+    return null;
+  }
+  return prompt;
+}
 
 function extractJSON(text) {
   let cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -39,19 +102,33 @@ function extractJSON(text) {
 }
 
 async function callGroq(systemPrompt) {
-  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`
-    },
-    body: JSON.stringify({
-      model: 'openai/gpt-oss-120b',
-      max_tokens: 1600,
-      temperature: 0,
-      messages: [{ role: 'user', content: systemPrompt }]
-    })
-  });
+  if (!API_KEY) {
+    const err = new Error('Server is missing GROQ_API_KEY. Set it in the environment and restart.');
+    err.status = 500;
+    throw err;
+  }
+
+  let response;
+  try {
+    response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      signal: AbortSignal.timeout(60000),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'openai/gpt-oss-120b',
+        max_tokens: 1600,
+        temperature: 0,
+        messages: [{ role: 'user', content: systemPrompt }]
+      })
+    });
+  } catch (e) {
+    const err = new Error(`Could not reach the AI provider: ${e.message}`);
+    err.status = 504;
+    throw err;
+  }
 
   if (!response.ok) {
     const errText = await response.text();
@@ -71,12 +148,10 @@ async function callGroq(systemPrompt) {
   return extractJSON(textBlock.content);
 }
 
-app.post('/api/fill-invoice', async (req, res) => {
+app.post('/api/fill-invoice', rateLimit, async (req, res) => {
   try {
-    const { prompt } = req.body;
-    if (!prompt || !prompt.trim()) {
-      return res.status(400).json({ error: 'Missing prompt' });
-    }
+    const prompt = readPrompt(req, res);
+    if (prompt === null) return;
 
     const parsed = await callGroq(`You are an invoice-extraction engine for a business tool. Read the description below and return ONLY a single raw JSON object — no markdown fences, no explanation, no questions, no comments, no trailing commas. The JSON must be strictly valid and parseable by JSON.parse().
 
@@ -113,12 +188,10 @@ Description: "${prompt.replace(/"/g, '\\"')}"`);
   }
 });
 
-app.post('/api/fill-boq', async (req, res) => {
+app.post('/api/fill-boq', rateLimit, async (req, res) => {
   try {
-    const { prompt } = req.body;
-    if (!prompt || !prompt.trim()) {
-      return res.status(400).json({ error: 'Missing prompt' });
-    }
+    const prompt = readPrompt(req, res);
+    if (prompt === null) return;
 
     const parsed = await callGroq(`You are a construction cost-estimation engine for a business tool used by contractors in Cambodia. Read the project description below and return ONLY a single raw JSON object — no markdown fences, no explanation, no questions, no comments, no trailing commas. The JSON must be strictly valid and parseable by JSON.parse().
 
@@ -151,6 +224,26 @@ Description: "${prompt.replace(/"/g, '\\"')}"`);
   }
 });
 
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    uptimeSeconds: Math.round(process.uptime()),
+    aiConfigured: Boolean(API_KEY)
+  });
+});
+
 app.get('/', (req, res) => res.send('Invoice AI backend is running.'));
+
+// JSON body parse / size errors land here as well as anything unhandled above.
+app.use((err, req, res, next) => {
+  console.error(err);
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Request body is too large.' });
+  }
+  if (err instanceof SyntaxError) {
+    return res.status(400).json({ error: 'Request body is not valid JSON.' });
+  }
+  res.status(err.status || 500).json({ error: err.message || 'Unexpected server error' });
+});
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
