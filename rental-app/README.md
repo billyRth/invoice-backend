@@ -59,6 +59,25 @@ tab, listing detail, and a full Khmer and English translation of every string.
 | Recently viewed | Airbnb | People look at six rooms and want the third one back. |
 | Share a listing | every marketplace | Listings spread through Telegram groups. Native share where available, clipboard otherwise. |
 
+## The tenancy record
+
+Once two people agree in person, they fill in a short form together: start date, term, the day rent
+falls due, tenant name. After that both sides see the same record, and the renter gets the things
+nobody currently has in one place: since when, until when, when the next rent is due and how many
+days that is, how much deposit is held, and a KHQR button to pay.
+
+**It is explicitly not the contract.** The paper contract is what the government needs and this does
+not touch it. This is the shared record of what was agreed, which is a different and more useful
+thing to have on a phone.
+
+Two effects beyond convenience:
+
+- **It closes the freshness loop for good.** Recording a tenancy takes the listing down, so a
+  landlord no longer has to remember to unlist. Agreeing and unlisting become the same action.
+- **It fixes the churn problem in the subscription model.** A landlord who lists once and vanishes
+  is the main risk with a monthly fee. A landlord whose tenancy end date lives in the app has a
+  reason to come back on that date, which is exactly when they need to list again.
+
 ## What is not built
 
 Auth, real payments, in-app chat, photo upload, the landlord side of posting. The listings are a

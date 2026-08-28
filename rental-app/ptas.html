@@ -269,7 +269,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 
 /* chips */
-.chips { display: flex; gap: 8px; overflow-x: auto; padding: 12px 18px 4px; scrollbar-width: none; }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 12px 18px 6px; scrollbar-width: none; }
 .chips::-webkit-scrollbar { display: none; }
 .chip {
   flex: none; min-height: 44px; padding: 8px 16px; border-radius: var(--r-full);
@@ -281,11 +281,11 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .chip:active { transform: scale(.96); }
 .chip[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); box-shadow: none; }
 
-.resultline { padding: 14px 18px 6px; font-size: 13px; color: var(--ink-2); display: flex; justify-content: space-between; align-items: baseline; }
+.resultline { padding: 16px 18px 4px; font-size: 13px; color: var(--ink-2); display: flex; justify-content: space-between; align-items: baseline; }
 .resultline b { color: var(--ink); font-weight: 600; }
 
 /* ================================================================= cards */
-.feed { display: grid; gap: 14px; padding: 8px 18px 0; }
+.feed { display: grid; gap: 16px; padding: 8px 18px 0; }
 
 .card {
   background: var(--surface);
@@ -328,12 +328,12 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .save.just-saved { transform: scale(1.18); }
 
 .stamp {
-  position: absolute; left: 10px; bottom: 10px;
-  display: flex; gap: 6px;
+  position: absolute; left: 12px; bottom: 12px;
+  display: flex; flex-wrap: wrap; gap: 8px;
 }
 .badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 9px; border-radius: var(--r-full);
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 26px; padding: 0 10px; border-radius: var(--r-full);
   font-size: 11px; font-weight: 600; letter-spacing: .01em;
   backdrop-filter: blur(6px);
 }
@@ -343,19 +343,21 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .badge-dead { background: var(--dead-wash); color: var(--dead); }
 .badge-solid{ background: rgba(255,255,255,.94); color: #14171A; }
 
-.card-body { padding: 13px 15px 15px; }
-.price { display: flex; align-items: baseline; gap: 7px; margin-bottom: 3px; }
-.price b { font-size: 19px; font-weight: 700; letter-spacing: -.02em; }
+.card-body { padding: 16px; }
+.price { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.price b { font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
 .price span { font-size: 12px; color: var(--ink-3); }
 
-.card-title { font-size: 14px; font-weight: 600; margin: 0 0 2px; }
-.card-where { font-size: 13px; color: var(--ink-2); margin: 0 0 10px; }
+.card-title { font-size: 14.5px; font-weight: 600; line-height: 1.35; margin: 0 0 4px; }
+.card-where { font-size: 13px; color: var(--ink-2); margin: 0 0 12px; }
 
-.facts { display: flex; flex-wrap: wrap; gap: 6px; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; }
 .fact {
-  font-size: 11.5px; font-weight: 500; color: var(--ink-2);
+  display: inline-flex; align-items: center;
+  min-height: 28px;
+  font-size: 12px; font-weight: 500; line-height: 1; color: var(--ink-2);
   background: var(--surface-2); border-radius: var(--r-sm);
-  padding: 4px 8px;
+  padding: 0 10px;
 }
 .fact.deposit { color: var(--brand); background: var(--brand-wash); font-weight: 600; }
 
@@ -398,19 +400,19 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   border-radius: var(--r-lg) var(--r-lg) 0 0;
   margin-top: -20px;
   position: relative;
-  padding: 20px 18px 0;
+  padding: 24px 18px 0;
 }
 
 .d-price { display: flex; align-items: baseline; gap: 8px; }
-.d-price b { font-size: 27px; font-weight: 700; letter-spacing: -.03em; }
+.d-price b { font-size: 28px; font-weight: 700; letter-spacing: -.03em; }
 .d-price span { font-size: 13px; color: var(--ink-3); }
-.d-title { font-size: 17px; font-weight: 600; margin: 8px 0 3px; }
-.d-where { font-size: 14px; color: var(--ink-2); margin: 0 0 14px; }
+.d-title { font-size: 17px; font-weight: 600; line-height: 1.35; margin: 8px 0 4px; }
+.d-where { font-size: 14px; color: var(--ink-2); margin: 0 0 16px; }
 
-.panel { background: var(--surface); border-radius: var(--r-md); box-shadow: var(--sh-1); padding: 15px; margin-bottom: 12px; }
-.panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3); margin: 0 0 11px; font-weight: 600; }
+.panel { background: var(--surface); border-radius: var(--r-md); box-shadow: var(--sh-1); padding: 16px; margin-bottom: 12px; }
+.panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3); margin: 0 0 12px; font-weight: 600; }
 
-.kv { display: grid; grid-template-columns: 1fr auto; gap: 9px 12px; font-size: 14px; }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 10px 16px; font-size: 14px; line-height: 1.4; }
 .kv dt { color: var(--ink-2); margin: 0; }
 .kv dd { margin: 0; font-weight: 600; text-align: right; }
 
@@ -419,7 +421,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .who-name { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .who-sub { font-size: 12.5px; color: var(--ink-2); margin-top: 1px; }
 
-.amenities { display: flex; flex-wrap: wrap; gap: 7px; }
+.amenities { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .trustnote {
   font-size: 12.5px; color: var(--ink-2); line-height: 1.55;
@@ -542,6 +544,16 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 .pill.trial  { background: var(--brand-wash);color: var(--brand); }
 .pill.paused { background: var(--warn-wash); color: var(--warn); }
 .pill.rented { background: var(--dead-wash); color: var(--dead); }
+
+.tenancy-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.tenancy-head .t-name { font-size: 14px; font-weight: 600; }
+.tenancy-where { font-size: 12.5px; color: var(--ink-2); margin: 0 0 14px; }
+.due { display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+       padding: 12px 14px; border-radius: var(--r-sm); background: var(--brand-wash); margin-bottom: 14px; }
+.due .amount { font-size: 19px; font-weight: 700; color: var(--brand); }
+.due .when { font-size: 12.5px; color: var(--ink-2); }
+.due.soon { background: var(--warn-wash); }
+.due.soon .amount { color: var(--warn); }
 
 .billrow { display: flex; justify-content: space-between; align-items: baseline;
            padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; }
@@ -871,6 +883,11 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
             </div>
           </div>
         </div>
+        <div class="panel" id="tenancy-panel" hidden>
+          <h3 data-t="renting">Currently renting</h3>
+          <div id="tenancy-body"></div>
+        </div>
+
         <div class="panel">
           <h3 data-t="myListings">My listings</h3>
           <div id="my-listings"></div>
@@ -942,6 +959,13 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           <div class="panel">
             <h3 data-t="similar">Similar places</h3>
             <div id="d-similar" class="similar"></div>
+          </div>
+
+          <div class="panel">
+            <button class="btn btn-primary" type="button" id="d-agree" style="width:100%">
+              <span data-t="agreeCta">We agreed, record it</span>
+            </button>
+            <p class="powernote" data-t="legalNote" style="margin-top:9px"></p>
           </div>
 
           <div class="panel">
@@ -1094,6 +1118,41 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     <div class="sheet-actions">
       <button class="btn btn-ghost" type="button" id="f-reset" style="flex:1;width:auto" data-t="reset">Reset</button>
       <button class="btn btn-primary" type="button" id="f-apply">Show results</button>
+    </div>
+  </div>
+
+  <div class="sheet" id="rec-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="rec-title">
+    <div class="grabber"></div>
+    <h2 id="rec-title" data-t="recordTitle">Record the tenancy</h2>
+    <p class="sub" data-t="recordSub">Fill this in together when you meet.</p>
+
+    <div class="sheet-body">
+      <div class="field">
+        <label for="rec-name" data-t="tenantName">Tenant name</label>
+        <input type="text" id="rec-name" autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="rec-start" data-t="startDate">Start date</label>
+        <input type="date" id="rec-start">
+      </div>
+      <div class="field">
+        <label data-t="termMonths">Term in months</label>
+        <div class="seg" role="group" id="rec-term">
+          <button type="button" data-rterm="3" aria-pressed="false">3</button>
+          <button type="button" data-rterm="6" aria-pressed="false">6</button>
+          <button type="button" data-rterm="12" aria-pressed="true">12</button>
+          <button type="button" data-rterm="24" aria-pressed="false">24</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="rec-due"><span data-t="dueDay">Rent due on day</span> <span class="val" id="rec-due-val">1</span></label>
+        <input id="rec-due" type="range" min="1" max="28" step="1" value="1">
+      </div>
+      <p class="powernote" data-t="legalNote"></p>
+    </div>
+
+    <div class="sheet-actions">
+      <button class="btn btn-primary" type="button" id="rec-save" data-t="saveRecord">Save record</button>
     </div>
   </div>
 
@@ -1320,7 +1379,19 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       reportRented:"រាយការណ៍ថាជួលរួច", reported:"អរគុណ។ បានរាយការណ៍។",
       reportedPaused:"បានរាយការណ៍ច្រើន។ ការផ្សាយត្រូវផ្អាក។",
       reportHint:"បើអ្នកទូរស័ព្ទទៅ ហើយគេថាជួលរួច សូមប្រាប់យើង។",
-      similar:"ស្រដៀងគ្នា", recent:"បានមើលថ្មីៗ", shareToast:"បានចម្លងតំណ"
+      similar:"ស្រដៀងគ្នា", recent:"បានមើលថ្មីៗ", shareToast:"បានចម្លងតំណ",
+
+      renting:"កំពុងជួល", agreeCta:"យល់ព្រមហើយ កត់ត្រាការជួល",
+      recordTitle:"កត់ត្រាការជួល", recordSub:"បំពេញជាមួយគ្នា ពេលជួបផ្ទាល់។ នេះមិនមែនកិច្ចសន្យាផ្លូវច្បាប់ទេ។",
+      startDate:"ចាប់ផ្តើមថ្ងៃ", termMonths:"រយៈពេល (ខែ)", dueDay:"បង់ថ្លៃជួលថ្ងៃទី",
+      tenantName:"ឈ្មោះអ្នកជួល", saveRecord:"រក្សាទុក",
+      since:"ចាប់ពី", until:"រហូតដល់", nextDue:"បង់លើកក្រោយ", inDays:"ក្នុង {n} ថ្ងៃ",
+      dueToday:"ថ្ងៃនេះ", overdue:"ហួសកំណត់ {n} ថ្ងៃ",
+      depositHeld:"ប្រាក់កក់កាន់ទុក", payRent:"បង់ថ្លៃជួល KHQR", paidToastRent:"បានបង់ថ្លៃជួល",
+      monthsLeft:"នៅសល់ {n} ខែ", endingSoon:"កិច្ចសន្យាជិតផុត",
+      recordedToast:"បានកត់ត្រា។ ការផ្សាយត្រូវដកចេញ។",
+      legalNote:"កិច្ចសន្យាក្រដាសនៅតែត្រូវការសម្រាប់រដ្ឋាភិបាល។ នេះគ្រាន់តែជាកំណត់ត្រារួមប៉ុណ្ណោះ។",
+      endTenancy:"បញ្ចប់ការជួល", noTenancy:"អ្នកមិនទាន់ជួលអ្វីទេ"
     },
     en: {
       tagline:"rentals people actually answer", filters:"Filters", searchPh:"Toul Kork, BKK, Sen Sok",
@@ -1382,7 +1453,19 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       reportRented:"Report as already rented", reported:"Thank you. Reported.",
       reportedPaused:"Enough reports. The listing has been paused.",
       reportHint:"If you call and the room has gone, tell us. Two reports pause a listing until the landlord confirms it again.",
-      similar:"Similar places", recent:"Recently viewed", shareToast:"Link copied"
+      similar:"Similar places", recent:"Recently viewed", shareToast:"Link copied",
+
+      renting:"Currently renting", agreeCta:"We agreed, record it",
+      recordTitle:"Record the tenancy", recordSub:"Fill this in together when you meet. It is a shared record, not a legal contract.",
+      startDate:"Start date", termMonths:"Term in months", dueDay:"Rent due on day",
+      tenantName:"Tenant name", saveRecord:"Save record",
+      since:"Since", until:"Until", nextDue:"Next rent due", inDays:"in {n} days",
+      dueToday:"today", overdue:"{n} days overdue",
+      depositHeld:"Deposit held", payRent:"Pay rent with KHQR", paidToastRent:"Rent paid",
+      monthsLeft:"{n} months left", endingSoon:"Contract ending soon",
+      recordedToast:"Recorded. The listing has been taken down.",
+      legalNote:"The paper contract is still what the government needs. This is only the shared record of what you agreed.",
+      endTenancy:"End tenancy", noTenancy:"You are not renting anything yet"
     }
   };
 
@@ -1668,6 +1751,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
     renderSaved();
     renderMine();
+    paintTenancy();
   }
 
   /* ---------------------------------------------------------- landlord side
@@ -2016,6 +2100,114 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     });
   }
 
+  /* ------------------------------------------------------------- tenancy
+     Once two people agree in person, they fill this in together. It is not
+     the legal contract, which stays on paper for the government. It is the
+     shared record of what was agreed, and it is what keeps both of them in
+     the app for the next twelve months rather than only during the search.
+
+     It also closes the freshness loop for good: recording a tenancy takes
+     the listing down, so the landlord never has to remember to. */
+  var tenancy = null;
+  var recTarget = null;
+  var recTerm = 12;
+
+  function dayNames(d) { return d.toISOString().slice(0, 10); }
+
+  function addMonths(date, n) {
+    var d = new Date(date.getTime());
+    var day = d.getDate();
+    d.setMonth(d.getMonth() + n);
+    if (d.getDate() < day) d.setDate(0);   // clamp 31st into a short month
+    return d;
+  }
+
+  function nextDueDate(from, dueDay) {
+    var now = new Date();
+    var candidate = new Date(now.getFullYear(), now.getMonth(), dueDay);
+    if (candidate < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
+      candidate = new Date(now.getFullYear(), now.getMonth() + 1, dueDay);
+    }
+    if (candidate < from) candidate = new Date(from.getTime());
+    return candidate;
+  }
+
+  function daysBetween(a, b) {
+    return Math.round((b - a) / 86400000);
+  }
+
+  function fmt(d) {
+    return d.toLocaleDateString(lang === "km" ? "km-KH" : "en-GB",
+      { day: "numeric", month: "short", year: "numeric" });
+  }
+
+  function paintTenancy() {
+    var panel = document.getElementById("tenancy-panel");
+    var body = document.getElementById("tenancy-body");
+    if (!panel || !body) return;
+
+    if (!tenancy) { panel.hidden = true; return; }
+    panel.hidden = false;
+
+    var l = tenancy.listing;
+    var start = new Date(tenancy.start);
+    var end = addMonths(start, tenancy.months);
+    var today = new Date();
+    var due = nextDueDate(start, tenancy.dueDay);
+    var dueIn = daysBetween(new Date(today.getFullYear(), today.getMonth(), today.getDate()), due);
+    var monthsLeft = Math.max(0, Math.round(daysBetween(today, end) / 30));
+
+    var whenText = dueIn === 0 ? t("dueToday")
+                 : dueIn > 0   ? t("inDays", { n: dueIn })
+                               : t("overdue", { n: Math.abs(dueIn) });
+
+    body.textContent = "";
+    body.innerHTML =
+      '<div class="tenancy-head"><span class="t-name">' + l.title[lang] + '</span>' +
+        '<span class="pill ' + (monthsLeft <= 1 ? "paused" : "live") + '">' +
+        (monthsLeft <= 1 ? t("endingSoon") : t("monthsLeft", { n: monthsLeft })) + '</span></div>' +
+      '<p class="tenancy-where">' + l.area[lang] + '</p>' +
+
+      '<div class="due' + (dueIn <= 5 ? " soon" : "") + '">' +
+        '<div><div class="amount">$' + l.price + '</div>' +
+        '<div class="when">' + t("nextDue") + " " + fmt(due) + " · " + whenText + '</div></div>' +
+      '</div>' +
+
+      '<dl class="kv">' +
+        "<dt>" + t("since") + "</dt><dd>" + fmt(start) + "</dd>" +
+        "<dt>" + t("until") + "</dt><dd>" + fmt(end) + "</dd>" +
+        "<dt>" + t("dueDay") + "</dt><dd>" + tenancy.dueDay + "</dd>" +
+        "<dt>" + t("depositHeld") + "</dt><dd>$" + (l.price * l.deposit) + "</dd>" +
+        "<dt>" + t("tenantName") + "</dt><dd>" + tenancy.name + "</dd>" +
+      "</dl>";
+
+    var pay = document.createElement("button");
+    pay.className = "btn btn-primary";
+    pay.type = "button";
+    pay.id = "pay-rent";
+    pay.style.cssText = "width:100%;margin-top:14px";
+    pay.textContent = t("payRent");
+    pay.addEventListener("click", function () { toast(t("paidToastRent")); });
+    body.appendChild(pay);
+
+    var endBtn = document.createElement("button");
+    endBtn.className = "reportbtn";
+    endBtn.type = "button";
+    endBtn.id = "end-tenancy";
+    endBtn.style.marginTop = "8px";
+    endBtn.textContent = t("endTenancy");
+    endBtn.addEventListener("click", function () {
+      tenancy = null;
+      paintTenancy();
+    });
+    body.appendChild(endBtn);
+
+    var note = document.createElement("p");
+    note.className = "powernote";
+    note.textContent = t("legalNote");
+    body.appendChild(note);
+  }
+
   function closeDetail() {
     var detail = document.getElementById("s-detail");
     var back = stack.pop() || "s-explore";
@@ -2067,6 +2259,62 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     if (current) toggleSave(current.id, null);
     this.classList.toggle("is-on", current && saved[current.id]);
   });
+  /* ---- the record sheet -------------------------------------------- */
+  var recSheet = document.getElementById("rec-sheet");
+
+  function openRecord(l) {
+    recTarget = l;
+    document.getElementById("rec-start").value = dayNames(new Date());
+    document.getElementById("rec-name").value = "";
+    recSheet.hidden = false; scrim.hidden = false;
+    recSheet.getBoundingClientRect();
+    recSheet.classList.add("is-open"); scrim.classList.add("is-open");
+  }
+
+  function closeRecord() {
+    recSheet.classList.remove("is-open"); scrim.classList.remove("is-open");
+    var hide = function () { recSheet.hidden = true; scrim.hidden = true; };
+    if (reduced) hide(); else window.setTimeout(hide, 340);
+  }
+
+  document.getElementById("d-agree").addEventListener("click", function () {
+    if (current) openRecord(current);
+  });
+
+  document.getElementById("rec-term").addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b) return;
+    this.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+    recTerm = Number(b.dataset.rterm);
+  });
+
+  var recDue = document.getElementById("rec-due");
+  recDue.addEventListener("input", function () {
+    document.getElementById("rec-due-val").textContent = this.value;
+  });
+
+  document.getElementById("rec-save").addEventListener("click", function () {
+    if (!recTarget) return;
+    var start = document.getElementById("rec-start").value || dayNames(new Date());
+    tenancy = {
+      listing: recTarget,
+      name: document.getElementById("rec-name").value.trim() || "Tenant",
+      start: start,
+      months: recTerm,
+      dueDay: Number(recDue.value)
+    };
+
+    /* Recording a tenancy is the same act as taking the room off the market,
+       so the landlord never has to remember to unlist it. */
+    recTarget.billing = recTarget.billing || {};
+    recTarget.billing.state = "rented";
+
+    closeRecord();
+    toast(t("recordedToast"));
+    render();
+    closeDetail();
+  });
+
   document.getElementById("d-call").addEventListener("click", function () {
     if (!current) return;
     /* A real tel: link, because a phone call is how a Khmer rental actually
@@ -2127,7 +2375,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     if (reduced) hide(); else window.setTimeout(hide, 340);
   }
   document.getElementById("open-filters").addEventListener("click", openSheet);
-  scrim.addEventListener("click", closeSheet);
+  scrim.addEventListener("click", function () {
+    if (!recSheet.hidden) closeRecord();
+    if (!sheet.hidden) closeSheet();
+  });
   document.getElementById("f-apply").addEventListener("click", function () { closeSheet(); render(); });
 
   /* ------------------------------------------------ drag the sheet down
