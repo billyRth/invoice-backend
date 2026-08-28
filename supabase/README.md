@@ -80,3 +80,42 @@ check existed, looked right, and did nothing.
 `get_advisors` found both of the real holes in this schema. Neither was
 reachable in production — the outer lock held while the inner one was open —
 and neither was visible in the function's own text.
+
+## Operating it, before there are screens for any of this
+
+**Make someone an admin** (only an admin can approve money). They have to have
+signed in once, so a row exists:
+
+```sql
+insert into admins (profile_id, note)
+select id, 'owner' from profiles where phone = '+855XXXXXXXX';
+```
+
+**Set the account landlords pay into.** Upload the KHQR image to the `khqr`
+bucket first, then:
+
+```sql
+insert into receiving_accounts (version, display_name, bank, account_no, qr_path, is_active, activated_at)
+values (1, 'PTAS / YOUR NAME', 'ABA', '000 000 000', 'v1.png', true, now());
+```
+
+Only one row may be active. To replace it, deactivate the old one and insert a
+new version — never edit a row, because every payment order points at the exact
+version the landlord was shown.
+
+**The approval queue**, until it has a screen:
+
+```sql
+select o.order_code, o.amount_usd, l.title, p.storage_path, p.claimed_tx_reference
+from payment_orders o
+join listings l on l.id = o.listing_id
+left join payment_proofs p on p.order_id = o.id and not p.superseded
+where o.state = 'submitted'
+order by o.created_at;
+
+-- match the receipt to your bank statement, then:
+select approve_payment_order('<order id>', '<bank reference>');
+select reject_payment_order('<order id>', 'could not find this transfer');
+```
+
+Approving is idempotent: tapping it twice does not sell two months.
