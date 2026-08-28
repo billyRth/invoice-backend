@@ -20,6 +20,30 @@ interface is built around.
 | Deposit terms surface in chat, late | Deposit is on the card, and the detail screen shows the full move-in cost in one line. |
 | Khmer posts, English-only portals | Khmer is the default language. The toggle is real, not a stub. |
 
+## The business model, and why it is also the product
+
+Listings cost **$1 per listing per month**, free for the first 14 days.
+
+The fee is not really revenue. It is the mechanism that keeps the feed honest. A landlord whose room
+is gone has a reason to take it down, and a landlord who has stopped paying attention stops paying,
+at which point the listing **pauses itself and leaves search**. Dead inventory expires whether or not
+anyone remembers to tidy it, which is the single thing every Cambodian listings site gets wrong.
+
+The landlord side of this runs in the prototype. Open the You tab: three listings, one live, one on
+free trial, one paused for non-payment. Paying puts a listing back into search and onto the bill.
+Marking one as rented removes it from search and stops the billing in the same tap.
+
+### On people doing the deal off-app
+
+They will, and it does not matter here. A commission model has to police contact, because every
+off-app deal is lost revenue, which is why ride apps fight cancellations. A subscription is paid for
+**visibility**, not for the transaction. If a landlord and a renter meet through a listing and settle
+it over the phone, the landlord has already paid, and then unlists, which is exactly the behaviour
+the model wants.
+
+Hiding phone numbers would make this worse than a Facebook group, where the number is right there.
+So the numbers stay visible, and revenue never depends on the deal happening inside the app.
+
 ## What runs
 
 Search, four quick filters, a filter sheet with price, bedrooms and type, save and unsave, a saved

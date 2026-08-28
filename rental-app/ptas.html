@@ -469,6 +469,47 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 input[type="range"] { width: 100%; accent-color: var(--brand); }
 
 .seg { display: grid; grid-auto-flow: column; gap: 7px; }
+/* Wrapping variant, for the option groups that outgrew a single row. */
+.seg.wrap { display: flex; flex-wrap: wrap; gap: 7px; }
+.seg.wrap button { padding: 10px 13px; }
+
+.sheet-body { overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 8px; }
+.sheet { display: flex; flex-direction: column; max-height: 88%; padding-bottom: 0; }
+.sheet-actions {
+  position: sticky; bottom: 0;
+  display: flex; gap: 10px;
+  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, transparent, var(--surface) 22%);
+}
+
+.mylist { display: grid; gap: 12px; margin-bottom: 14px; }
+.myrow { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; align-items: start;
+         padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.myrow:last-of-type { border-bottom: 0; padding-bottom: 0; }
+.myrow .name { font-size: 14px; font-weight: 600; }
+.myrow .meta { font-size: 12.5px; color: var(--ink-2); margin-top: 2px; }
+.myrow .actions2 { grid-column: 1 / -1; display: flex; gap: 8px; margin-top: 8px; }
+.myrow .mini {
+  padding: 8px 12px; border-radius: var(--r-sm); font-size: 12.5px; font-weight: 600;
+  background: var(--surface-2); color: var(--ink-2);
+  transition: transform 120ms var(--ease), background-color 160ms var(--ease);
+}
+.myrow .mini:active { transform: scale(.96); }
+.myrow .mini.pay { background: var(--brand); color: var(--on-brand); }
+
+.pill { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: var(--r-full); white-space: nowrap; }
+.pill.live   { background: var(--ok-wash);   color: var(--ok); }
+.pill.trial  { background: var(--brand-wash);color: var(--brand); }
+.pill.paused { background: var(--warn-wash); color: var(--warn); }
+.pill.rented { background: var(--dead-wash); color: var(--dead); }
+
+.billrow { display: flex; justify-content: space-between; align-items: baseline;
+           padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; }
+.billrow b { font-size: 18px; }
+
+.powernote { font-size: 12px; color: var(--ink-2); margin: 9px 0 0; line-height: 1.5; }
+.fact.warnfact { background: var(--warn-wash); color: var(--warn); font-weight: 600; }
+.kv dd.over { color: var(--warn); }
 .seg button {
   padding: 11px 0; border-radius: var(--r-sm);
   background: var(--surface-2); font-size: 13.5px; font-weight: 600; color: var(--ink-2);
@@ -715,6 +756,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
             <dt data-t="postStep3">Verify your ID</dt><dd>3</dd>
           </dl>
         </div>
+        <div class="panel">
+          <h3 data-t="whyPay">Why it costs money</h3>
+          <p style="margin:0 0 10px;font-size:14px" data-t="whyPayBody"></p>
+          <p style="margin:0;font-weight:600" id="fee-line"></p>
+        </div>
+
         <div class="trustnote" data-t="postNote">
           Listings expire after 14 days unless you confirm the room is still free. One tap keeps it live. This is the whole reason renters trust this over a Facebook post.
         </div>
@@ -737,6 +784,16 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
             </div>
           </div>
         </div>
+        <div class="panel">
+          <h3 data-t="myListings">My listings</h3>
+          <div id="my-listings"></div>
+          <div class="billrow">
+            <span data-t="monthlyBill">Monthly bill</span>
+            <b id="bill-total">$0</b>
+          </div>
+          <p class="powernote" data-t="billNote"></p>
+        </div>
+
         <div class="panel">
           <h3 data-t="mePrefs">Preferences</h3>
           <dl class="kv">
@@ -772,6 +829,22 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           <div class="panel">
             <h3 data-t="theMoney">The money</h3>
             <dl class="kv" id="d-money"></dl>
+          </div>
+
+          <div class="panel">
+            <h3 data-t="fUtilities">Utilities</h3>
+            <dl class="kv" id="d-utilities"></dl>
+            <p class="powernote" id="d-power-note" hidden></p>
+          </div>
+
+          <div class="panel">
+            <h3 data-t="theParking">Parking</h3>
+            <p id="d-parking" style="margin:0;font-weight:600"></p>
+          </div>
+
+          <div class="panel">
+            <h3 data-t="theTerms">Terms</h3>
+            <dl class="kv" id="d-terms"></dl>
           </div>
 
           <div class="panel">
@@ -829,34 +902,92 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     <h2 id="sheet-title" data-t="filterTitle">Filters</h2>
     <p class="sub" data-t="filterSub">Everything here is a real filter over the listings.</p>
 
-    <div class="field">
-      <label for="f-price"><span data-t="fMax">Maximum rent</span> <span class="val" id="f-price-val">$400</span></label>
-      <input id="f-price" type="range" min="80" max="600" step="10" value="600">
-    </div>
-
-    <div class="field">
-      <label data-t="fBeds">Bedrooms</label>
-      <div class="seg" role="group" id="f-beds">
-        <button type="button" data-beds="any" aria-pressed="true" data-t="any">Any</button>
-        <button type="button" data-beds="1" aria-pressed="false">1</button>
-        <button type="button" data-beds="2" aria-pressed="false">2</button>
-        <button type="button" data-beds="3" aria-pressed="false">3+</button>
+    <div class="sheet-body">
+      <div class="field">
+        <label for="f-price"><span data-t="fMax">Maximum rent</span> <span class="val" id="f-price-val">$1000</span></label>
+        <input id="f-price" type="range" min="80" max="1000" step="10" value="1000">
       </div>
-    </div>
 
-    <div class="field">
-      <label data-t="fType">Type</label>
-      <div class="seg" role="group" id="f-type">
-        <button type="button" data-type="any" aria-pressed="true" data-t="any">Any</button>
-        <button type="button" data-type="room" aria-pressed="false" data-t="tRoom">Room</button>
-        <button type="button" data-type="apartment" aria-pressed="false" data-t="tApt">Apartment</button>
-        <button type="button" data-type="house" aria-pressed="false" data-t="tHouse">House</button>
+      <div class="field">
+        <label data-t="fType">Type</label>
+        <div class="seg wrap" role="group" id="f-type">
+          <button type="button" data-type="any" aria-pressed="true" data-t="any">Any</button>
+          <button type="button" data-type="room" aria-pressed="false" data-t="tRoom">Room</button>
+          <button type="button" data-type="studio" aria-pressed="false" data-t="tStudio">Studio</button>
+          <button type="button" data-type="apartment" aria-pressed="false" data-t="tApt">Apartment</button>
+          <button type="button" data-type="flathouse" aria-pressed="false" data-t="tFlathouse">Flat house</button>
+          <button type="button" data-type="house" aria-pressed="false" data-t="tHouse">House</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label data-t="fTerm">Rental term</label>
+        <div class="seg wrap" role="group" id="f-term">
+          <button type="button" data-term="any" aria-pressed="true" data-t="any">Any</button>
+          <button type="button" data-term="monthly" aria-pressed="false" data-t="termMonthly">Monthly</button>
+          <button type="button" data-term="6" aria-pressed="false" data-t="term6">6 month contract</button>
+          <button type="button" data-term="12" aria-pressed="false" data-t="term12">1 year contract</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label data-t="fBeds">Bedrooms</label>
+        <div class="seg" role="group" id="f-beds">
+          <button type="button" data-beds="any" aria-pressed="true" data-t="any">Any</button>
+          <button type="button" data-beds="1" aria-pressed="false">1</button>
+          <button type="button" data-beds="2" aria-pressed="false">2</button>
+          <button type="button" data-beds="3" aria-pressed="false">3+</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label data-t="fParking">Parking</label>
+        <div class="seg wrap" role="group" id="f-park">
+          <button type="button" data-park="car" aria-pressed="false" data-t="parkCar">Car parking</button>
+          <button type="button" data-park="moto" aria-pressed="false" data-t="parkMoto">Motorbike parking</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label data-t="fPowerCap">Max electricity</label>
+        <div class="seg wrap" role="group" id="f-power">
+          <button type="button" data-power="any" aria-pressed="true" data-t="anyPower">Any</button>
+          <button type="button" data-power="730" aria-pressed="false">730 ៛</button>
+          <button type="button" data-power="900" aria-pressed="false">900 ៛</button>
+          <button type="button" data-power="1200" aria-pressed="false">1200 ៛</button>
+        </div>
+        <p class="powernote" data-t="powerNote">EDC residential tops out at 730 riel/kWh.</p>
+      </div>
+
+      <div class="field">
+        <label data-t="fMustHave">Must have</label>
+        <div class="seg wrap" role="group" id="f-must">
+          <button type="button" data-must="aircon" aria-pressed="false" data-t="aircon">Air con</button>
+          <button type="button" data-must="furnished" aria-pressed="false" data-t="furnished">Furnished</button>
+          <button type="button" data-must="privateBath" aria-pressed="false" data-t="privateBath">Private bathroom</button>
+          <button type="button" data-must="lift" aria-pressed="false" data-t="lift">Lift</button>
+          <button type="button" data-must="kitchen" aria-pressed="false" data-t="kitchen">Kitchen</button>
+          <button type="button" data-must="washer" aria-pressed="false" data-t="washer">Washing machine</button>
+          <button type="button" data-must="balcony" aria-pressed="false" data-t="balcony">Balcony</button>
+          <button type="button" data-must="security" aria-pressed="false" data-t="security">Security guard</button>
+          <button type="button" data-must="pets" aria-pressed="false" data-t="pets">Pets allowed</button>
+          <button type="button" data-must="internet" aria-pressed="false" data-t="internetInc">Internet included</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label data-t="sortBy">Sort</label>
+        <div class="seg wrap" role="group" id="f-sort">
+          <button type="button" data-sort="fresh" aria-pressed="true" data-t="sortFresh">Recently confirmed</button>
+          <button type="button" data-sort="low" aria-pressed="false" data-t="sortLow">Price low to high</button>
+          <button type="button" data-sort="high" aria-pressed="false" data-t="sortHigh">Price high to low</button>
+        </div>
       </div>
     </div>
 
     <div class="sheet-actions">
       <button class="btn btn-ghost" type="button" id="f-reset" style="flex:1;width:auto" data-t="reset">Reset</button>
-      <button class="btn btn-primary" type="button" id="f-apply" data-t="showResults">Show results</button>
+      <button class="btn btn-primary" type="button" id="f-apply">Show results</button>
     </div>
   </div>
 
@@ -875,70 +1006,146 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
      A fixed set of listings. Prices, areas and deposit terms are typical of
      Phnom Penh in 2026. lastConfirmed is days since the landlord last said
      the place is still free, which is the number this product is built on. */
+  /* EDC residential tariff tops out at 730 riel per kWh (tiers: 380 / 480 /
+     610 / 730). Landlords routinely resell power above that, and it is the
+     most commonly hidden cost in a Khmer rental, so it is a first class
+     field here rather than a line in a description. Verify against the
+     current EAC tariff before launch. */
+  var EDC_TOP_TIER = 730;
+
+  /* Paid listings, which is the whole answer to dead inventory.
+     A listing costs a small monthly fee. The fee is not really revenue, it is
+     an incentive: a landlord whose room is taken has a reason to take it down,
+     and a landlord who has stopped caring stops paying, at which point the
+     listing pauses itself and disappears from search. Dead listings therefore
+     expire whether or not anyone remembers to tidy them. */
+  var LISTING_FEE = 1;      // USD per listing per month
+  var FREE_DAYS  = 14;      // free while a new listing finds its first renter
+
   var LISTINGS = [
     { id:"tk-1", title:{en:"Bright studio near Toul Kork market", km:"បន្ទប់ស្ទូឌីយោ ជិតផ្សារទួលគោក"},
-      area:{en:"Toul Kork, Phnom Penh", km:"ទួលគោក ភ្នំពេញ"}, price:180, beds:0, type:"room", size:28,
-      deposit:1, verified:true, lastConfirmed:1, furnished:true,
-      landlord:{name:"Chan Sophal", since:2021, listings:3},
-      amenities:{en:["Furnished","Air con","Wi-Fi included","Private bathroom","2nd floor"],
-                 km:["មានគ្រឿងសង្ហារិម","ម៉ាស៊ីនត្រជាក់","វ៉ាយហ្វាយ","បន្ទប់ទឹកឯកជន","ជាន់ទី២"]},
+      area:{en:"Toul Kork, Phnom Penh", km:"ទួលគោក ភ្នំពេញ"},
+      price:180, beds:0, type:"studio", size:28, floor:2,
+      deposit:1, term:"monthly", minStay:3, availableNow:true,
+      power:1000, water:0, internet:true,
+      parking:{ car:0, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:true, lift:false, washer:false, pets:false, balcony:false, security:true, kitchen:true },
+      verified:true, lastConfirmed:1,
+      landlord:{ name:"Chan Sophal", since:2021, listings:3 },
       photos:["toulkork-studio-a","toulkork-studio-b","toulkork-studio-c"] },
 
     { id:"bkk3-1", title:{en:"One bedroom with balcony, BKK3", km:"អាផាតមិន ១បន្ទប់ មានយ៉រ បឹងកេងកង៣"},
-      area:{en:"Boeung Keng Kang 3", km:"បឹងកេងកង៣"}, price:320, beds:1, type:"apartment", size:45,
-      deposit:2, verified:true, lastConfirmed:3, furnished:true,
-      landlord:{name:"Meas Dara", since:2019, listings:8},
-      amenities:{en:["Furnished","Balcony","Lift","Security guard","Parking"],
-                 km:["មានគ្រឿងសង្ហារិម","យ៉រ","ជណ្តើរយន្ត","អ្នកយាម","ចំណតរថយន្ត"]},
+      area:{en:"Boeung Keng Kang 3", km:"បឹងកេងកង៣"},
+      price:320, beds:1, type:"apartment", size:45, floor:4,
+      deposit:2, term:"12", minStay:12, availableNow:true,
+      power:900, water:2500, internet:true,
+      parking:{ car:1, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:true, lift:true, washer:true, pets:false, balcony:true, security:true, kitchen:true },
+      verified:true, lastConfirmed:3,
+      landlord:{ name:"Meas Dara", since:2019, listings:8 },
       photos:["bkk3-balcony-a","bkk3-balcony-b","bkk3-balcony-c"] },
 
-    { id:"ss-1", title:{en:"Two bedroom flat, Sen Sok", km:"ផ្ទះល្វែង ២បន្ទប់ សែនសុខ"},
-      area:{en:"Sen Sok, Phnom Penh", km:"សែនសុខ ភ្នំពេញ"}, price:250, beds:2, type:"apartment", size:60,
-      deposit:1, verified:false, lastConfirmed:2, furnished:false,
-      landlord:{name:"Ly Sreyneang", since:2023, listings:1},
-      amenities:{en:["Unfurnished","Kitchen","Water included","Ground floor"],
-                 km:["គ្មានគ្រឿងសង្ហារិម","ផ្ទះបាយ","រួមបញ្ចូលទឹក","ជាន់ផ្ទាល់ដី"]},
+    { id:"ss-1", title:{en:"Two bedroom flat house, Sen Sok", km:"ផ្ទះល្វែង ២បន្ទប់ សែនសុខ"},
+      area:{en:"Sen Sok, Phnom Penh", km:"សែនសុខ ភ្នំពេញ"},
+      price:250, beds:2, type:"flathouse", size:60, floor:0,
+      deposit:1, term:"6", minStay:6, availableNow:true,
+      power:800, water:0, internet:false,
+      parking:{ car:1, moto:true },
+      has:{ aircon:false, furnished:false, privateBath:true, lift:false, washer:false, pets:true, balcony:false, security:false, kitchen:true },
+      verified:false, lastConfirmed:2,
+      landlord:{ name:"Ly Sreyneang", since:2023, listings:1 },
       photos:["sensok-flat-a","sensok-flat-b"] },
 
     { id:"rm-1", title:{en:"Room above a coffee shop, Russian Market", km:"បន្ទប់ជួល ខាងលើហាងកាហ្វេ ផ្សារទួលទំពូង"},
-      area:{en:"Toul Tom Poung", km:"ទួលទំពូង"}, price:140, beds:0, type:"room", size:22,
-      deposit:1, verified:true, lastConfirmed:6, furnished:true,
-      landlord:{name:"Kim Bunthoeun", since:2022, listings:2},
-      amenities:{en:["Furnished","Shared bathroom","Wi-Fi included","3rd floor, no lift"],
-                 km:["មានគ្រឿងសង្ហារិម","បន្ទប់ទឹករួម","វ៉ាយហ្វាយ","ជាន់ទី៣ គ្មានជណ្តើរយន្ត"]},
+      area:{en:"Toul Tom Poung", km:"ទួលទំពូង"},
+      price:140, beds:0, type:"room", size:22, floor:3,
+      deposit:1, term:"monthly", minStay:1, availableNow:true,
+      power:1200, water:3000, internet:true,
+      parking:{ car:0, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:false, lift:false, washer:false, pets:false, balcony:false, security:false, kitchen:false },
+      verified:true, lastConfirmed:6,
+      landlord:{ name:"Kim Bunthoeun", since:2022, listings:2 },
       photos:["russianmarket-room-a","russianmarket-room-b"] },
 
     { id:"cc-1", title:{en:"Riverside house, Chroy Changvar", km:"ផ្ទះមាត់ទន្លេ ជ្រោយចង្វារ"},
-      area:{en:"Chroy Changvar", km:"ជ្រោយចង្វារ"}, price:450, beds:3, type:"house", size:110,
-      deposit:2, verified:true, lastConfirmed:4, furnished:false,
-      landlord:{name:"Pen Chanthou", since:2018, listings:5},
-      amenities:{en:["Unfurnished","Garden","Parking for 2","Quiet street"],
-                 km:["គ្មានគ្រឿងសង្ហារិម","សួនច្បារ","ចំណតរថយន្ត ២","ផ្លូវស្ងាត់"]},
+      area:{en:"Chroy Changvar", km:"ជ្រោយចង្វារ"},
+      price:450, beds:3, type:"house", size:110, floor:0,
+      deposit:2, term:"12", minStay:12, availableNow:false,
+      power:730, water:2000, internet:false,
+      parking:{ car:2, moto:true },
+      has:{ aircon:false, furnished:false, privateBath:true, lift:false, washer:true, pets:true, balcony:true, security:false, kitchen:true },
+      verified:true, lastConfirmed:4,
+      landlord:{ name:"Pen Chanthou", since:2018, listings:5 },
       photos:["chroychangvar-house-a","chroychangvar-house-b","chroychangvar-house-c"] },
 
     { id:"ca-1", title:{en:"Cheap room, Chbar Ampov", km:"បន្ទប់ជួលថោក ច្បារអំពៅ"},
-      area:{en:"Chbar Ampov", km:"ច្បារអំពៅ"}, price:95, beds:0, type:"room", size:18,
-      deposit:1, verified:false, lastConfirmed:19, furnished:false,
-      landlord:{name:"Sok Vanna", since:2024, listings:1},
-      amenities:{en:["Unfurnished","Shared bathroom","Fan only"],
-                 km:["គ្មានគ្រឿងសង្ហារិម","បន្ទប់ទឹករួម","មានតែកង្ហារ"]},
+      area:{en:"Chbar Ampov", km:"ច្បារអំពៅ"},
+      price:95, beds:0, type:"room", size:18, floor:1,
+      deposit:1, term:"monthly", minStay:1, availableNow:true,
+      power:1500, water:4000, internet:false,
+      parking:{ car:0, moto:true },
+      has:{ aircon:false, furnished:false, privateBath:false, lift:false, washer:false, pets:false, balcony:false, security:false, kitchen:false },
+      verified:false, lastConfirmed:19,
+      landlord:{ name:"Sok Vanna", since:2024, listings:1 },
       photos:["chbarampov-room-a"] },
 
     { id:"tk-2", title:{en:"Quiet 2 bed near Institute of Technology", km:"អាផាតមិន ២បន្ទប់ ជិតវិទ្យាស្ថានបច្ចេកវិទ្យា"},
-      area:{en:"Toul Kork, Phnom Penh", km:"ទួលគោក ភ្នំពេញ"}, price:280, beds:2, type:"apartment", size:55,
-      deposit:1, verified:true, lastConfirmed:0, furnished:true,
-      landlord:{name:"Nou Sokhem", since:2020, listings:4},
-      amenities:{en:["Furnished","Air con","Study desk","Wi-Fi included","Lift"],
-                 km:["មានគ្រឿងសង្ហារិម","ម៉ាស៊ីនត្រជាក់","តុសិក្សា","វ៉ាយហ្វាយ","ជណ្តើរយន្ត"]},
+      area:{en:"Toul Kork, Phnom Penh", km:"ទួលគោក ភ្នំពេញ"},
+      price:280, beds:2, type:"apartment", size:55, floor:5,
+      deposit:1, term:"6", minStay:6, availableNow:true,
+      power:730, water:0, internet:true,
+      parking:{ car:1, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:true, lift:true, washer:true, pets:false, balcony:true, security:true, kitchen:true },
+      verified:true, lastConfirmed:0,
+      owner:"me", billing:{ state:"live", daysLeft:23 },
+      landlord:{ name:"Nou Sokhem", since:2020, listings:4 },
       photos:["toulkork-2bed-a","toulkork-2bed-b","toulkork-2bed-c"] },
 
     { id:"bkk1-1", title:{en:"Serviced one bed, BKK1", km:"អាផាតមិនសេវាកម្ម ១បន្ទប់ បឹងកេងកង១"},
-      area:{en:"Boeung Keng Kang 1", km:"បឹងកេងកង១"}, price:520, beds:1, type:"apartment", size:50,
-      deposit:2, verified:true, lastConfirmed:8, furnished:true,
-      landlord:{name:"Tep Marina", since:2017, listings:12},
-      amenities:{en:["Furnished","Cleaning included","Gym","Pool","Lift"],
-                 km:["មានគ្រឿងសង្ហារិម","រួមបញ្ចូលការសម្អាត","កន្លែងហាត់ប្រាណ","អាងហែលទឹក","ជណ្តើរយន្ត"]},
-      photos:["bkk1-serviced-a","bkk1-serviced-b"] }
+      area:{en:"Boeung Keng Kang 1", km:"បឹងកេងកង១"},
+      price:520, beds:1, type:"apartment", size:50, floor:8,
+      deposit:2, term:"12", minStay:12, availableNow:true,
+      power:0, water:0, internet:true,
+      parking:{ car:1, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:true, lift:true, washer:true, pets:false, balcony:false, security:true, kitchen:true },
+      verified:true, lastConfirmed:8,
+      landlord:{ name:"Tep Marina", since:2017, listings:12 },
+      photos:["bkk1-serviced-a","bkk1-serviced-b"] },
+
+    { id:"tp-1", title:{en:"Shophouse ground floor, Tuol Sangke", km:"ផ្ទះល្វែងជាន់ផ្ទាល់ដី ទួលសង្កែ"},
+      area:{en:"Tuol Sangke, Russey Keo", km:"ទួលសង្កែ ឫស្សីកែវ"},
+      price:210, beds:1, type:"flathouse", size:40, floor:0,
+      deposit:1, term:"monthly", minStay:3, availableNow:true,
+      power:850, water:2500, internet:false,
+      parking:{ car:1, moto:true },
+      has:{ aircon:false, furnished:false, privateBath:true, lift:false, washer:false, pets:true, balcony:false, security:false, kitchen:true },
+      verified:false, lastConfirmed:11,
+      owner:"me", billing:{ state:"paused", daysLeft:0 },
+      landlord:{ name:"Hun Sreypov", since:2023, listings:2 },
+      photos:["tuolsangke-shophouse-a","tuolsangke-shophouse-b"] },
+
+    { id:"ss-2", title:{en:"Student room with motorbike parking, Sen Sok", km:"បន្ទប់និស្សិត មានចំណតម៉ូតូ សែនសុខ"},
+      area:{en:"Sen Sok, Phnom Penh", km:"សែនសុខ ភ្នំពេញ"},
+      price:120, beds:0, type:"room", size:20, floor:2,
+      deposit:1, term:"monthly", minStay:1, availableNow:true,
+      power:900, water:0, internet:true,
+      parking:{ car:0, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:true, lift:false, washer:false, pets:false, balcony:false, security:true, kitchen:false },
+      verified:true, lastConfirmed:2,
+      owner:"me", billing:{ state:"trial", daysLeft:9 },
+      landlord:{ name:"Chea Vichea", since:2022, listings:6 },
+      photos:["sensok-student-a","sensok-student-b"] },
+
+    { id:"bkk2-1", title:{en:"Villa with garden, BKK2", km:"វីឡា មានសួន បឹងកេងកង២"},
+      area:{en:"Boeung Keng Kang 2", km:"បឹងកេងកង២"},
+      price:900, beds:4, type:"house", size:180, floor:0,
+      deposit:2, term:"12", minStay:12, availableNow:false,
+      power:730, water:2000, internet:true,
+      parking:{ car:2, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:true, lift:false, washer:true, pets:true, balcony:true, security:true, kitchen:true },
+      verified:true, lastConfirmed:5,
+      landlord:{ name:"Ouk Sovannara", since:2016, listings:9 },
+      photos:["bkk2-villa-a","bkk2-villa-b","bkk2-villa-c"] }
   ];
 
   var photoUrl = function (seed, w, h) {
@@ -971,7 +1178,37 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       landlordSince:"ម្ចាស់ផ្ទះតាំងពី {y} · ការផ្សាយ {n}",
       results:"{n} កន្លែង", saved:"បានរក្សាទុក", unsaved:"បានដកចេញ",
       contactToast:"នៅក្នុងកំណែពិត វានឹងបើកការជជែក ឬលេខទូរស័ព្ទ",
-      postToast:"ការដាក់ផ្សាយមិនទាន់មានក្នុងគំរូនេះ", sqm:"ម៉ែត្រការ៉េ", bedsLabel:"បន្ទប់គេង", studio:"ស្ទូឌីយោ"
+      postToast:"ការដាក់ផ្សាយមិនទាន់មានក្នុងគំរូនេះ", sqm:"ម៉ែត្រការ៉េ", bedsLabel:"បន្ទប់គេង", studio:"ស្ទូឌីយោ",
+
+      tStudio:"ស្ទូឌីយោ", tFlathouse:"ផ្ទះល្វែង", tVilla:"វីឡា",
+      fTerm:"រយៈពេលជួល", termMonthly:"ប្រចាំខែ", term6:"កិច្ចសន្យា ៦ខែ", term12:"កិច្ចសន្យា ១ឆ្នាំ",
+      fParking:"ចំណត", parkCar:"ចំណតឡាន", parkMoto:"ចំណតម៉ូតូ", noParking:"គ្មានចំណត",
+      carSlots:"ឡាន {n}", motoYes:"ម៉ូតូ",
+      fMustHave:"ត្រូវតែមាន", fUtilities:"សេវាប្រើប្រាស់",
+      aircon:"ម៉ាស៊ីនត្រជាក់", furnished:"គ្រឿងសង្ហារិម", lift:"ជណ្តើរយន្ត", privateBath:"បន្ទប់ទឹកឯកជន",
+      sharedBath:"បន្ទប់ទឹករួម", washer:"ម៉ាស៊ីនបោកគក់", pets:"អនុញ្ញាតសត្វចិញ្ចឹម", balcony:"យ៉រ",
+      security:"អ្នកយាម", kitchen:"ផ្ទះបាយ", internetInc:"អ៊ីនធឺណិតរួមបញ្ចូល",
+      power:"អគ្គិសនី", water:"ទឹក", internet:"អ៊ីនធឺណិត",
+      included:"រួមបញ្ចូល", perKwh:"៛/kWh", perM3:"៛/ម³",
+      powerFair:"តម្លៃរដ្ឋ", powerOver:"លើសតម្លៃរដ្ឋ {p}%",
+      powerNote:"អគ្គិសនីរដ្ឋ (EDC) ខ្ពស់បំផុត ៧៣០៛/kWh។ ម្ចាស់ផ្ទះខ្លះលក់ថ្លៃជាង។",
+      fPowerCap:"អគ្គិសនីអតិបរមា", anyPower:"ទាំងអស់",
+      theTerms:"លក្ខខណ្ឌ", minStay:"ស្នាក់នៅយ៉ាងតិច", availableNow:"ទំនេរឥឡូវ", availableSoon:"ទំនេរឆាប់ៗ",
+      floor:"ជាន់", ground:"ជាន់ផ្ទាល់ដី", theParking:"ចំណត", monthsShort:"ខែ",
+      showN:"បង្ហាញ {n} កន្លែង", noneMatch:"គ្មានលទ្ធផល", sortBy:"តម្រៀប",
+      sortFresh:"បញ្ជាក់ថ្មីៗ", sortLow:"តម្លៃទាបទៅខ្ពស់", sortHigh:"តម្លៃខ្ពស់ទៅទាប",
+
+      myListings:"ការផ្សាយរបស់ខ្ញុំ", billing:"ការបង់ប្រាក់",
+      stLive:"កំពុងផ្សាយ", stTrial:"សាកល្បងឥតគិតថ្លៃ", stPaused:"ផ្អាក មិនបានបង់", stRented:"ជួលរួច",
+      daysLeft:"នៅសល់ {n} ថ្ងៃ", freeLeft:"ឥតគិតថ្លៃ នៅសល់ {n} ថ្ងៃ",
+      pausedNote:"មិនបង្ហាញក្នុងការស្វែងរក រហូតដល់បង់ប្រាក់",
+      markRented:"ជួលរួចហើយ", payNow:"បង់ដោយ KHQR",
+      monthlyBill:"ថ្លៃប្រចាំខែ", perListing:"${f}/ការផ្សាយ/ខែ",
+      billNote:"ការផ្សាយដែលមិនបានបង់ ត្រូវផ្អាកដោយស្វ័យប្រវត្តិ។ ដូច្នេះបន្ទប់ដែលជួលរួច មិននៅក្នុងការស្វែងរកទេ។",
+      rentedToast:"បានដកចេញ។ ឈប់គិតថ្លៃ។", paidToast:"បានបង់រួច។ ការផ្សាយបានបន្ត។",
+      whyPay:"ហេតុអ្វីត្រូវបង់?",
+      whyPayBody:"ថ្លៃតិចតួច ធ្វើឲ្យម្ចាស់ផ្ទះដកការផ្សាយពេលជួលរួច។ នេះជាមូលហេតុដែលបញ្ជីនៅទីនេះថ្មីជាងហ្វេសប៊ុក។",
+      feeLine:"${f} ក្នុងមួយខែ ក្នុងមួយការផ្សាយ។ {d} ថ្ងៃដំបូងឥតគិតថ្លៃ។"
     },
     en: {
       tagline:"rentals people actually answer", filters:"Filters", searchPh:"Toul Kork, BKK, Sen Sok",
@@ -997,7 +1234,37 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       landlordSince:"Landlord since {y} · {n} listings",
       results:"{n} places", saved:"Saved", unsaved:"Removed",
       contactToast:"In the real app this opens a chat or reveals the phone number",
-      postToast:"Posting is not built in this prototype", sqm:"sqm", bedsLabel:"bed", studio:"Studio"
+      postToast:"Posting is not built in this prototype", sqm:"sqm", bedsLabel:"bed", studio:"Studio",
+
+      tStudio:"Studio", tFlathouse:"Flat house", tVilla:"Villa",
+      fTerm:"Rental term", termMonthly:"Monthly", term6:"6 month contract", term12:"1 year contract",
+      fParking:"Parking", parkCar:"Car parking", parkMoto:"Motorbike parking", noParking:"No parking",
+      carSlots:"{n} car", motoYes:"Motorbike",
+      fMustHave:"Must have", fUtilities:"Utilities",
+      aircon:"Air con", furnished:"Furnished", lift:"Lift", privateBath:"Private bathroom",
+      sharedBath:"Shared bathroom", washer:"Washing machine", pets:"Pets allowed", balcony:"Balcony",
+      security:"Security guard", kitchen:"Kitchen", internetInc:"Internet included",
+      power:"Electricity", water:"Water", internet:"Internet",
+      included:"Included", perKwh:"riel/kWh", perM3:"riel/m3",
+      powerFair:"State rate", powerOver:"{p}% over state rate",
+      powerNote:"EDC residential tops out at 730 riel/kWh. Some landlords resell power above that.",
+      fPowerCap:"Max electricity", anyPower:"Any",
+      theTerms:"Terms", minStay:"Minimum stay", availableNow:"Available now", availableSoon:"Available soon",
+      floor:"Floor", ground:"Ground floor", theParking:"Parking", monthsShort:"mo",
+      showN:"Show {n} places", noneMatch:"Nothing matches", sortBy:"Sort",
+      sortFresh:"Recently confirmed", sortLow:"Price low to high", sortHigh:"Price high to low",
+
+      myListings:"My listings", billing:"Billing",
+      stLive:"Live", stTrial:"Free trial", stPaused:"Paused, unpaid", stRented:"Rented",
+      daysLeft:"{n} days left", freeLeft:"Free, {n} days left",
+      pausedNote:"Hidden from search until it is paid",
+      markRented:"Mark as rented", payNow:"Pay with KHQR",
+      monthlyBill:"Monthly bill", perListing:"${f} per listing per month",
+      billNote:"An unpaid listing pauses itself, so a room that has already gone stops appearing in search whether or not anyone remembers to remove it.",
+      rentedToast:"Taken down. Billing stopped.", paidToast:"Paid. The listing is live again.",
+      whyPay:"Why it costs money",
+      whyPayBody:"A small monthly fee gives a landlord a reason to take the listing down once the room is gone. That is the whole reason the listings here are fresher than a Facebook group.",
+      feeLine:"${f} per month per listing. The first {d} days are free."
     }
   };
 
@@ -1026,23 +1293,37 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   }
 
   /* ============================================================== filters */
-  var state = { q:"", maxPrice:600, beds:"any", type:"any", verified:false, fresh:false, lowDeposit:false, furnished:false };
+  var state = {
+    q:"", maxPrice:1000, beds:"any", type:"any", term:"any", sort:"fresh",
+    parkCar:false, parkMoto:false, maxPower:"any",
+    verified:false, fresh:false, lowDeposit:false,
+    must:{ aircon:false, furnished:false, lift:false, privateBath:false, washer:false, pets:false, balcony:false, security:false, kitchen:false, internet:false }
+  };
   var saved = {};
   var current = null;
 
   function activeFilterCount() {
     var n = 0;
-    if (state.maxPrice < 600) n++;
+    if (state.maxPrice < 1000) n++;
     if (state.beds !== "any") n++;
     if (state.type !== "any") n++;
+    if (state.term !== "any") n++;
+    if (state.maxPower !== "any") n++;
+    if (state.parkCar) n++;
+    if (state.parkMoto) n++;
     if (state.verified) n++;
     if (state.fresh) n++;
     if (state.lowDeposit) n++;
-    if (state.furnished) n++;
+    Object.keys(state.must).forEach(function (k) { if (state.must[k]) n++; });
     return n;
   }
 
+  function isLive(l) {
+    return !l.billing || (l.billing.state !== "paused" && l.billing.state !== "rented");
+  }
+
   function matches(l) {
+    if (!isLive(l)) return false;      // unpaid or already rented, so not shown
     if (state.q) {
       var hay = (l.title.en + " " + l.title.km + " " + l.area.en + " " + l.area.km).toLowerCase();
       if (hay.indexOf(state.q.toLowerCase()) === -1) return false;
@@ -1052,18 +1333,34 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       if (state.beds === "3" ? l.beds < 3 : String(l.beds) !== state.beds) return false;
     }
     if (state.type !== "any" && l.type !== state.type) return false;
+    if (state.term !== "any" && l.term !== state.term) return false;
+    if (state.parkCar && !(l.parking && l.parking.car > 0)) return false;
+    if (state.parkMoto && !(l.parking && l.parking.moto)) return false;
+    if (state.maxPower !== "any" && l.power > Number(state.maxPower)) return false;
     if (state.verified && !l.verified) return false;
     if (state.fresh && l.lastConfirmed > 7) return false;
     if (state.lowDeposit && l.deposit > 1) return false;
-    if (state.furnished && !l.furnished) return false;
-    return true;
+
+    var must = state.must, ok = true;
+    Object.keys(must).forEach(function (k) {
+      if (!must[k]) return;
+      if (k === "internet") { if (!l.internet) ok = false; return; }
+      if (!l.has || !l.has[k]) ok = false;
+    });
+    return ok;
   }
 
   /* Stale listings sink. This ordering is the product in one line. */
   function ranked(list) {
     return list.slice().sort(function (a, b) {
+      /* Stale always sinks, whatever the sort. A listing nobody has
+         confirmed in two weeks is not a good result at any price. */
       var as = a.lastConfirmed > 14 ? 1 : 0, bs = b.lastConfirmed > 14 ? 1 : 0;
       if (as !== bs) return as - bs;
+
+      if (state.sort === "low")  return a.price - b.price;
+      if (state.sort === "high") return b.price - a.price;
+
       if (a.verified !== b.verified) return a.verified ? -1 : 1;
       return a.lastConfirmed - b.lastConfirmed;
     });
@@ -1095,8 +1392,43 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     return l.beds + " bed" + (l.beds === 1 ? "" : "s");
   }
 
+  var TYPE_KEY = { room:"tRoom", studio:"tStudio", apartment:"tApt", flathouse:"tFlathouse", house:"tHouse" };
+  function typeLabel(l) { return t(TYPE_KEY[l.type] || "tRoom"); }
+
+  function termLabel(l) {
+    return l.term === "monthly" ? t("termMonthly") : l.term === "6" ? t("term6") : t("term12");
+  }
+
+  /* Electricity is the number renters ask about first, so it gets its own
+     treatment: included, at the state rate, or a plain percentage over it. */
+  function powerInfo(l) {
+    if (l.power === 0) return { text: t("power") + " " + t("included"), over: false };
+    if (l.power <= EDC_TOP_TIER) return { text: l.power + " " + t("perKwh"), over: false };
+    var pct = Math.round(((l.power - EDC_TOP_TIER) / EDC_TOP_TIER) * 100);
+    return { text: l.power + " " + t("perKwh"), over: true, pct: pct };
+  }
+
+  function parkingLabel(l) {
+    var bits = [];
+    if (l.parking && l.parking.car > 0) bits.push(t("carSlots", { n: l.parking.car }));
+    if (l.parking && l.parking.moto) bits.push(t("motoYes"));
+    return bits.length ? bits.join(" · ") : t("noParking");
+  }
+
+  /* One list of amenity keys, used by the cards, the detail panel and the
+     filters, so the three can never drift apart. */
+  var AMENITY_KEYS = ["aircon","furnished","privateBath","lift","washer","balcony","security","kitchen","pets"];
+  function amenityLabels(l) {
+    var out = [];
+    AMENITY_KEYS.forEach(function (k) { if (l.has && l.has[k]) out.push(t(k)); });
+    if (l.has && !l.has.privateBath) out.push(t("sharedBath"));
+    if (l.internet) out.push(t("internetInc"));
+    return out;
+  }
+
   function cardHTML(l) {
     var f = shortFresh(l);
+    var p = powerInfo(l);
     return '' +
       '<div class="card-media">' +
         '<img src="' + photoUrl(l.photos[0], 800, 600) + '" alt="" loading="lazy" data-flip="' + l.id + '">' +
@@ -1110,8 +1442,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         '<p class="card-title">' + l.title[lang] + '</p>' +
         '<p class="card-where">' + l.area[lang] + '</p>' +
         '<div class="facts">' +
+          '<span class="fact">' + typeLabel(l) + '</span>' +
           '<span class="fact">' + bedLabel(l) + '</span>' +
           '<span class="fact">' + l.size + ' ' + t("sqm") + '</span>' +
+          '<span class="fact">' + termLabel(l) + '</span>' +
+          '<span class="fact' + (p.over ? ' warnfact' : '') + '">⚡ ' + p.text + '</span>' +
+          '<span class="fact">' + parkingLabel(l) + '</span>' +
           '<span class="fact deposit">' + t("depositWord") + ' ' + l.deposit + ' ' + monthsWord(l.deposit) + '</span>' +
         '</div>' +
       '</div>';
@@ -1205,7 +1541,90 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     badge.hidden = count === 0;
     badge.textContent = String(count);
 
+    /* The apply button counts as you go, so you can see a filter bite
+       before committing to it. */
+    var apply = document.getElementById("f-apply");
+    if (apply) apply.textContent = list.length ? t("showN", { n: list.length }) : t("noneMatch");
+
     renderSaved();
+    renderMine();
+  }
+
+  /* ---------------------------------------------------------- landlord side
+     Three states, and the middle one is the point: a listing nobody pays for
+     pauses itself and leaves search, so the feed stays clean even when the
+     landlord has stopped paying attention. */
+  var STATUS = { live:"stLive", trial:"stTrial", paused:"stPaused", rented:"stRented" };
+
+  function renderMine() {
+    var host = document.getElementById("my-listings");
+    if (!host) return;
+    var mine = LISTINGS.filter(function (l) { return l.owner === "me"; });
+    host.textContent = "";
+    host.className = "mylist";
+
+    var bill = 0;
+
+    mine.forEach(function (l) {
+      var st = l.billing.state;
+      if (st === "live") bill += LISTING_FEE;
+
+      var row = document.createElement("div");
+      row.className = "myrow";
+      row.setAttribute("data-mine", l.id);
+
+      var meta =
+        st === "live"   ? t("daysLeft", { n: l.billing.daysLeft }) :
+        st === "trial"  ? t("freeLeft", { n: l.billing.daysLeft }) :
+        st === "paused" ? t("pausedNote") : "";
+
+      row.innerHTML =
+        '<div><div class="name">' + l.title[lang] + '</div>' +
+        '<div class="meta">' + meta + '</div></div>' +
+        '<span class="pill ' + st + '">' + t(STATUS[st]) + '</span>';
+
+      if (st !== "rented") {
+        var actions = document.createElement("div");
+        actions.className = "actions2";
+
+        if (st === "paused") {
+          var pay = document.createElement("button");
+          pay.type = "button";
+          pay.className = "mini pay";
+          pay.setAttribute("data-pay", l.id);
+          pay.textContent = t("payNow");
+          pay.addEventListener("click", function () {
+            l.billing.state = "live";
+            l.billing.daysLeft = 30;
+            toast(t("paidToast"));
+            renderMine();
+            render();
+          });
+          actions.appendChild(pay);
+        }
+
+        var rented = document.createElement("button");
+        rented.type = "button";
+        rented.className = "mini";
+        rented.setAttribute("data-rented", l.id);
+        rented.textContent = t("markRented");
+        rented.addEventListener("click", function () {
+          l.billing.state = "rented";
+          toast(t("rentedToast"));
+          renderMine();
+          render();               // it leaves search immediately
+        });
+        actions.appendChild(rented);
+
+        row.appendChild(actions);
+      }
+
+      host.appendChild(row);
+    });
+
+    document.getElementById("bill-total").textContent = "$" + bill;
+    var feeLine = document.getElementById("fee-line");
+    if (feeLine) feeLine.textContent = t("feeLine", { f: LISTING_FEE, d: FREE_DAYS });
   }
 
   function renderSaved() {
@@ -1366,12 +1785,31 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
     var am = document.getElementById("d-amenities");
     am.textContent = "";
-    l.amenities[lang].forEach(function (a) {
-      var s = document.createElement("span");
-      s.className = "fact";
-      s.textContent = a;
-      am.appendChild(s);
+    amenityLabels(l).forEach(function (a) {
+      var chip = document.createElement("span");
+      chip.className = "fact";
+      chip.textContent = a;
+      am.appendChild(chip);
     });
+
+    var p = powerInfo(l);
+    var util = document.getElementById("d-utilities");
+    util.innerHTML =
+      "<dt>" + t("power") + "</dt><dd" + (p.over ? ' class="over"' : "") + ">" +
+        p.text + (p.over ? " · " + t("powerOver", { p: p.pct }) : (l.power === 0 ? "" : " · " + t("powerFair"))) + "</dd>" +
+      "<dt>" + t("water") + "</dt><dd>" + (l.water === 0 ? t("included") : l.water + " " + t("perM3")) + "</dd>" +
+      "<dt>" + t("internet") + "</dt><dd>" + (l.internet ? t("included") : "—") + "</dd>";
+    document.getElementById("d-power-note").textContent = p.over ? t("powerNote") : "";
+    document.getElementById("d-power-note").hidden = !p.over;
+
+    document.getElementById("d-parking").textContent = parkingLabel(l);
+
+    var terms = document.getElementById("d-terms");
+    terms.innerHTML =
+      "<dt>" + t("fTerm") + "</dt><dd>" + termLabel(l) + "</dd>" +
+      "<dt>" + t("minStay") + "</dt><dd>" + l.minStay + " " + t("monthsShort") + "</dd>" +
+      "<dt>" + t("floor") + "</dt><dd>" + (l.floor === 0 ? t("ground") : l.floor) + "</dd>" +
+      "<dt>" + t("availableNow") + "</dt><dd>" + (l.availableNow ? "✓" : t("availableSoon")) + "</dd>";
 
     document.getElementById("d-initial").textContent = l.landlord.name.charAt(0);
     document.getElementById("d-landlord").textContent = l.landlord.name;
@@ -1491,32 +1929,66 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   var price = document.getElementById("f-price");
   var priceVal = document.getElementById("f-price-val");
   function paintPrice() {
-    priceVal.textContent = price.value >= 600 ? "$600+" : "$" + price.value;
+    priceVal.textContent = price.value >= 1000 ? "$1000+" : "$" + price.value;
     state.maxPrice = Number(price.value);
   }
   price.addEventListener("input", function () { paintPrice(); render(); });
   paintPrice();
 
-  function segGroup(id, key) {
+  /* One picker per group. Single-choice groups behave like radios, the
+     multi-choice ones toggle, and both feed the same render. */
+  function pickOne(id, attr, key) {
     document.getElementById(id).addEventListener("click", function (e) {
       var b = e.target.closest("button");
       if (!b) return;
       this.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
-      state[key] = b.dataset[key === "beds" ? "beds" : "type"];
+      state[key] = b.dataset[attr];
       render();
     });
   }
-  segGroup("f-beds", "beds");
-  segGroup("f-type", "type");
+  pickOne("f-beds",  "beds",  "beds");
+  pickOne("f-type",  "type",  "type");
+  pickOne("f-term",  "term",  "term");
+  pickOne("f-power", "power", "maxPower");
+  pickOne("f-sort",  "sort",  "sort");
+
+  function toggleMany(id, attr, apply) {
+    document.getElementById(id).addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      var on = b.getAttribute("aria-pressed") === "true";
+      b.setAttribute("aria-pressed", String(!on));
+      apply(b.dataset[attr], !on);
+      render();
+    });
+  }
+  toggleMany("f-park", "park", function (which, on) {
+    if (which === "car") state.parkCar = on; else state.parkMoto = on;
+  });
+  toggleMany("f-must", "must", function (which, on) { state.must[which] = on; });
 
   document.getElementById("f-reset").addEventListener("click", function () {
-    state.maxPrice = 600; state.beds = "any"; state.type = "any";
-    state.verified = state.fresh = state.lowDeposit = state.furnished = false;
-    price.value = 600; paintPrice();
-    document.querySelectorAll("#f-beds button, #f-type button").forEach(function (b, i) {
-      b.setAttribute("aria-pressed", String(b.dataset.beds === "any" || b.dataset.type === "any"));
+    state.maxPrice = 1000;
+    state.beds = state.type = state.term = state.maxPower = "any";
+    state.sort = "fresh";
+    state.parkCar = state.parkMoto = false;
+    state.verified = state.fresh = state.lowDeposit = false;
+    Object.keys(state.must).forEach(function (k) { state.must[k] = false; });
+
+    price.value = 1000; paintPrice();
+
+    /* "Any" and the default sort go back on, everything else goes off. */
+    document.querySelectorAll("#f-beds button, #f-type button, #f-term button, #f-power button")
+      .forEach(function (b) {
+        var d = b.dataset;
+        b.setAttribute("aria-pressed", String(d.beds === "any" || d.type === "any" || d.term === "any" || d.power === "any"));
+      });
+    document.querySelectorAll("#f-sort button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.sort === "fresh"));
     });
-    document.querySelectorAll(".chip").forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+    document.querySelectorAll("#f-park button, #f-must button, .chip").forEach(function (b) {
+      b.setAttribute("aria-pressed", "false");
+    });
     render();
   });
 
@@ -1528,8 +2000,16 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     chip.addEventListener("click", function () {
       var on = chip.getAttribute("aria-pressed") === "true";
       chip.setAttribute("aria-pressed", String(!on));
-      var map = { verified:"verified", fresh:"fresh", nodeposit:"lowDeposit", furnished:"furnished" };
-      state[map[chip.dataset.quick]] = !on;
+      /* The furnished chip and the furnished filter are the same switch, so
+         they must write to the same place. */
+      if (chip.dataset.quick === "furnished") {
+        state.must.furnished = !on;
+        var twin = document.querySelector('#f-must [data-must="furnished"]');
+        if (twin) twin.setAttribute("aria-pressed", String(!on));
+      } else {
+        var map = { verified:"verified", fresh:"fresh", nodeposit:"lowDeposit" };
+        state[map[chip.dataset.quick]] = !on;
+      }
       render();
     });
   });
