@@ -38,6 +38,39 @@ function extractJSON(text) {
   throw err;
 }
 
+async function callGroq(systemPrompt) {
+  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'openai/gpt-oss-120b',
+      max_tokens: 1600,
+      temperature: 0,
+      messages: [{ role: 'user', content: systemPrompt }]
+    })
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    const err = new Error(`Groq API error (${response.status}): ${errText}`);
+    err.status = 502;
+    throw err;
+  }
+
+  const data = await response.json();
+  const textBlock = data.choices && data.choices[0] && data.choices[0].message;
+  if (!textBlock || !textBlock.content) {
+    const err = new Error('AI returned no text content');
+    err.status = 502;
+    throw err;
+  }
+
+  return extractJSON(textBlock.content);
+}
+
 app.post('/api/fill-invoice', async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -45,19 +78,7 @@ app.post('/api/fill-invoice', async (req, res) => {
       return res.status(400).json({ error: 'Missing prompt' });
     }
 
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'openai/gpt-oss-120b',
-        max_tokens: 1600,
-        temperature: 0,
-        messages: [{
-          role: 'user',
-          content: `You are an invoice-extraction engine for a business tool. Read the description below and return ONLY a single raw JSON object — no markdown fences, no explanation, no questions, no comments, no trailing commas. The JSON must be strictly valid and parseable by JSON.parse().
+    const parsed = await callGroq(`You are an invoice-extraction engine for a business tool. Read the description below and return ONLY a single raw JSON object — no markdown fences, no explanation, no questions, no comments, no trailing commas. The JSON must be strictly valid and parseable by JSON.parse().
 
 Rules:
 - ALWAYS return valid JSON matching the schema, even if the description is vague, terse, or incomplete. Invent sensible professional defaults for anything missing.
@@ -83,27 +104,50 @@ Schema:
   "notes": string
 }
 
-Description: "${prompt.replace(/"/g, '\\"')}"`
-        }]
-      })
-    });
+Description: "${prompt.replace(/"/g, '\\"')}"`);
 
-    if (!response.ok) {
-      const errText = await response.text();
-      return res.status(502).json({ error: `Groq API error (${response.status}): ${errText}` });
-    }
-
-    const data = await response.json();
-    const textBlock = data.choices && data.choices[0] && data.choices[0].message;
-    if (!textBlock || !textBlock.content) {
-      return res.status(502).json({ error: 'AI returned no text content' });
-    }
-
-    const parsed = extractJSON(textBlock.content);
     res.json(parsed);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message });
+    res.status(err.status || 500).json({ error: err.message });
+  }
+});
+
+app.post('/api/fill-boq', async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    if (!prompt || !prompt.trim()) {
+      return res.status(400).json({ error: 'Missing prompt' });
+    }
+
+    const parsed = await callGroq(`You are a construction cost-estimation engine for a business tool used by contractors in Cambodia. Read the project description below and return ONLY a single raw JSON object — no markdown fences, no explanation, no questions, no comments, no trailing commas. The JSON must be strictly valid and parseable by JSON.parse().
+
+Rules:
+- ALWAYS return valid JSON matching the schema, even if the description is vague or incomplete. Invent sensible, realistic default quantities, units, and unit rates for anything not specified — use plausible construction-industry rates in USD (Cambodia commonly prices construction in USD).
+- Never ask questions. Never refuse. Best-guess everything, using standard construction practice.
+- Break the project down into realistic line items grouped into categories. Standard categories: "Preliminaries" (site setup, permits, mobilization), "Materials" (concrete, steel, brick, roofing, wiring, etc.), "Labor" (crew time by trade or general labor), "Equipment" (rented machinery, tools), and any other category that fits the described work (e.g. "Electrical", "Plumbing", "Finishing"). Only include categories that are actually relevant to the description.
+- Each line item needs a realistic unit of measurement appropriate to construction: m² (area), m³ (volume, e.g. concrete), m (linear, e.g. piping/wiring runs), kg or ton (weight, e.g. rebar/steel), no. / pcs (countable items, e.g. doors, fixtures), LS (lump sum, e.g. a fixed-price sub-task), day or hour (labor time).
+- Labor line items should reflect crew size and duration if mentioned (e.g. "crew of 6 for 25 days" could be one line item "General labor" with qty=150 (6×25), unit="day", or broken into a few labor lines by trade if trades are implied).
+- markups: contingency, overhead & profit, and VAT/tax are NOT line items — they go in a separate markups array, each with {"label": string, "type": "percent"|"flat", "value": number}. If nothing is specified, still include a reasonable default: {"label":"Contingency","type":"percent","value":10}.
+- warnings: an array of short, plain-English strings flagging important missing info that would materially affect accuracy (e.g. missing location which affects material cost assumptions, missing finish quality/grade, missing timeline). Leave empty if nothing significant is missing.
+
+Schema:
+{
+  "projectName": string,
+  "preparedBy": string,
+  "clientName": string,
+  "categories": [{"name": string, "items": [{"description": string, "unit": string, "qty": number, "rate": number}]}],
+  "markups": [{"label": string, "type": "percent"|"flat", "value": number}],
+  "warnings": [string],
+  "notes": string
+}
+
+Description: "${prompt.replace(/"/g, '\\"')}"`);
+
+    res.json(parsed);
+  } catch (err) {
+    console.error(err);
+    res.status(err.status || 500).json({ error: err.message });
   }
 });
 
