@@ -616,6 +616,28 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 .recent-card .r-area { font-size: 11.5px; color: var(--ink-2); }
 .recent-card:active { opacity: .7; }
 
+.gate {
+  position: absolute; inset: 0; z-index: 90;
+  background: var(--bg);
+  display: grid; align-items: center;
+  padding: 32px 24px;
+  overflow-y: auto;
+}
+.gate[hidden] { display: none; }
+.gate-inner { width: 100%; }
+.gate-h { font-size: 22px; margin: 0 0 6px; }
+.gate-p { font-size: 14px; color: var(--ink-2); margin: 0 0 22px; }
+
+.rolecard {
+  display: grid; gap: 3px; width: 100%; text-align: left;
+  padding: 18px; margin-bottom: 12px; min-height: 44px;
+  border-radius: var(--r-md); background: var(--surface); box-shadow: var(--sh-1);
+  transition: transform 120ms var(--ease), box-shadow 200ms var(--ease);
+}
+.rolecard:active { transform: scale(.985); box-shadow: var(--sh-2); }
+.rolecard .r-title { font-size: 15.5px; font-weight: 600; }
+.rolecard .r-sub { font-size: 13px; color: var(--ink-2); }
+
 .empty { padding: 64px 32px; text-align: center; color: var(--ink-2); }
 .empty .big { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
 .empty p { font-size: 13.5px; margin: 0 0 18px; line-height: 1.6; }
@@ -848,30 +870,47 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       </div>
     </section>
 
-    <!-- ============================================================ POST -->
-    <section class="screen" id="s-post" hidden aria-label="Post a listing">
+    <!-- ====================================================== LANDLORD -->
+    <section class="screen" id="s-post" hidden aria-label="Listings">
       <header class="top">
-        <div class="brandline"><div class="wordmark"><b data-t="postTitle">Post a room</b></div></div>
+        <div class="brandline"><div class="wordmark"><b data-t="tabListings">Listings</b></div></div>
       </header>
       <div class="scroll pad">
         <div class="panel">
-          <h3 data-t="postStepsTitle">Three steps, about four minutes</h3>
-          <dl class="kv">
-            <dt data-t="postStep1">Photos and address</dt><dd>1</dd>
-            <dt data-t="postStep2">Price and deposit</dt><dd>2</dd>
-            <dt data-t="postStep3">Verify your ID</dt><dd>3</dd>
-          </dl>
+          <h3 data-t="myListings">My listings</h3>
+          <div id="my-listings"></div>
+          <div class="billrow">
+            <span data-t="monthlyBill">Monthly bill</span>
+            <b id="bill-total">$0</b>
+          </div>
+          <p class="powernote" data-t="billNote"></p>
         </div>
-        <div class="panel">
+
+        <button class="btn btn-primary" type="button" id="post-start" style="width:100%" data-t="addListing">Add a listing</button>
+
+        <div class="panel" style="margin-top:12px">
           <h3 data-t="whyPay">Why it costs money</h3>
           <p style="margin:0 0 10px;font-size:14px" data-t="whyPayBody"></p>
           <p style="margin:0;font-weight:600" id="fee-line"></p>
         </div>
 
-        <div class="trustnote" data-t="postNote">
-          Listings expire after 14 days unless you confirm the room is still free. One tap keeps it live. This is the whole reason renters trust this over a Facebook post.
+        <div class="trustnote" data-t="postNote"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================== RENTING -->
+    <section class="screen" id="s-renting" hidden aria-label="Renting">
+      <header class="top">
+        <div class="brandline"><div class="wordmark"><b data-t="renting">Currently renting</b></div></div>
+      </header>
+      <div class="scroll pad">
+        <div class="panel" id="tenancy-panel" hidden>
+          <div id="tenancy-body"></div>
         </div>
-        <button class="btn btn-primary" type="button" id="post-start" data-t="postStart">Start a listing</button>
+        <div class="empty" id="tenancy-empty">
+          <p class="big" data-t="noTenancy">You are not renting anything yet</p>
+          <p data-t="reportHint"></p>
+        </div>
       </div>
     </section>
 
@@ -883,36 +922,37 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       <div class="scroll pad">
         <div class="panel">
           <div class="who">
-            <div class="avatar">S</div>
-            <div>
-              <div class="who-name">Sokha</div>
-              <div class="who-sub" data-t="meSub">Renting in Toul Kork since 2024</div>
+            <div class="avatar" id="me-initial">S</div>
+            <div style="flex:1;min-width:0">
+              <div class="who-name" id="me-name">Sokha</div>
+              <div class="who-sub" id="me-phone"></div>
             </div>
           </div>
         </div>
-        <div class="panel" id="tenancy-panel" hidden>
-          <h3 data-t="renting">Currently renting</h3>
-          <div id="tenancy-body"></div>
-        </div>
 
         <div class="panel">
-          <h3 data-t="myListings">My listings</h3>
-          <div id="my-listings"></div>
-          <div class="billrow">
-            <span data-t="monthlyBill">Monthly bill</span>
-            <b id="bill-total">$0</b>
+          <h3 data-t="mode">Mode</h3>
+          <div class="seg" role="group" id="mode-switch">
+            <button type="button" data-mode="renter" aria-pressed="true" data-t="modeRenter">Renting</button>
+            <button type="button" data-mode="landlord" aria-pressed="false" data-t="modeLandlord">Landlord</button>
           </div>
-          <p class="powernote" data-t="billNote"></p>
+          <p class="powernote" data-t="oneAccount"></p>
         </div>
 
         <div class="panel">
           <h3 data-t="mePrefs">Preferences</h3>
           <dl class="kv">
-            <dt data-t="meLang">Language</dt><dd id="me-lang">ខ្មែរ</dd>
+            <dt data-t="meLang">Language</dt>
+            <dd><span class="lang" role="group" aria-label="Language">
+              <button type="button" data-lang="km" aria-pressed="true">ខ្មែរ</button>
+              <button type="button" data-lang="en" aria-pressed="false">EN</button>
+            </span></dd>
             <dt data-t="meAlerts">Price alerts</dt><dd data-t="on">On</dd>
             <dt data-t="meArea">Usual area</dt><dd>Toul Kork</dd>
           </dl>
         </div>
+
+        <button class="reportbtn" type="button" id="sign-out" data-t="signOut">Sign out</button>
       </div>
     </section>
 
@@ -1025,8 +1065,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     <button class="tab" type="button" role="tab" data-tab="s-saved" aria-selected="false">
       <svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg><span data-t="tabSaved">Saved</span>
     </button>
-    <button class="tab" type="button" role="tab" data-tab="s-post" aria-selected="false">
-      <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span data-t="tabPost">Post</span>
+    <button class="tab" type="button" role="tab" data-tab="s-renting" data-tab-slot="third" aria-selected="false">
+      <svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>Renting</span>
     </button>
     <button class="tab" type="button" role="tab" data-tab="s-me" aria-selected="false">
       <svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span data-t="tabMe">You</span>
@@ -1034,6 +1074,36 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   </nav>
 
   <!-- ============================================================ sheet -->
+  <div class="gate" id="gate">
+    <div class="gate-inner">
+      <div class="wordmark" style="margin-bottom:28px"><b style="font-size:26px">ផ្ទះ Ptas</b></div>
+
+      <div id="gate-step-phone">
+        <h2 class="gate-h" data-t="signInTitle">Sign in</h2>
+        <p class="gate-p" data-t="signInSub">Enter your phone number.</p>
+        <div class="field">
+          <label for="gate-phone" data-t="phoneLabel">Phone number</label>
+          <input type="tel" id="gate-phone" inputmode="tel" autocomplete="tel" placeholder="012 345 678">
+          <p class="error" id="gate-error" role="alert"></p>
+        </div>
+        <button class="btn btn-primary" type="button" id="gate-continue" style="width:100%" data-t="continue">Continue</button>
+      </div>
+
+      <div id="gate-step-role" hidden>
+        <h2 class="gate-h" data-t="roleTitle">What are you here for?</h2>
+        <p class="gate-p" data-t="roleSub">You can switch at any time.</p>
+        <button class="rolecard" type="button" data-role="renter">
+          <span class="r-title" data-t="roleRenter">Find a place</span>
+          <span class="r-sub" data-t="roleRenterSub">Search rooms and houses to rent</span>
+        </button>
+        <button class="rolecard" type="button" data-role="landlord">
+          <span class="r-title" data-t="roleLandlord">List a place</span>
+          <span class="r-sub" data-t="roleLandlordSub">Manage listings and tenants</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="scrim" id="scrim" hidden></div>
   <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-title">
     <div class="grabber"></div>
@@ -1398,7 +1468,18 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       monthsLeft:"នៅសល់ {n} ខែ", endingSoon:"កិច្ចសន្យាជិតផុត",
       recordedToast:"បានកត់ត្រា។ ការផ្សាយត្រូវដកចេញ។",
       legalNote:"កិច្ចសន្យាក្រដាសនៅតែត្រូវការសម្រាប់រដ្ឋាភិបាល។ នេះគ្រាន់តែជាកំណត់ត្រារួមប៉ុណ្ណោះ។",
-      endTenancy:"បញ្ចប់ការជួល", noTenancy:"អ្នកមិនទាន់ជួលអ្វីទេ"
+      endTenancy:"បញ្ចប់ការជួល", noTenancy:"អ្នកមិនទាន់ជួលអ្វីទេ",
+
+      signInTitle:"ចូលប្រើ", signInSub:"បញ្ចូលលេខទូរស័ព្ទរបស់អ្នក។ យើងផ្ញើលេខកូដមកវិញ។",
+      phoneLabel:"លេខទូរស័ព្ទ", continue:"បន្ត",
+      roleTitle:"អ្នកមកដើម្បីអ្វី?", roleSub:"អ្នកអាចប្តូរពេលណាក៏បាន។",
+      roleRenter:"រកកន្លែងស្នាក់នៅ", roleRenterSub:"រកបន្ទប់ ឬផ្ទះជួល",
+      roleLandlord:"ដាក់ផ្សាយកន្លែង", roleLandlordSub:"គ្រប់គ្រងការផ្សាយ និងអ្នកជួល",
+      mode:"របៀប", modeRenter:"អ្នកជួល", modeLandlord:"ម្ចាស់ផ្ទះ",
+      switchedRenter:"ប្តូរទៅរបៀបអ្នកជួល", switchedLandlord:"ប្តូរទៅរបៀបម្ចាស់ផ្ទះ",
+      tabRenting:"ការជួល", tabListings:"ការផ្សាយ",
+      signOut:"ចាកចេញ", account:"គណនី", oneAccount:"គណនីតែមួយ។ អ្នកអាចជាទាំងអ្នកជួល និងម្ចាស់ផ្ទះ។",
+      addListing:"បន្ថែមការផ្សាយ", noListings:"អ្នកមិនទាន់មានការផ្សាយទេ"
     },
     en: {
       tagline:"rentals people actually answer", filters:"Filters", searchPh:"Toul Kork, BKK, Sen Sok",
@@ -1472,7 +1553,18 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       monthsLeft:"{n} months left", endingSoon:"Contract ending soon",
       recordedToast:"Recorded. The listing has been taken down.",
       legalNote:"The paper contract is still what the government needs. This is only the shared record of what you agreed.",
-      endTenancy:"End tenancy", noTenancy:"You are not renting anything yet"
+      endTenancy:"End tenancy", noTenancy:"You are not renting anything yet",
+
+      signInTitle:"Sign in", signInSub:"Enter your phone number. We send back a code.",
+      phoneLabel:"Phone number", continue:"Continue",
+      roleTitle:"What are you here for?", roleSub:"You can switch at any time.",
+      roleRenter:"Find a place", roleRenterSub:"Search rooms and houses to rent",
+      roleLandlord:"List a place", roleLandlordSub:"Manage listings and tenants",
+      mode:"Mode", modeRenter:"Renting", modeLandlord:"Landlord",
+      switchedRenter:"Switched to renting", switchedLandlord:"Switched to landlord",
+      tabRenting:"Renting", tabListings:"Listings",
+      signOut:"Sign out", account:"Account", oneAccount:"One account. You can be a renter and a landlord at the same time.",
+      addListing:"Add a listing", noListings:"You have no listings yet"
     }
   };
 
@@ -1494,7 +1586,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     document.querySelectorAll(".lang button").forEach(function (b) {
       b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
     });
-    document.getElementById("me-lang").textContent = lang === "km" ? "ខ្មែរ" : "English";
+    /* The third tab is contextual, so its label comes from the mode rather
+       than from a static data-t key. */
+    if (typeof applyMode === "function" && session.signedIn) applyMode();
     if (skipRender) return;              // boot paints the skeleton instead
     render();
     if (current) openDetail(current, null, true);
@@ -2153,8 +2247,14 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     var body = document.getElementById("tenancy-body");
     if (!panel || !body) return;
 
-    if (!tenancy) { panel.hidden = true; return; }
+    var empty = document.getElementById("tenancy-empty");
+    if (!tenancy) {
+      panel.hidden = true;
+      if (empty) empty.hidden = false;
+      return;
+    }
     panel.hidden = false;
+    if (empty) empty.hidden = true;
 
     var l = tenancy.listing;
     var start = new Date(tenancy.start);
@@ -2233,6 +2333,47 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   /* ================================================================= tabs
      Tab switching is instant. Someone moves between tabs dozens of times a
      session, and an animation there turns into friction rather than polish. */
+  /* ------------------------------------------------------------- session
+     One account, two modes. In Cambodia the same person is often both: a
+     renter who also sublets a room. Two logins would mean two identities and
+     two phone numbers for one human, so the mode is a switch, not a signup.
+
+     Phone number rather than email, because that is what people actually
+     have and what KHQR is tied to. */
+  var session = { signedIn:false, phone:"", mode:"renter" };
+
+  var THIRD_TAB = { renter:{ id:"s-renting", key:"tabRenting" },
+                    landlord:{ id:"s-post",  key:"tabListings" } };
+
+  function applyMode() {
+    var third = THIRD_TAB[session.mode];
+    var btn = document.querySelector('.tab[data-tab-slot="third"]');
+    btn.dataset.tab = third.id;
+    btn.querySelector("span").textContent = t(third.key);
+    btn.querySelector("use").setAttribute("href", session.mode === "renter" ? "#i-home" : "#i-plus");
+
+    document.querySelectorAll("#mode-switch button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.mode === session.mode));
+    });
+
+    /* If the hidden-away screen is the one on show, move off it. */
+    if (activeTab === "s-renting" || activeTab === "s-post") {
+      activeTab = third.id;
+      showScreen(activeTab);
+      document.querySelectorAll(".tab").forEach(function (b) {
+        b.setAttribute("aria-selected", String(b.dataset.tab === activeTab));
+      });
+    }
+    render();
+  }
+
+  function signIn(phone) {
+    session.signedIn = true;
+    session.phone = phone;
+    document.getElementById("me-phone").textContent = phone;
+    document.getElementById("gate").hidden = true;
+  }
+
   var activeTab = "s-explore";
   var pill = document.getElementById("tab-pill");
 
@@ -2260,6 +2401,57 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     }, { root: document.getElementById("explore-scroll"), threshold: 1 }).observe(sentinel);
   }
 
+
+  /* ---- the gate ------------------------------------------------------ */
+  var gatePhone = document.getElementById("gate-phone");
+  document.getElementById("gate-continue").addEventListener("click", function () {
+    var v = gatePhone.value.replace(/[^0-9]/g, "");
+    var err = document.getElementById("gate-error");
+    if (v.length < 8) {
+      err.textContent = lang === "km" ? "លេខទូរស័ព្ទមិនត្រឹមត្រូវ" : "That number looks too short.";
+      gatePhone.setAttribute("aria-invalid", "true");
+      gatePhone.focus();
+      return;
+    }
+    err.textContent = "";
+    gatePhone.removeAttribute("aria-invalid");
+    session.phone = gatePhone.value.trim();
+    document.getElementById("gate-step-phone").hidden = true;
+    document.getElementById("gate-step-role").hidden = false;
+  });
+
+  document.querySelectorAll(".rolecard").forEach(function (card) {
+    card.addEventListener("click", function () {
+      session.mode = card.dataset.role;
+      signIn(session.phone);
+      applyMode();
+      /* Land on the screen that matches why they said they were here. */
+      activeTab = session.mode === "landlord" ? "s-post" : "s-explore";
+      showScreen(activeTab);
+      var all = Array.prototype.slice.call(document.querySelectorAll(".tab"));
+      all.forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === activeTab)); });
+      movePill(all.findIndex(function (b) { return b.dataset.tab === activeTab; }));
+    });
+  });
+
+  document.getElementById("mode-switch").addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b || b.dataset.mode === session.mode) return;
+    session.mode = b.dataset.mode;
+    applyMode();
+    toast(t(session.mode === "renter" ? "switchedRenter" : "switchedLandlord"));
+  });
+
+  document.getElementById("sign-out").addEventListener("click", function () {
+    session = { signedIn:false, phone:"", mode:"renter" };
+    document.getElementById("gate-step-phone").hidden = false;
+    document.getElementById("gate-step-role").hidden = true;
+    gatePhone.value = "";
+    document.getElementById("gate").hidden = false;
+    activeTab = "s-explore";
+    showScreen(activeTab);
+    applyMode();
+  });
 
   document.getElementById("back").addEventListener("click", closeDetail);
   document.getElementById("d-save").addEventListener("click", function () {
@@ -2517,8 +2709,14 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     render();
   });
 
-  document.querySelectorAll(".lang button").forEach(function (b) {
-    b.addEventListener("click", function () { lang = b.dataset.lang; applyLang(); });
+  /* The toggle appears in the Explore header and again in account
+     preferences, so a landlord who never opens Explore can still switch.
+     Delegated, so both copies work and neither needs its own wiring. */
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest(".lang button");
+    if (!b) return;
+    lang = b.dataset.lang;
+    applyLang();
   });
 
   /* =============================================================== toast */
@@ -2546,6 +2744,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   }
 
   applyLang(true);   // labels only, so the skeleton below is not wiped
+  document.querySelector('.tab[data-tab-slot="third"] span').textContent = t("tabRenting");
   skeleton();
   window.setTimeout(function () { render(); }, reduced ? 0 : 650);
 })();

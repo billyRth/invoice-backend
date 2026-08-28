@@ -44,6 +44,25 @@ the model wants.
 Hiding phone numbers would make this worse than a Facebook group, where the number is right there.
 So the numbers stay visible, and revenue never depends on the deal happening inside the app.
 
+## One account, two modes
+
+Sign in is a phone number, because that is what people have and what KHQR is tied to. After that the
+app asks what you are here for, and the answer sets a mode rather than an account type.
+
+**Not two logins.** In Cambodia the same person is often both: someone renting a room who also
+sublets one, or a tenant whose family owns a shophouse. Two accounts would mean two identities and
+two phone numbers for one human, so the mode is a switch in preferences that can be flipped at any
+time.
+
+The mode decides what the interface offers:
+
+| | Renter | Landlord |
+| --- | --- | --- |
+| Third tab | **Renting**: the tenancy record, next rent due, KHQR | **Listings**: live and paused listings, monthly bill |
+| Sees billing | No | Yes |
+| Sees "mark as rented" | No | Yes |
+| Explore and Saved | Yes | Yes, landlords check the competition too |
+
 ## What runs
 
 Search, four quick filters, a filter sheet with price, bedrooms and type, save and unsave, a saved
