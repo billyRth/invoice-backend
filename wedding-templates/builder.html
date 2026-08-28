@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invitation builder</title>
+
+<!--
+  INVITATION BUILDER
+
+  Describe a wedding in plain English, and this calls POST /api/fill-wedding,
+  drops the result into cobalt-porcelain.html, and hands back a finished
+  single-file invitation you can deploy.
+
+  It fetches ./cobalt-porcelain.html at runtime, so serve this folder over
+  http rather than opening the file directly:
+
+      npx serve wedding-templates      (or any static server)
+
+  Opening it from file:// will fail at the fetch step, and the page says so.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --paper:        #F2F3EF;
+  --paper-raised: #FFFFFF;
+  --ink:          #12151A;
+  --ink-soft:     #565D6B;
+  --accent:       #1E3AC7;
+  --accent-press: #16299A;
+  --on-accent:    #FFFFFF;
+  --rule:         rgba(18, 21, 26, .13);
+  --warn:         #8A5A00;
+  --bad:          #A81E1E;
+  --ease-out:     cubic-bezier(.22, .61, .36, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:        #0E1116;
+    --paper-raised: #161B22;
+    --ink:          #ECEDEA;
+    --ink-soft:     #98A0AE;
+    --accent:       #93A6FF;
+    --accent-press: #B3C0FF;
+    --on-accent:    #0B0E13;
+    --rule:         rgba(236, 237, 234, .15);
+    --warn:         #E0B24C;
+    --bad:          #FF9C9C;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.shell { display: grid; grid-template-columns: 1fr; min-height: 100dvh; }
+@media (min-width: 62rem) { .shell { grid-template-columns: 26rem 1fr; } }
+
+/* ----------------------------------------------------------------- panel */
+.panel {
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+h1 {
+  font-family: "Bodoni Moda", Georgia, serif;
+  font-weight: 500;
+  font-size: 1.875rem;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.sub { margin: 0; color: var(--ink-soft); font-size: .875rem; }
+
+label { display: block; font-size: .8125rem; font-weight: 500; margin-bottom: .35rem; }
+.hint { color: var(--ink-soft); font-weight: 400; }
+
+textarea, input[type="url"] {
+  font: inherit;
+  width: 100%;
+  color: var(--ink);
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  padding: .7rem .8rem;
+  transition: border-color 140ms var(--ease-out);
+}
+textarea { min-height: 12rem; resize: vertical; line-height: 1.5; }
+textarea:hover, input[type="url"]:hover { border-color: color-mix(in srgb, var(--ink) 34%, transparent); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 1.4rem;
+  border: 1px solid transparent;
+  border-radius: 0;
+  font: inherit;
+  font-size: .9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 160ms var(--ease-out), transform 100ms var(--ease-out), opacity 160ms var(--ease-out);
+}
+.btn:active { transform: scale(.98); }
+.btn[disabled] { opacity: .6; cursor: default; transform: none; }
+.btn-primary { background: var(--accent); color: var(--on-accent); width: 100%; }
+.btn-primary:hover:not([disabled]) { background: var(--accent-press); }
+.btn-quiet { background: transparent; color: var(--ink); border-color: var(--rule); width: 100%; }
+.btn-quiet:hover:not([disabled]) { border-color: var(--ink); }
+
+details { border-top: 1px solid var(--rule); padding-top: .9rem; }
+summary { cursor: pointer; font-size: .8125rem; color: var(--ink-soft); }
+details > div { margin-top: .9rem; display: grid; gap: .75rem; }
+
+.status { font-size: .8125rem; min-height: 1.4em; }
+.status.is-bad { color: var(--bad); }
+
+.warnings {
+  border-left: 2px solid var(--warn);
+  padding: .1rem 0 .1rem .8rem;
+  margin: 0;
+  display: grid;
+  gap: .4rem;
+  list-style: none;
+}
+.warnings li { font-size: .8125rem; color: var(--ink-soft); }
+.warnings-title { font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--warn); margin: 0 0 .5rem; }
+
+.stack-end { margin-top: auto; display: grid; gap: .6rem; }
+
+/* --------------------------------------------------------------- preview */
+.preview { position: relative; background: var(--paper-raised); min-height: 60vh; }
+.preview iframe { width: 100%; height: 100%; min-height: 60vh; border: 0; display: block; }
+@media (min-width: 62rem) { .preview, .preview iframe { height: 100dvh; min-height: 0; } }
+
+.empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 2rem;
+  color: var(--ink-soft);
+  font-size: .875rem;
+}
+.empty[hidden] { display: none; }
+</style>
+</head>
+
+<body>
+
+<div class="shell">
+
+  <form class="panel" id="panel">
+    <div>
+      <h1>Invitation builder</h1>
+      <p class="sub">Describe the wedding in your own words. Everything you leave out gets a sensible default and a warning.</p>
+    </div>
+
+    <div>
+      <label for="brief">The wedding <span class="hint">who, when, where, the running order</span></label>
+      <textarea id="brief" placeholder="Sophea and Elias, 11 April 2026, riverside house outside Kampot. Ceremony 3pm in the garden, drinks after, dinner at 6 on one long table, dancing until midnight. Kids welcome. Garden formal. Reply by end of February."></textarea>
+    </div>
+
+    <button class="btn btn-primary" type="submit" id="generate">Generate invitation</button>
+    <p class="status" id="status" role="status"></p>
+
+    <div id="warnings-box" hidden>
+      <p class="warnings-title">Worth checking</p>
+      <ul class="warnings" id="warnings"></ul>
+    </div>
+
+    <details>
+      <summary>Photographs and API</summary>
+      <div>
+        <div>
+          <label for="portrait">Portrait photo URL <span class="hint">3:4</span></label>
+          <input type="url" id="portrait" placeholder="Leave blank to keep the placeholder">
+        </div>
+        <div>
+          <label for="venue-photo">Venue photo URL <span class="hint">3:2</span></label>
+          <input type="url" id="venue-photo" placeholder="Leave blank to keep the placeholder">
+        </div>
+        <div>
+          <label for="api">API base URL</label>
+          <input type="url" id="api" value="https://invoice-backend-d6a2.onrender.com">
+        </div>
+      </div>
+    </details>
+
+    <div class="stack-end">
+      <button class="btn btn-quiet" type="button" id="download" disabled>Download invitation.html</button>
+      <button class="btn btn-quiet" type="button" id="download-json" disabled>Download content as JSON</button>
+    </div>
+  </form>
+
+  <div class="preview">
+    <p class="empty" id="empty">The finished invitation appears here.</p>
+    <iframe id="preview" title="Invitation preview"></iframe>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var TEMPLATE_URL = "./cobalt-porcelain.html";
+
+  var panel     = document.getElementById("panel");
+  var brief     = document.getElementById("brief");
+  var generate  = document.getElementById("generate");
+  var status    = document.getElementById("status");
+  var warnBox   = document.getElementById("warnings-box");
+  var warnList  = document.getElementById("warnings");
+  var preview   = document.getElementById("preview");
+  var empty     = document.getElementById("empty");
+  var download  = document.getElementById("download");
+  var downloadJson = document.getElementById("download-json");
+
+  var templateText = null;   // cached template source
+  var builtHtml = null;      // last generated invitation
+  var builtData = null;      // last generated content object
+
+  function say(message, bad) {
+    status.textContent = message;
+    status.classList.toggle("is-bad", !!bad);
+  }
+
+  function loadTemplate() {
+    if (templateText) return Promise.resolve(templateText);
+    return fetch(TEMPLATE_URL)
+      .then(function (response) {
+        if (!response.ok) throw new Error("Template returned " + response.status);
+        return response.text();
+      })
+      .then(function (text) { templateText = text; return text; })
+      .catch(function () {
+        throw new Error("Could not load cobalt-porcelain.html. Serve this folder over http rather than opening the file directly.");
+      });
+  }
+
+  /* Swap the content object inside the template, leaving everything else
+     byte for byte identical. */
+  function build(template, data, photos) {
+    var out = template.replace(
+      /window\.WEDDING = [\s\S]*?\n\};/,
+      "window.WEDDING = " + JSON.stringify(data, null, 2) + ";"
+    );
+
+    if (photos && (photos.portrait || photos.venue)) {
+      out = out.replace(/window\.WEDDING_PHOTOS = [\s\S]*?\n\};/, function (block) {
+        var next = block;
+        if (photos.portrait) next = next.replace(/portrait: "[^"]*"/, 'portrait: "' + photos.portrait + '"');
+        if (photos.venue)    next = next.replace(/venue:    "[^"]*"/, 'venue:    "' + photos.venue + '"');
+        return next;
+      });
+    }
+
+    if (out === template) throw new Error("Could not find the content block in the template.");
+    return out;
+  }
+
+  function showWarnings(list) {
+    warnList.textContent = "";
+    if (!list || !list.length) { warnBox.hidden = true; return; }
+    list.forEach(function (text) {
+      var li = document.createElement("li");
+      li.textContent = text;
+      warnList.appendChild(li);
+    });
+    warnBox.hidden = false;
+  }
+
+  function saveFile(name, text, type) {
+    var blob = new Blob([text], { type: type });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function fileStem(data) {
+    var names = [data.partnerOne, data.partnerTwo].filter(Boolean).join("-") || "invitation";
+    return names.toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+  }
+
+  panel.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    var text = brief.value.trim();
+    if (!text) { say("Describe the wedding first.", true); brief.focus(); return; }
+
+    var base = document.getElementById("api").value.trim().replace(/\/+$/, "");
+    if (!base) { say("Set an API base URL.", true); return; }
+
+    generate.disabled = true;
+    say("Asking the model. This can take a few seconds.");
+    showWarnings(null);
+
+    Promise.all([
+      loadTemplate(),
+      fetch(base + "/api/fill-wedding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: text })
+      }).then(function (response) {
+        return response.json().then(function (body) {
+          if (!response.ok) throw new Error(body.error || ("Request failed with " + response.status));
+          return body;
+        }, function () {
+          throw new Error("The server replied with something that is not JSON. Status " + response.status + ".");
+        });
+      })
+    ])
+      .then(function (results) {
+        var template = results[0];
+        var data = results[1];
+
+        builtData = data;
+        builtHtml = build(template, data, {
+          portrait: document.getElementById("portrait").value.trim(),
+          venue: document.getElementById("venue-photo").value.trim()
+        });
+
+        preview.srcdoc = builtHtml;
+        empty.hidden = true;
+        download.disabled = false;
+        downloadJson.disabled = false;
+
+        showWarnings(data.warnings);
+        say("Done. " + (data.schedule ? data.schedule.length : 0) + " events, " +
+            (data.details ? data.details.length : 0) + " detail sections.");
+      })
+      .catch(function (error) {
+        say(error.message, true);
+      })
+      .then(function () {
+        generate.disabled = false;
+      });
+  });
+
+  download.addEventListener("click", function () {
+    if (!builtHtml) return;
+    saveFile(fileStem(builtData) + ".html", builtHtml, "text/html");
+  });
+
+  downloadJson.addEventListener("click", function () {
+    if (!builtData) return;
+    saveFile(fileStem(builtData) + ".json", JSON.stringify(builtData, null, 2), "application/json");
+  });
+})();
+</script>
+
+</body>
+</html>

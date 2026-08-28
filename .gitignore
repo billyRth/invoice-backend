@@ -1,0 +1,16 @@
+# dependencies
+node_modules/
+
+# environment / secrets — never commit these
+.env
+.env.*
+!.env.example
+
+# logs
+npm-debug.log*
+*.log
+
+# OS / editor noise
+.DS_Store
+.vscode/
+.idea/

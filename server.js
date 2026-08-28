@@ -1,12 +1,75 @@
 const express = require('express');
 const cors = require('cors');
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
 const PORT = process.env.PORT || 3000;
 const API_KEY = process.env.GROQ_API_KEY;
+
+// Comma-separated allowlist, e.g. "https://example.com,https://www.example.com".
+// Unset => allow any origin (convenient for local dev and the current prototypes).
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+// Guardrails on incoming requests.
+const MAX_BODY_BYTES = '64kb';
+const MAX_PROMPT_CHARS = 8000;
+
+// Simple in-memory rate limit. Good enough for a single Render instance; swap for
+// a shared store (Redis/Upstash) if this ever runs on more than one instance.
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 20;
+
+if (!API_KEY) {
+  console.warn('WARNING: GROQ_API_KEY is not set. AI endpoints will return 500 until it is configured.');
+}
+
+const app = express();
+app.set('trust proxy', 1); // Render sits behind a proxy; needed for correct client IPs.
+app.use(cors(ALLOWED_ORIGINS.length ? { origin: ALLOWED_ORIGINS } : {}));
+app.use(express.json({ limit: MAX_BODY_BYTES }));
+
+const rateLimitHits = new Map();
+
+function rateLimit(req, res, next) {
+  const now = Date.now();
+  const key = req.ip || 'unknown';
+  const hits = (rateLimitHits.get(key) || []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+
+  if (hits.length >= RATE_LIMIT_MAX_REQUESTS) {
+    const retryAfter = Math.ceil((RATE_LIMIT_WINDOW_MS - (now - hits[0])) / 1000);
+    res.set('Retry-After', String(retryAfter));
+    return res.status(429).json({ error: 'Too many requests. Please wait a moment and try again.' });
+  }
+
+  hits.push(now);
+  rateLimitHits.set(key, hits);
+  next();
+}
+
+// Drop stale rate-limit entries so the map does not grow forever.
+setInterval(() => {
+  const cutoff = Date.now() - RATE_LIMIT_WINDOW_MS;
+  for (const [key, hits] of rateLimitHits) {
+    const fresh = hits.filter((t) => t > cutoff);
+    if (fresh.length) rateLimitHits.set(key, fresh);
+    else rateLimitHits.delete(key);
+  }
+}, RATE_LIMIT_WINDOW_MS).unref();
+
+// Validates and returns the prompt, or sends the error response and returns null.
+function readPrompt(req, res) {
+  const { prompt } = req.body || {};
+  if (typeof prompt !== 'string' || !prompt.trim()) {
+    res.status(400).json({ error: 'Missing prompt' });
+    return null;
+  }
+  if (prompt.length > MAX_PROMPT_CHARS) {
+    res.status(413).json({ error: `Prompt is too long (max ${MAX_PROMPT_CHARS} characters).` });
+    return null;
+  }
+  return prompt;
+}
 
 function extractJSON(text) {
   let cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -39,19 +102,33 @@ function extractJSON(text) {
 }
 
 async function callGroq(systemPrompt) {
-  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`
-    },
-    body: JSON.stringify({
-      model: 'openai/gpt-oss-120b',
-      max_tokens: 1600,
-      temperature: 0,
-      messages: [{ role: 'user', content: systemPrompt }]
-    })
-  });
+  if (!API_KEY) {
+    const err = new Error('Server is missing GROQ_API_KEY. Set it in the environment and restart.');
+    err.status = 500;
+    throw err;
+  }
+
+  let response;
+  try {
+    response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      signal: AbortSignal.timeout(60000),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'openai/gpt-oss-120b',
+        max_tokens: 1600,
+        temperature: 0,
+        messages: [{ role: 'user', content: systemPrompt }]
+      })
+    });
+  } catch (e) {
+    const err = new Error(`Could not reach the AI provider: ${e.message}`);
+    err.status = 504;
+    throw err;
+  }
 
   if (!response.ok) {
     const errText = await response.text();
@@ -71,12 +148,10 @@ async function callGroq(systemPrompt) {
   return extractJSON(textBlock.content);
 }
 
-app.post('/api/fill-invoice', async (req, res) => {
+app.post('/api/fill-invoice', rateLimit, async (req, res) => {
   try {
-    const { prompt } = req.body;
-    if (!prompt || !prompt.trim()) {
-      return res.status(400).json({ error: 'Missing prompt' });
-    }
+    const prompt = readPrompt(req, res);
+    if (prompt === null) return;
 
     const parsed = await callGroq(`You are an invoice-extraction engine for a business tool. Read the description below and return ONLY a single raw JSON object — no markdown fences, no explanation, no questions, no comments, no trailing commas. The JSON must be strictly valid and parseable by JSON.parse().
 
@@ -113,12 +188,10 @@ Description: "${prompt.replace(/"/g, '\\"')}"`);
   }
 });
 
-app.post('/api/fill-boq', async (req, res) => {
+app.post('/api/fill-boq', rateLimit, async (req, res) => {
   try {
-    const { prompt } = req.body;
-    if (!prompt || !prompt.trim()) {
-      return res.status(400).json({ error: 'Missing prompt' });
-    }
+    const prompt = readPrompt(req, res);
+    if (prompt === null) return;
 
     const parsed = await callGroq(`You are a construction cost-estimation engine for a business tool used by contractors in Cambodia. Read the project description below and return ONLY a single raw JSON object — no markdown fences, no explanation, no questions, no comments, no trailing commas. The JSON must be strictly valid and parseable by JSON.parse().
 
@@ -151,6 +224,73 @@ Description: "${prompt.replace(/"/g, '\\"')}"`);
   }
 });
 
+app.post('/api/fill-wedding', rateLimit, async (req, res) => {
+  try {
+    const prompt = readPrompt(req, res);
+    if (prompt === null) return;
+
+    const parsed = await callGroq(`You are a wedding-invitation content engine. A couple describes their wedding in plain language and you turn it into the structured content of a single-page invitation site. Return ONLY a single raw JSON object — no markdown fences, no explanation, no questions, no comments, no trailing commas. The JSON must be strictly valid and parseable by JSON.parse().
+
+Rules:
+- ALWAYS return valid JSON matching the schema, even if the description is vague or incomplete. Invent warm, plausible defaults for anything missing, and flag what you invented in warnings.
+- Never ask questions. Never refuse. Best-guess everything.
+- Write in the couple's voice: first person plural ("we", "our"), warm, plain, specific. Never marketing language. Never filler verbs like "elevate", "seamless", "unforgettable", "magical".
+- NEVER use em-dashes or en-dashes in any string you produce. Use a comma, a period, or a regular hyphen.
+- names: partnerOne and partnerTwo are the two first names as they should read on the invitation, in the order the description gives them.
+- date: dateISO is machine-readable ("2026-04-11"). dateLabel is how it should read to a guest ("Saturday 11 April 2026"). If the description gives no year, assume the next occurrence of that date in the future.
+- schedule: the running order of the day, earliest first. Each entry is {"time": "15:00" 24-hour string, "title": short name of the moment (2 to 4 words, e.g. "Blessing ceremony", "Drinks in the courtyard", "Dinner", "Speeches, then dancing"), "note": one sentence of practical detail a guest actually needs, max 20 words, or "" if nothing useful to add}. Aim for 4 to 7 entries. If the description mentions a second day (a brunch, a recovery breakfast), include it as a final entry.
+- venue: name, oneLine (a short orienting sentence, e.g. "A small riverside house 20 minutes upstream from Kampot town"), address, gettingThere (transport, parking, shuttles), staying (accommodation held or suggested, or "" if not mentioned).
+- details: practical guest questions. Each is {"heading": 1 to 3 words, "body": max 30 words}. Use only headings the description supports, drawn from: dress code, children, gifts, weather, food, transport, photographs, accessibility. Between 3 and 5 entries.
+- rsvp: {"deadlineISO": "2026-02-28", "deadlineLabel": "Saturday 28 February 2026", "email": contact email if given else "", "maxGuestsPerReply": number, default 4}.
+- invitationNote: two or three sentences for the top of the page, in the couple's voice, saying who is inviting and what the day is. This is the one place a little warmth and personal detail belongs. Max 60 words.
+- photoSlots: the photographs this invitation needs, so the couple knows what to gather. Each is {"slot": one of "portrait"|"venue"|"gallery", "alt": a plain description of what the photo should show, "aspect": "3:4"|"3:2"|"4:5"}. Always include exactly one "portrait" (3:4) and one "venue" (3:2), plus 3 to 4 "gallery" (4:5).
+- warnings: short plain-English strings naming anything important the description left out that a guest would need, for example a missing ceremony time, no address, or no RSVP deadline. Also flag details you invented. Empty array if the description covered everything.
+
+Schema:
+{
+  "partnerOne": string,
+  "partnerTwo": string,
+  "dateISO": string,
+  "dateLabel": string,
+  "cityLabel": string,
+  "invitationNote": string,
+  "schedule": [{"time": string, "title": string, "note": string}],
+  "venue": {"name": string, "oneLine": string, "address": string, "gettingThere": string, "staying": string},
+  "details": [{"heading": string, "body": string}],
+  "rsvp": {"deadlineISO": string, "deadlineLabel": string, "email": string, "maxGuestsPerReply": number},
+  "photoSlots": [{"slot": string, "alt": string, "aspect": string}],
+  "warnings": [string]
+}
+
+Description: "${prompt.replace(/"/g, '\\"')}"`);
+
+    res.json(parsed);
+  } catch (err) {
+    console.error(err);
+    res.status(err.status || 500).json({ error: err.message });
+  }
+});
+
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    uptimeSeconds: Math.round(process.uptime()),
+    aiConfigured: Boolean(API_KEY)
+  });
+});
+
 app.get('/', (req, res) => res.send('Invoice AI backend is running.'));
+
+// JSON body parse / size errors land here as well as anything unhandled above.
+app.use((err, req, res, next) => {
+  console.error(err);
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Request body is too large.' });
+  }
+  if (err instanceof SyntaxError) {
+    return res.status(400).json({ error: 'Request body is not valid JSON.' });
+  }
+  res.status(err.status || 500).json({ error: err.message || 'Unexpected server error' });
+});
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
