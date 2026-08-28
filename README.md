@@ -91,6 +91,32 @@ Response:
 Contingency / overhead / VAT are **markups**, never line items. Units follow construction
 convention (m2, m3, m, kg, ton, no., LS, day, hour).
 
+### `POST /api/fill-wedding`
+
+Request: `{ "prompt": "We're marrying by the river in Kampot on 11 April, ceremony at 3, dinner at 6, kids welcome" }`
+
+Response:
+
+```jsonc
+{
+  "partnerOne": "string", "partnerTwo": "string",
+  "dateISO": "2026-04-11", "dateLabel": "Saturday 11 April 2026",
+  "cityLabel": "string",
+  "invitationNote": "string",
+  "schedule": [{ "time": "15:00", "title": "string", "note": "string" }],
+  "venue": { "name": "string", "oneLine": "string", "address": "string", "gettingThere": "string", "staying": "string" },
+  "details": [{ "heading": "string", "body": "string" }],
+  "rsvp": { "deadlineISO": "string", "deadlineLabel": "string", "email": "string", "maxGuestsPerReply": 4 },
+  "photoSlots": [{ "slot": "portrait|venue|gallery", "alt": "string", "aspect": "3:4|3:2|4:5" }],
+  "warnings": ["string"]
+}
+```
+
+The schema maps one to one onto `wedding-templates/cobalt-porcelain.html`, so a filled response
+populates that page without reshaping. Copy is generated in the couple's voice, and the prompt
+forbids em-dashes so output matches the template's typographic rules. `photoSlots` tells the couple
+which photographs they still need to supply.
+
 ### Error responses
 
 Every error is `{ "error": "human-readable message" }` with a meaningful status:
