@@ -128,6 +128,22 @@ where a landlord will actually do this: photos, the place, the money, then a che
 what the listing will say and what it will cost. Publishing puts it straight into search on the free
 trial.
 
+## Auditing it
+
+`audit.mjs` walks every screen in every theme and reports contrast failures, layout overflow at
+360px, controls without an accessible name, and images without alt text. It needs Playwright and a
+Chromium binary:
+
+```bash
+node rental-app/audit.mjs
+```
+
+It should print `FINDINGS 0`. The first run printed 114, all of them one token: `--ink-3` was
+`#8D949D`, which measures 3.02:1 on the surfaces it sits on, below the 4.5:1 that WCAG AA asks for
+text under 24px. It was being used for tab labels, panel headings and the "/ month" suffix, so a
+single wrong value failed the same check about a hundred times. Darkening that token and `--dead`
+fixed all of them, and the check now runs as part of the normal test suite so it cannot drift back.
+
 ## What is not built
 
 Auth, real payments, in-app chat, photo upload, the landlord side of posting. The listings are a
