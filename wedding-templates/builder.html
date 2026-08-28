@@ -97,7 +97,7 @@ h1 {
 label { display: block; font-size: .8125rem; font-weight: 500; margin-bottom: .35rem; }
 .hint { color: var(--ink-soft); font-weight: 400; }
 
-textarea, input[type="url"] {
+textarea, input[type="url"], select {
   font: inherit;
   width: 100%;
   color: var(--ink);
@@ -108,7 +108,7 @@ textarea, input[type="url"] {
   transition: border-color 140ms var(--ease-out);
 }
 textarea { min-height: 12rem; resize: vertical; line-height: 1.5; }
-textarea:hover, input[type="url"]:hover { border-color: color-mix(in srgb, var(--ink) 34%, transparent); }
+textarea:hover, input[type="url"]:hover, select:hover { border-color: color-mix(in srgb, var(--ink) 34%, transparent); }
 
 .btn {
   display: inline-flex;
@@ -181,6 +181,14 @@ details > div { margin-top: .9rem; display: grid; gap: .75rem; }
     </div>
 
     <div>
+      <label for="template">Design</label>
+      <select id="template">
+        <option value="./popil-crimson.html">Popil crimson, Khmer, bilingual</option>
+        <option value="./cobalt-porcelain.html">Cobalt porcelain, universal</option>
+      </select>
+    </div>
+
+    <div>
       <label for="brief">The wedding <span class="hint">who, when, where, the running order</span></label>
       <textarea id="brief" placeholder="Sophea and Elias, 11 April 2026, riverside house outside Kampot. Ceremony 3pm in the garden, drinks after, dinner at 6 on one long table, dancing until midnight. Kids welcome. Garden formal. Reply by end of February."></textarea>
     </div>
@@ -228,7 +236,7 @@ details > div { margin-top: .9rem; display: grid; gap: .75rem; }
 (function () {
   "use strict";
 
-  var TEMPLATE_URL = "./cobalt-porcelain.html";
+  var templates = {};   // url -> source text, fetched once each
 
   var panel     = document.getElementById("panel");
   var brief     = document.getElementById("brief");
@@ -241,7 +249,6 @@ details > div { margin-top: .9rem; display: grid; gap: .75rem; }
   var download  = document.getElementById("download");
   var downloadJson = document.getElementById("download-json");
 
-  var templateText = null;   // cached template source
   var builtHtml = null;      // last generated invitation
   var builtData = null;      // last generated content object
 
@@ -250,32 +257,43 @@ details > div { margin-top: .9rem; display: grid; gap: .75rem; }
     status.classList.toggle("is-bad", !!bad);
   }
 
-  function loadTemplate() {
-    if (templateText) return Promise.resolve(templateText);
-    return fetch(TEMPLATE_URL)
+  function loadTemplate(url) {
+    if (templates[url]) return Promise.resolve(templates[url]);
+    return fetch(url)
       .then(function (response) {
         if (!response.ok) throw new Error("Template returned " + response.status);
         return response.text();
       })
-      .then(function (text) { templateText = text; return text; })
+      .then(function (text) { templates[url] = text; return text; })
       .catch(function () {
-        throw new Error("Could not load cobalt-porcelain.html. Serve this folder over http rather than opening the file directly.");
+        throw new Error("Could not load " + url + ". Serve this folder over http rather than opening the file directly.");
       });
   }
 
   /* Swap the content object inside the template, leaving everything else
      byte for byte identical. */
   function build(template, data, photos) {
+    // Escaping "<\/" keeps a stray closing script tag inside the content from
+    // ending this script early. It stays valid JSON either way.
+    // (This comment must not contain that tag literally, for the same reason.)
+    var json = JSON.stringify(data, null, 2).replace(/<\//g, "<\\/");
+
     var out = template.replace(
       /window\.WEDDING = [\s\S]*?\n\};/,
-      "window.WEDDING = " + JSON.stringify(data, null, 2) + ";"
+      function () { return "window.WEDDING = " + json + ";"; }
     );
 
     if (photos && (photos.portrait || photos.venue)) {
       out = out.replace(/window\.WEDDING_PHOTOS = [\s\S]*?\n\};/, function (block) {
         var next = block;
-        if (photos.portrait) next = next.replace(/portrait: "[^"]*"/, 'portrait: "' + photos.portrait + '"');
-        if (photos.venue)    next = next.replace(/venue:    "[^"]*"/, 'venue:    "' + photos.venue + '"');
+        // Function replacements, so a "$" in a URL is not read as a
+        // replacement pattern by String.replace.
+        if (photos.portrait) next = next.replace(/portrait: "[^"]*"/, function () {
+          return 'portrait: "' + photos.portrait.replace(/"/g, "%22") + '"';
+        });
+        if (photos.venue) next = next.replace(/venue:    "[^"]*"/, function () {
+          return 'venue:    "' + photos.venue.replace(/"/g, "%22") + '"';
+        });
         return next;
       });
     }
@@ -326,7 +344,7 @@ details > div { margin-top: .9rem; display: grid; gap: .75rem; }
     showWarnings(null);
 
     Promise.all([
-      loadTemplate(),
+      loadTemplate(document.getElementById("template").value),
       fetch(base + "/api/fill-wedding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -5,8 +5,20 @@ straight onto Netlify.
 
 | File | What it is |
 | --- | --- |
-| `builder.html` | The tool. Describe a wedding in plain English, it calls `/api/fill-wedding`, fills the template, and hands back a finished single-file invitation. |
-| `cobalt-porcelain.html` | The template. Cobalt on cool porcelain, Bodoni Moda display, Instrument Sans body, all-sharp corners. Universal rather than culture-specific. |
+| `builder.html` | The tool. Describe a wedding in plain English, it calls `/api/fill-wedding`, fills the chosen template, and hands back a finished single-file invitation. |
+| `popil-crimson.html` | Khmer template, bilingual. Silk crimson on ivory card stock, Moul for Khmer display, Marcellus for Latin, krama check dividers drawn in CSS. The day is laid out as the sequence of named rites rather than one ceremony. |
+| `cobalt-porcelain.html` | Universal template. Cobalt on cool porcelain, Bodoni Moda display, Instrument Sans body, all-sharp corners. |
+
+## The Khmer template
+
+Khmer sits above English throughout, the way a printed card reads. Every Khmer field is optional:
+leave `partnerOneKh`, `partnerTwoKh`, `invitationHeadingKh`, `invitationNoteKh` and a rite's
+`titleKh` empty and those lines are removed rather than left showing somebody else's Khmer, so the
+same file also works for an English-only wedding.
+
+**The Khmer strings in the sample were written without a native reviewer.** Have a Khmer speaker
+check them before anything goes to guests. The endpoint is instructed to leave a Khmer field empty
+rather than guess, and to warn you whenever it fills one.
 
 ## Using the builder
 

@@ -238,7 +238,9 @@ Rules:
 - NEVER use em-dashes or en-dashes in any string you produce. Use a comma, a period, or a regular hyphen.
 - names: partnerOne and partnerTwo are the two first names as they should read on the invitation, in the order the description gives them.
 - date: dateISO is machine-readable ("2026-04-11"). dateLabel is how it should read to a guest ("Saturday 11 April 2026"). If the description gives no year, assume the next occurrence of that date in the future.
-- schedule: the running order of the day, earliest first. Each entry is {"time": "15:00" 24-hour string, "title": short name of the moment (2 to 4 words, e.g. "Blessing ceremony", "Drinks in the courtyard", "Dinner", "Speeches, then dancing"), "note": one sentence of practical detail a guest actually needs, max 20 words, or "" if nothing useful to add}. Aim for 4 to 7 entries. If the description mentions a second day (a brunch, a recovery breakfast), include it as a final entry.
+- schedule: the running order of the day, earliest first. Each entry is {"time": "15:00" 24-hour string, "title": short name of the moment (2 to 4 words, e.g. "Blessing ceremony", "Drinks in the courtyard", "Dinner", "Speeches, then dancing"), "titleKh": the Khmer name of the rite in Khmer script if and only if this is a named traditional Khmer rite you are confident of, otherwise "", "note": one sentence of practical detail a guest actually needs, max 20 words, or "" if nothing useful to add}. Aim for 4 to 7 entries. If the description mentions a second day (a brunch, a recovery breakfast), include it as a final entry.
+- Khmer fields (partnerOneKh, partnerTwoKh, invitationHeadingKh, invitationNoteKh, and schedule titleKh) are OPTIONAL. Fill them ONLY when the description is clearly a Khmer or Cambodian wedding. Otherwise set every one of them to "". Never transliterate a non-Khmer name into Khmer script, and never invent Khmer for a rite you are not sure of: an empty string is always better than wrong Khmer. If you fill any Khmer field, add a warning saying the Khmer should be checked by a native speaker before the invitation is sent.
+- A traditional Khmer wedding is a sequence of named rites rather than one ceremony. When the description implies one, use the real running order and real names: ហែជំនូន (the procession of gifts), សែនដូនតា (honouring the ancestors), កាត់សក់ (the symbolic hair cutting), បង្វិលពពិល (the passing of candles), ចងដៃ (the tying of wrists), then the reception. Only include the rites the description actually supports.
 - venue: name, oneLine (a short orienting sentence, e.g. "A small riverside house 20 minutes upstream from Kampot town"), address, gettingThere (transport, parking, shuttles), staying (accommodation held or suggested, or "" if not mentioned).
 - details: practical guest questions. Each is {"heading": 1 to 3 words, "body": max 30 words}. Use only headings the description supports, drawn from: dress code, children, gifts, weather, food, transport, photographs, accessibility. Between 3 and 5 entries.
 - rsvp: {"deadlineISO": "2026-02-28", "deadlineLabel": "Saturday 28 February 2026", "email": contact email if given else "", "maxGuestsPerReply": number, default 4}.
@@ -250,11 +252,15 @@ Schema:
 {
   "partnerOne": string,
   "partnerTwo": string,
+  "partnerOneKh": string,
+  "partnerTwoKh": string,
   "dateISO": string,
   "dateLabel": string,
   "cityLabel": string,
+  "invitationHeadingKh": string,
   "invitationNote": string,
-  "schedule": [{"time": string, "title": string, "note": string}],
+  "invitationNoteKh": string,
+  "schedule": [{"time": string, "titleKh": string, "title": string, "note": string}],
   "venue": {"name": string, "oneLine": string, "address": string, "gettingThere": string, "staying": string},
   "details": [{"heading": string, "body": string}],
   "rsvp": {"deadlineISO": string, "deadlineLabel": string, "email": string, "maxGuestsPerReply": number},

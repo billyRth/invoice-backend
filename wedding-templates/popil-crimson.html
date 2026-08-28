@@ -3,74 +3,78 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sophea &amp; Elias · 11 April 2026</title>
-<meta name="description" content="Sophea and Elias are getting married in Kampot on Saturday 11 April 2026. Schedule, venue and RSVP.">
+<title>Sophea &amp; Elias</title>
+<meta name="description" content="A Khmer wedding invitation.">
 
 <!--
-  COBALT / PORCELAIN  ·  wedding invitation template
+  POPIL / CRIMSON  ·  Khmer wedding invitation template
   Single self-contained file. No build step. Deploy as-is.
 
   Design direction
-    Palette   Cobalt against a cool porcelain neutral. Deliberately not the
-              gold-on-black or warm-paper families used in earlier concepts.
-    Type      Bodoni Moda (display) + Instrument Sans (interface and body).
-    Shape     One radius system: everything is sharp (0px). Print logic.
-    Theme     One theme per viewer, following prefers-color-scheme. No section inverts.
+    Palette   Silk crimson on ivory card stock, the way a printed Khmer
+              invitation actually looks. One accent only. Gold is deliberately
+              absent: gold on dark is the version everyone already makes.
+    Type      Moul for Khmer display, the face used on real invitation cards.
+              Marcellus for Latin display, inscriptional and carved rather
+              than calligraphic. Kantumruy Pro carries both scripts in body.
+    Motif     The krama check, drawn in CSS rather than as an image, used as
+              a structural divider between sections.
+    Bilingual Khmer sits above English throughout, as on a printed card. Any
+              Khmer field can be left empty and the page falls back to English.
 
   Before going live
-    1. Replace every https://picsum.photos URL with real photography.
-       Slots are marked TODO below with the target aspect ratio.
-    2. Self-host the two fonts and drop the Google Fonts <link>.
-    3. Set RSVP_ENDPOINT in the script at the bottom. Until it is set the form
-       validates and shows the success state but sends nothing.
+    1. Have a Khmer speaker check every Khmer string. They were written
+       without a native reviewer and the ceremony names matter.
+    2. Replace every picsum.photos URL with real photography.
+    3. Set RSVP_ENDPOINT at the bottom of the script.
 -->
 
-<!-- Set the js flag before first paint. If this ran at the end of the body the
-     hero would render visible and then jump to its hidden start state. -->
 <script>document.documentElement.classList.add("js");</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Loaded without blocking render: a slow or blocked font host must never stop the
      invitation from appearing. The fallback stack carries the page until it lands. -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Instrument+Sans:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Instrument+Sans:wght@400;500;600&display=swap"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600&family=Marcellus&family=Moul&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600&family=Marcellus&family=Moul&display=swap"></noscript>
 
 <style>
 /* ---------------------------------------------------------------- tokens */
 :root {
-  --paper:        #F2F3EF;
-  --paper-raised: #FFFFFF;
-  --ink:          #12151A;
-  --ink-soft:     #565D6B;
-  --accent:       #1E3AC7;
-  --accent-press: #16299A;
-  --on-accent:    #FFFFFF;
-  --rule:         rgba(18, 21, 26, .13);
+  --paper:        #F6F2EA;
+  --paper-raised: #FFFDF8;
+  --ink:          #241A17;
+  --ink-soft:     #6B5C55;
+  --accent:       #A11B2E;
+  --accent-press: #7C1223;
+  --on-accent:    #FFF8F0;
+  --rule:         rgba(36, 26, 23, .14);
+  --accent-wash:  rgba(161, 27, 46, .09);
   --shadow:
-     0 0 0 1px rgba(18, 21, 26, .05),
-     0 1px 2px -1px rgba(18, 21, 26, .07),
-     0 8px 24px -12px rgba(18, 21, 26, .18);
+     0 0 0 1px rgba(36, 26, 23, .06),
+     0 2px 4px -2px rgba(36, 26, 23, .10),
+     0 12px 30px -18px rgba(36, 26, 23, .35);
 
-  --ease:  cubic-bezier(.16, 1, .3, 1);
+  --ease:     cubic-bezier(.16, 1, .3, 1);
   --ease-out: cubic-bezier(.22, .61, .36, 1);
 
-  --gutter: clamp(1.25rem, 5vw, 5rem);
-  --stack:  clamp(4.5rem, 11vw, 9rem);
-  --measure: 62ch;
+  --gutter:  clamp(1.25rem, 5vw, 5rem);
+  --stack:   clamp(4.5rem, 11vw, 8.5rem);
+  --measure: 60ch;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper:        #0E1116;
-    --paper-raised: #161B22;
-    --ink:          #ECEDEA;
-    --ink-soft:     #98A0AE;
-    --accent:       #93A6FF;
-    --accent-press: #B3C0FF;
-    --on-accent:    #0B0E13;
-    --rule:         rgba(236, 237, 234, .15);
-    --shadow: 0 0 0 1px rgba(236, 237, 234, .07);
+    --paper:        #17100F;
+    --paper-raised: #1F1616;
+    --ink:          #F2E9E0;
+    --ink-soft:     #A9958C;
+    --accent:       #E8798A;
+    --accent-press: #F2A0AC;
+    --on-accent:    #1A0E10;
+    --rule:         rgba(242, 233, 224, .16);
+    --accent-wash:  rgba(232, 121, 138, .12);
+    --shadow: 0 0 0 1px rgba(242, 233, 224, .08);
   }
 }
 
@@ -83,15 +87,14 @@ body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  font-family: "Kantumruy Pro", ui-sans-serif, system-ui, sans-serif;
   font-size: clamp(1rem, .96rem + .2vw, 1.0625rem);
-  line-height: 1.6;
+  font-weight: 300;
+  line-height: 1.75;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
 }
 
 img { max-width: 100%; display: block; }
-
 ::selection { background: var(--accent); color: var(--on-accent); }
 
 :where(a, button, input, select, textarea):focus-visible {
@@ -100,43 +103,56 @@ img { max-width: 100%; display: block; }
 }
 
 /* ------------------------------------------------------------- typography */
+.kh {
+  font-family: "Moul", "Kantumruy Pro", serif;
+  font-weight: 400;
+  line-height: 1.85;          /* Khmer needs far more leading than Latin */
+  letter-spacing: 0;
+}
+.kh:empty { display: none; }   /* an unfilled Khmer line takes no space */
+
 .display {
-  font-family: "Bodoni Moda", Georgia, "Times New Roman", serif;
-  font-weight: 500;
-  letter-spacing: -.01em;
-  line-height: 1.06;
+  font-family: "Marcellus", Georgia, serif;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: .005em;
   margin: 0;
 }
 
-h2.display { font-size: clamp(2.1rem, 1.3rem + 3.4vw, 3.9rem); }
-h3 {
-  font-family: "Instrument Sans", sans-serif;
-  font-size: .9375rem;
-  font-weight: 600;
-  letter-spacing: .01em;
-  margin: 0 0 .5rem;
-}
+h2.display { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3rem); }
+h3 { font-family: "Marcellus", Georgia, serif; font-weight: 400; font-size: 1.125rem; margin: 0 0 .35rem; }
 
 p { margin: 0 0 1.1rem; max-width: var(--measure); }
 p:last-child { margin-bottom: 0; }
 
-.lede { font-size: clamp(1.0625rem, 1rem + .35vw, 1.25rem); color: var(--ink-soft); }
+.lede { font-size: clamp(1.0625rem, 1rem + .3vw, 1.1875rem); color: var(--ink-soft); }
 .soft { color: var(--ink-soft); }
 
 .label {
-  font-size: .75rem;
+  font-size: .6875rem;
   font-weight: 500;
-  letter-spacing: .16em;
+  letter-spacing: .22em;
   text-transform: uppercase;
-  color: var(--ink-soft);
-  margin: 0 0 1.5rem;
+  color: var(--accent);
+  margin: 0 0 1.25rem;
 }
 
 /* ------------------------------------------------------------------ shell */
-.wrap { width: 100%; max-width: 78rem; margin-inline: auto; padding-inline: var(--gutter); }
+.wrap { width: 100%; max-width: 72rem; margin-inline: auto; padding-inline: var(--gutter); }
 section { padding-block: var(--stack); }
 
-.rule { height: 1px; background: var(--rule); border: 0; margin: 0; }
+/* The krama check, the Cambodian scarf pattern, drawn in CSS. Used as the
+   divider between sections instead of a plain hairline. */
+.krama {
+  height: 14px;
+  border: 0;
+  margin: 0;
+  background-color: var(--paper);
+  background-image:
+    repeating-linear-gradient(90deg, var(--accent-wash) 0 14px, transparent 14px 28px),
+    repeating-linear-gradient(0deg,  var(--accent-wash) 0 14px, transparent 14px 28px);
+  border-block: 1px solid var(--rule);
+}
 
 /* -------------------------------------------------------------------- nav */
 .nav {
@@ -148,7 +164,7 @@ section { padding-block: var(--stack); }
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  background: color-mix(in srgb, var(--paper) 86%, transparent);
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--rule);
@@ -156,11 +172,11 @@ section { padding-block: var(--stack); }
 @supports not (backdrop-filter: blur(1px)) { .nav { background: var(--paper); } }
 
 .monogram {
-  font-family: "Bodoni Moda", Georgia, serif;
-  font-size: 1.375rem;
-  letter-spacing: .02em;
+  font-family: "Marcellus", Georgia, serif;
+  font-size: 1.25rem;
+  letter-spacing: .12em;
   text-decoration: none;
-  color: var(--ink);
+  color: var(--accent);
   white-space: nowrap;
 }
 
@@ -175,59 +191,52 @@ section { padding-block: var(--stack); }
 .nav-links a:hover { color: var(--ink); }
 .nav-links a.is-cta { color: var(--accent); font-weight: 500; }
 
-@media (max-width: 34rem) {
-  .nav-links a:not(.is-cta) { display: none; }
-}
+@media (max-width: 34rem) { .nav-links a:not(.is-cta) { display: none; } }
 
-/* ------------------------------------------------------------------- hero */
+/* ------------------------------------------------------------------- hero
+   Centred, unlike the cobalt template's split. A Khmer invitation is a
+   formal announcement, and the announcement itself is the composition. */
 .hero {
   min-height: calc(100dvh - 64px);
   display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  gap: clamp(2.5rem, 6vw, 5rem);
-  padding-block: clamp(2rem, 5vw, 6rem) var(--stack);
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  gap: 0;
+  padding-block: clamp(2rem, 5vw, 5rem) var(--stack);
 }
 
-@media (min-width: 60rem) {
-  .hero { grid-template-columns: 1.05fr .95fr; }
-}
+.hero-kh { font-size: clamp(1rem, .85rem + .7vw, 1.375rem); color: var(--accent); margin: 0 0 1.25rem; }
 
 .hero-names {
-  font-size: clamp(3.25rem, 1.4rem + 8.4vw, 7rem);
-  line-height: 1;
+  font-size: clamp(2.75rem, 1.4rem + 6.4vw, 5.5rem);
+  line-height: 1.1;
   margin: 0 0 1.5rem;
+  max-width: 20ch;
 }
-.hero-names .amp {
-  font-style: italic;
-  font-weight: 400;
-  color: var(--accent);
-  padding-inline: .06em;
-}
+.hero-names .amp { color: var(--accent); font-size: .68em; vertical-align: .08em; padding-inline: .18em; }
 
 .hero-meta {
-  font-size: .8125rem;
+  font-size: .75rem;
   font-weight: 500;
-  letter-spacing: .18em;
+  letter-spacing: .24em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  margin: 0 0 clamp(1.25rem, 3vw, 2rem);
+  margin: 0 0 2rem;
 }
+.hero-meta span + span::before { content: "  ·  "; }
 
-.hero-lede { margin-bottom: 2rem; max-width: 34ch; }
+.hero-lede { max-width: 46ch; margin-bottom: 2.25rem; }
 
 .hero-figure {
-  position: relative;
+  width: min(100%, 30rem);
   aspect-ratio: 4 / 5;
+  margin-top: clamp(2.5rem, 6vw, 4.5rem);
+  overflow: hidden;
   background: var(--paper-raised);
   box-shadow: var(--shadow);
-  overflow: hidden;
 }
 .hero-figure img { width: 100%; height: 100%; object-fit: cover; }
-
-@media (min-width: 60rem) {
-  .hero-figure { aspect-ratio: 3 / 4; }
-}
 
 /* --------------------------------------------------------------- buttons */
 .btn {
@@ -239,9 +248,10 @@ section { padding-block: var(--stack); }
   border: 1px solid transparent;
   border-radius: 0;
   font: inherit;
+  font-family: "Kantumruy Pro", sans-serif;
   font-size: .9375rem;
   font-weight: 500;
-  letter-spacing: .01em;
+  letter-spacing: .04em;
   white-space: nowrap;
   text-decoration: none;
   cursor: pointer;
@@ -253,83 +263,85 @@ section { padding-block: var(--stack); }
 }
 .btn:active { transform: scale(.98); }
 .btn[disabled] { cursor: default; opacity: .62; transform: none; }
-
 .btn-primary { background: var(--accent); color: var(--on-accent); }
 .btn-primary:hover:not([disabled]) { background: var(--accent-press); }
-
-.btn-quiet {
-  background: transparent;
-  color: var(--ink);
-  border-color: var(--rule);
-}
+.btn-quiet { background: transparent; color: var(--ink); border-color: var(--rule); }
 .btn-quiet:hover { border-color: var(--ink); }
 
-.actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; }
 
 /* ---------------------------------------------------------------- letter */
-.letter { max-width: 46rem; margin-inline: auto; text-align: center; }
+.letter { max-width: 44rem; margin-inline: auto; text-align: center; }
 .letter p { margin-inline: auto; }
-.letter .display { margin-bottom: 1.75rem; }
+.letter .kh { color: var(--accent); font-size: clamp(.9375rem, .85rem + .35vw, 1.125rem); margin-bottom: 1.5rem; }
+.letter .display { margin-bottom: 1.5rem; }
 
-/* -------------------------------------------------------------- schedule */
-.schedule {
+/* -------------------------------------------------------------- schedule
+   A Khmer wedding day is a sequence of named rites, so each one gets its
+   own row with the Khmer name leading and the English beneath. */
+.rites { display: grid; gap: 0; margin-top: clamp(2.5rem, 5vw, 3.5rem); }
+
+.rite {
   display: grid;
-  gap: clamp(2rem, 4vw, 3.25rem) clamp(2rem, 5vw, 4.5rem);
   grid-template-columns: 1fr;
-  margin-top: clamp(2.5rem, 5vw, 4rem);
+  gap: .35rem 2rem;
+  padding-block: clamp(1.5rem, 3vw, 2.25rem);
+  border-top: 1px solid var(--rule);
 }
-@media (min-width: 48rem) { .schedule { grid-template-columns: repeat(2, 1fr); } }
+.rite:last-child { border-bottom: 1px solid var(--rule); }
 
-.slot { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; align-items: baseline; }
-.slot-time {
-  font-family: "Bodoni Moda", Georgia, serif;
-  font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem);
-  line-height: 1;
+@media (min-width: 46rem) {
+  .rite { grid-template-columns: 7rem 1fr; align-items: baseline; }
+}
+
+.rite-time {
+  font-family: "Marcellus", Georgia, serif;
+  font-size: 1.25rem;
   color: var(--accent);
   font-variant-numeric: lining-nums tabular-nums;
 }
-.slot h3 { margin-bottom: .25rem; }
-.slot p { font-size: .9375rem; color: var(--ink-soft); }
+.rite-kh { font-size: 1.0625rem; color: var(--ink); margin: 0 0 .1rem; }
+.rite h3 { color: var(--ink-soft); font-size: 1rem; }
+.rite p { font-size: .9375rem; color: var(--ink-soft); margin: .35rem 0 0; }
 
 /* ----------------------------------------------------------------- venue */
 .venue { display: grid; grid-template-columns: 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
-@media (min-width: 60rem) { .venue { grid-template-columns: 1.15fr .85fr; } }
+@media (min-width: 60rem) { .venue { grid-template-columns: .9fr 1.1fr; } }
 
 .venue-figure { aspect-ratio: 3 / 2; overflow: hidden; box-shadow: var(--shadow); background: var(--paper-raised); }
 .venue-figure img { width: 100%; height: 100%; object-fit: cover; }
 
 .venue-facts { display: grid; gap: 1.5rem; margin-top: 2rem; }
 .venue-facts div { display: grid; gap: .2rem; }
-.venue-facts dt { font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
-.venue-facts dd { margin: 0; font-size: 1rem; }
+.venue-facts dt { font-size: .6875rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+.venue-facts dd { margin: 0; }
 .venue-facts a { color: var(--accent); text-underline-offset: 3px; }
 
 /* --------------------------------------------------------------- gallery */
 .gallery {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: min(78vw, 26rem);
+  grid-auto-columns: min(74vw, 24rem);
   gap: 1rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding-inline: var(--gutter);
   padding-bottom: 1rem;
   margin-inline: calc(var(--gutter) * -1);
-  scrollbar-width: thin;
   overscroll-behavior-x: contain;
 }
 .gallery figure { margin: 0; scroll-snap-align: center; }
 .gallery img { aspect-ratio: 4 / 5; width: 100%; object-fit: cover; box-shadow: var(--shadow); }
 
 /* --------------------------------------------------------------- details */
-.details { display: grid; grid-template-columns: 1fr; gap: clamp(2rem, 4vw, 3rem); margin-top: clamp(2.5rem, 5vw, 4rem); }
+.details { display: grid; grid-template-columns: 1fr; gap: clamp(2rem, 4vw, 3rem); margin-top: clamp(2.5rem, 5vw, 3.5rem); }
 @media (min-width: 44rem) { .details { grid-template-columns: repeat(2, 1fr); } }
 .details p { font-size: .9375rem; color: var(--ink-soft); }
 
 /* ------------------------------------------------------------------ rsvp */
 .rsvp { background: var(--paper-raised); border-block: 1px solid var(--rule); }
 .rsvp-inner { display: grid; grid-template-columns: 1fr; gap: clamp(2rem, 5vw, 4rem); }
-@media (min-width: 60rem) { .rsvp-inner { grid-template-columns: .8fr 1.2fr; } }
+@media (min-width: 60rem) { .rsvp-inner { grid-template-columns: .85fr 1.15fr; } }
 
 .field { display: grid; gap: .4rem; margin-bottom: 1.25rem; }
 .field label { font-size: .8125rem; font-weight: 500; }
@@ -337,6 +349,7 @@ section { padding-block: var(--stack); }
 
 input[type="text"], input[type="email"], select, textarea {
   font: inherit;
+  font-family: "Kantumruy Pro", sans-serif;
   font-size: 1rem;
   color: var(--ink);
   background: var(--paper);
@@ -349,15 +362,11 @@ input[type="text"], input[type="email"], select, textarea {
 }
 textarea { min-height: 6.5rem; resize: vertical; }
 input:hover, select:hover, textarea:hover { border-color: color-mix(in srgb, var(--ink) 34%, transparent); }
-input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--ink-soft) 82%, transparent); }
-[aria-invalid="true"] { border-color: #C02626; }
-@media (prefers-color-scheme: dark) { [aria-invalid="true"] { border-color: #FF8A8A; } }
+input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--ink-soft) 80%, transparent); }
+[aria-invalid="true"] { border-color: #B3261E; }
+@media (prefers-color-scheme: dark) { [aria-invalid="true"] { border-color: #FF9C9C; } }
 
-.error {
-  font-size: .8125rem;
-  color: #A81E1E;
-  min-height: 0;
-}
+.error { font-size: .8125rem; color: #9C1B14; }
 @media (prefers-color-scheme: dark) { .error { color: #FF9C9C; } }
 
 .choice { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
@@ -375,15 +384,13 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--ink-
 }
 .choice input { position: absolute; opacity: 0; width: 0; height: 0; }
 .choice label:hover { border-color: color-mix(in srgb, var(--ink) 40%, transparent); }
-/* .is-checked is set in script as a fallback for browsers without :has() */
 .choice label:has(input:checked),
 .choice label.is-checked { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .choice label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 #guest-field[hidden] { display: none; }
-
-.form-note { font-size: .8125rem; color: var(--ink-soft); margin-top: 1rem; }
 .label-tight { margin-bottom: .4rem; }
+.form-note { font-size: .8125rem; color: var(--ink-soft); margin-top: 1rem; }
 
 .thanks { display: grid; align-content: center; gap: .75rem; min-height: 12rem; }
 .thanks[hidden] { display: none; }
@@ -391,11 +398,9 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--ink-
 /* ---------------------------------------------------------------- footer */
 footer { padding-block: clamp(3rem, 6vw, 5rem); text-align: center; }
 footer p { margin-inline: auto; font-size: .875rem; color: var(--ink-soft); }
-footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1rem; }
+footer .monogram { font-size: 1.5rem; display: inline-block; margin-bottom: .75rem; }
 
 /* ---------------------------------------------------------------- motion */
-/* Reveals are opt-in through the .js class so that a viewer with no
-   JavaScript, or a failed script, still sees every word. */
 .js [data-reveal] {
   opacity: 0;
   transform: translateY(10px);
@@ -408,8 +413,8 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
 .js [data-reveal].is-in { opacity: 1; transform: none; filter: none; }
 
 .js [data-enter] {
-  animation: enter 640ms var(--ease) both;
-  animation-delay: calc(var(--i, 0) * 70ms);
+  animation: enter 680ms var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 80ms);
 }
 @keyframes enter {
   from { opacity: 0; transform: translateY(12px); filter: blur(5px); }
@@ -423,11 +428,7 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
   .js [data-reveal],
   .js [data-reveal].is-in,
   .js [data-enter] {
-    opacity: 1;
-    transform: none;
-    filter: none;
-    transition: none;
-    animation: none;
+    opacity: 1; transform: none; filter: none; transition: none; animation: none;
   }
   .btn:active { transform: none; }
   .swap, .swap.is-out { transition: none; opacity: 1; transform: none; filter: none; }
@@ -436,38 +437,42 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
 
 <!--
   CONTENT
-  Everything a guest reads lives in this one object. Edit it by hand, or let
-  POST /api/fill-wedding write it for you from a plain-English description.
-  Its shape is exactly what that endpoint returns.
+  Same shape as POST /api/fill-wedding, plus optional Khmer fields. Any
+  Khmer field left empty simply does not render, so this template also
+  works for a couple who want it in English only.
 -->
 <script>
 window.WEDDING = {
   "partnerOne": "Sophea",
   "partnerTwo": "Elias",
+  "partnerOneKh": "សុភា",
+  "partnerTwoKh": "អេលីយ៉ាស",
   "dateISO": "2026-04-11",
   "dateLabel": "Saturday 11 April 2026",
   "cityLabel": "Kampot, Cambodia",
-  "invitationNote": "Together with our families, we invite you to celebrate our marriage. We met in a queue for a broken ferry in 2019 and have been travelling badly together ever since. In April we would like to stop travelling for two days, stand under a tamarind tree with the people we love, and eat far too much.",
+  "invitationHeadingKh": "សូមគោរពអញ្ជើញ",
+  "invitationNote": "Together with our families, we invite you to our wedding. The rites begin before sunrise and run through the morning, and you are welcome at any point of the day. Come hungry.",
+  "invitationNoteKh": "សូមអញ្ជើញចូលរួមក្នុងពិធីមង្គលការរបស់យើងខ្ញុំ",
   "schedule": [
-    { "time": "15:00", "title": "Blessing ceremony", "note": "In the garden. Seating is unassigned, so arrive by 14:45 and sit where you like." },
-    { "time": "16:30", "title": "Drinks in the courtyard", "note": "Cold beer, tamarind soda, and shade. Photographs happen around you, not to you." },
-    { "time": "18:00", "title": "Dinner", "note": "One long table under the trees. Khmer and Levantine dishes, served family style." },
-    { "time": "20:30", "title": "Speeches, then dancing", "note": "Four speeches, strictly timed by Sophea's aunt. The band plays until midnight." },
-    { "time": "23:45", "title": "Last shuttle to town", "note": "Two vans leave from the front gate. After that it is a 20 minute taxi ride." },
-    { "time": "09:00", "title": "Sunday breakfast", "note": "Open house at the guesthouse until noon. No dress code, no speeches, no plan." }
+    { "time": "06:30", "titleKh": "ហែជំនូន", "title": "Hai Chomnoun, the procession of gifts", "note": "The groom's family walks from the road with fruit and cake. Guests are welcome to join the line." },
+    { "time": "07:30", "titleKh": "សែនដូនតា", "title": "Sen Doun Ta, honouring the ancestors", "note": "In the family house. Please remove shoes at the step." },
+    { "time": "09:00", "titleKh": "កាត់សក់", "title": "Kat Sak, the hair cutting", "note": "Symbolic only. No hair is actually lost." },
+    { "time": "10:30", "titleKh": "បង្វិលពពិល", "title": "Bangvul Popil, the passing of candles", "note": "Elders pass the flame around the couple. Seven turns." },
+    { "time": "11:30", "titleKh": "ចងដៃ", "title": "Chang Dai, the tying of wrists", "note": "Bring a small note if you would like to give a blessing aloud." },
+    { "time": "18:00", "titleKh": "ពិធីជប់លៀង", "title": "The reception", "note": "Dinner, speeches, and a band that does not know when to stop." }
   ],
   "venue": {
     "name": "Sala Ou Neaharung",
-    "oneLine": "A small riverside house 20 minutes upstream from Kampot town.",
+    "oneLine": "The family house and garden, 20 minutes upstream from Kampot town.",
     "address": "Ou Neaharung, Kampot Province, Cambodia",
-    "gettingThere": "Shuttles leave the Old Market at 14:00 and 14:20. Parking is on the grass by the gate.",
+    "gettingThere": "Shuttles leave the Old Market at 06:00 and again at 17:00. Parking is on the grass by the gate.",
     "staying": "We hold ten rooms at Villa Chompou under the name Chhun until 1 March."
   },
   "details": [
-    { "heading": "What to wear", "body": "Garden formal. The lawn is soft after the afternoon rain, so thin heels will sink. Linen beats wool in April." },
-    { "heading": "Children", "body": "Very welcome. There is a quiet room with mats and a sitter next to the hall from 18:00 onwards." },
-    { "heading": "Gifts", "body": "Your presence is genuinely the gift. If you would rather not arrive empty handed, there is a box at the door." },
-    { "heading": "Weather", "body": "April in Kampot runs hot and dry, around 34 degrees by mid afternoon. We will have shade, fans and cold water." }
+    { "heading": "What to wear", "body": "Traditional dress if you have it, otherwise anything formal. Avoid white and black, and bring shoes that come off easily." },
+    { "heading": "The morning rites", "body": "The ceremonies start at 06:30 and are the heart of the day. If you can only come once, come early rather than late." },
+    { "heading": "Children", "body": "Welcome throughout. There is a quiet room beside the hall from the afternoon onwards." },
+    { "heading": "Gifts", "body": "There is a table at the reception for envelopes, as is customary. Nothing else is expected." }
   ],
   "rsvp": {
     "deadlineISO": "2026-02-28",
@@ -476,26 +481,24 @@ window.WEDDING = {
     "maxGuestsPerReply": 4
   },
   "photoSlots": [
-    { "slot": "portrait", "alt": "The two of us on the riverbank at dusk", "aspect": "3:4" },
-    { "slot": "venue", "alt": "The riverside courtyard where the ceremony will be held", "aspect": "3:2" },
-    { "slot": "gallery", "alt": "The river in the early morning", "aspect": "4:5" },
-    { "slot": "gallery", "alt": "The tamarind tree in the garden", "aspect": "4:5" },
-    { "slot": "gallery", "alt": "The long dinner table set under the trees", "aspect": "4:5" },
+    { "slot": "portrait", "alt": "The two of us outside the family house", "aspect": "3:4" },
+    { "slot": "venue", "alt": "The garden where the rites take place", "aspect": "3:2" },
+    { "slot": "gallery", "alt": "The river before sunrise", "aspect": "4:5" },
+    { "slot": "gallery", "alt": "Offerings laid out for the procession", "aspect": "4:5" },
+    { "slot": "gallery", "alt": "The hall being set for the reception", "aspect": "4:5" },
     { "slot": "gallery", "alt": "Kampot town in the evening", "aspect": "4:5" }
   ],
   "warnings": []
 };
 
-/* Photograph URLs, kept apart from the words so the AI never touches them.
-   Replace each one with a real photograph before this page goes to guests. */
 window.WEDDING_PHOTOS = {
-  portrait: "https://picsum.photos/seed/sophea-elias-portrait/1200/1600",
-  venue:    "https://picsum.photos/seed/kampot-riverside-villa/1600/1067",
+  portrait: "https://picsum.photos/seed/khmer-couple-portrait/1200/1600",
+  venue:    "https://picsum.photos/seed/khmer-garden-ceremony/1600/1067",
   gallery: [
-    "https://picsum.photos/seed/kampot-river-morning/1000/1250",
-    "https://picsum.photos/seed/tamarind-tree-garden/1000/1250",
-    "https://picsum.photos/seed/long-table-dinner/1000/1250",
-    "https://picsum.photos/seed/kampot-town-evening/1000/1250"
+    "https://picsum.photos/seed/kampot-river-dawn/1000/1250",
+    "https://picsum.photos/seed/khmer-offerings/1000/1250",
+    "https://picsum.photos/seed/reception-hall-setting/1000/1250",
+    "https://picsum.photos/seed/kampot-evening/1000/1250"
   ]
 };
 </script>
@@ -506,7 +509,7 @@ window.WEDDING_PHOTOS = {
 <nav class="nav wrap" aria-label="Primary">
   <a class="monogram" href="#top" data-w="monogram">S&amp;E</a>
   <div class="nav-links">
-    <a href="#day">The day</a>
+    <a href="#day">The rites</a>
     <a href="#where">Where</a>
     <a href="#details">Details</a>
     <a href="#rsvp" class="is-cta">RSVP</a>
@@ -515,62 +518,63 @@ window.WEDDING_PHOTOS = {
 
 <main id="top">
 
-  <!-- ------------------------------------------------------------- hero -->
   <header class="hero wrap">
-    <div>
-      <p class="hero-meta" data-enter style="--i:0">
-        <span data-w="dateLabel">Saturday 11 April 2026</span> ·
-        <span data-w="cityLabel">Kampot, Cambodia</span>
-      </p>
-      <h1 class="display hero-names" data-enter style="--i:1">
-        <span data-w="partnerOne">Sophea</span>
-        <span class="amp">&amp;</span>
-        <span data-w="partnerTwo">Elias</span>
-      </h1>
-      <p class="lede hero-lede" data-enter style="--i:2" data-w="heroLine">
-        We are getting married by the river, and we would love you there for the whole weekend.
-      </p>
-      <div class="actions" data-enter style="--i:3">
-        <a class="btn btn-primary" href="#rsvp">RSVP</a>
-        <a class="btn btn-quiet" href="#day">See the day</a>
-      </div>
+    <p class="kh hero-kh" data-enter style="--i:0" data-w="invitationHeadingKh">សូមគោរពអញ្ជើញ</p>
+
+    <h1 class="display hero-names" data-enter style="--i:1">
+      <span data-w="partnerOne">Sophea</span><span class="amp">&amp;</span><span data-w="partnerTwo">Elias</span>
+    </h1>
+
+    <p class="kh hero-kh" data-enter style="--i:1" id="hero-names-kh">
+      <span data-w="partnerOneKh">សុភា</span> &amp; <span data-w="partnerTwoKh">អេលីយ៉ាស</span>
+    </p>
+
+    <p class="hero-meta" data-enter style="--i:2">
+      <span data-w="dateLabel">Saturday 11 April 2026</span><span data-w="cityLabel">Kampot, Cambodia</span>
+    </p>
+
+    <p class="lede hero-lede" data-enter style="--i:3" data-w="heroLine">
+      Together with our families, we invite you to our wedding.
+    </p>
+
+    <div class="actions" data-enter style="--i:4">
+      <a class="btn btn-primary" href="#rsvp">RSVP</a>
+      <a class="btn btn-quiet" href="#day">The rites</a>
     </div>
 
-    <div class="hero-figure" data-enter style="--i:2">
-      <img id="photo-portrait"
-           src="https://picsum.photos/seed/sophea-elias-portrait/1200/1600"
-           alt="The two of us on the riverbank at dusk" width="1200" height="1600">
+    <div class="hero-figure" data-enter style="--i:5">
+      <img id="photo-portrait" src="https://picsum.photos/seed/khmer-couple-portrait/1200/1600"
+           alt="The two of us outside the family house" width="1200" height="1600">
     </div>
   </header>
 
-  <hr class="rule">
+  <hr class="krama">
 
-  <!-- ----------------------------------------------------------- letter -->
   <section>
     <div class="wrap letter" data-reveal>
-      <h2 class="display" data-w="invitationLead">Together with our families, we invite you to celebrate our marriage.</h2>
+      <p class="kh" data-w="invitationNoteKh">សូមអញ្ជើញចូលរួមក្នុងពិធីមង្គលការរបស់យើងខ្ញុំ</p>
+      <h2 class="display" data-w="invitationLead">Together with our families, we invite you to our wedding.</h2>
       <p class="lede" data-w="invitationRest">
-        We met in a queue for a broken ferry in 2019 and have been travelling badly together ever
-        since. In April we would like to stop travelling for two days, stand under a tamarind tree
-        with the people we love, and eat far too much.
+        The rites begin before sunrise and run through the morning, and you are welcome at any
+        point of the day. Come hungry.
       </p>
     </div>
   </section>
 
-  <hr class="rule">
+  <hr class="krama">
 
-  <!-- --------------------------------------------------------- schedule -->
   <section id="day">
     <div class="wrap">
       <p class="label" data-reveal data-w="dateLabel">Saturday 11 April 2026</p>
-      <h2 class="display" data-reveal>The day, hour by hour</h2>
+      <h2 class="display" data-reveal>The order of the day</h2>
 
-      <div class="schedule" id="schedule">
-        <div class="slot" data-reveal>
-          <span class="slot-time">15:00</span>
+      <div class="rites" id="schedule">
+        <div class="rite" data-reveal>
+          <span class="rite-time">06:30</span>
           <div>
-            <h3>Blessing ceremony</h3>
-            <p>In the garden. Seating is unassigned, so arrive by 14:45 and sit where you like.</p>
+            <p class="kh rite-kh">ហែជំនូន</p>
+            <h3>Hai Chomnoun, the procession of gifts</h3>
+            <p>The groom's family walks from the road with fruit and cake.</p>
           </div>
         </div>
       </div>
@@ -578,29 +582,28 @@ window.WEDDING_PHOTOS = {
   </section>
 
   <template id="tpl-slot">
-    <div class="slot" data-reveal>
-      <span class="slot-time"></span>
+    <div class="rite" data-reveal>
+      <span class="rite-time"></span>
       <div>
+        <p class="kh rite-kh"></p>
         <h3></h3>
         <p></p>
       </div>
     </div>
   </template>
 
-  <hr class="rule">
+  <hr class="krama">
 
-  <!-- ------------------------------------------------------------ venue -->
   <section id="where">
     <div class="wrap venue">
       <div class="venue-figure" data-reveal>
-        <img id="photo-venue"
-             src="https://picsum.photos/seed/kampot-riverside-villa/1600/1067"
-             alt="The riverside courtyard where the ceremony will be held" width="1600" height="1067">
+        <img id="photo-venue" src="https://picsum.photos/seed/khmer-garden-ceremony/1600/1067"
+             alt="The garden where the rites take place" width="1600" height="1067">
       </div>
 
       <div data-reveal>
         <h2 class="display" data-w="venue.name">Sala Ou Neaharung</h2>
-        <p class="soft" data-w="venue.oneLine">A small riverside house 20 minutes upstream from Kampot town.</p>
+        <p class="soft" data-w="venue.oneLine">The family house and garden, 20 minutes upstream from Kampot town.</p>
 
         <dl class="venue-facts">
           <div>
@@ -611,7 +614,7 @@ window.WEDDING_PHOTOS = {
           </div>
           <div>
             <dt>Getting there</dt>
-            <dd data-w="venue.gettingThere">Shuttles leave the Old Market at 14:00 and 14:20. Parking is on the grass by the gate.</dd>
+            <dd data-w="venue.gettingThere">Shuttles leave the Old Market at 06:00 and again at 17:00.</dd>
           </div>
           <div id="staying-fact">
             <dt>Staying over</dt>
@@ -622,26 +625,23 @@ window.WEDDING_PHOTOS = {
     </div>
   </section>
 
-  <!-- ---------------------------------------------------------- gallery -->
   <section aria-label="Photographs">
     <div class="wrap">
       <div class="gallery" id="gallery" data-reveal>
-        <figure><img src="https://picsum.photos/seed/kampot-river-morning/1000/1250" alt="The river in the early morning" width="1000" height="1250"></figure>
+        <figure><img src="https://picsum.photos/seed/kampot-river-dawn/1000/1250" alt="The river before sunrise" width="1000" height="1250"></figure>
       </div>
     </div>
   </section>
 
-  <hr class="rule">
+  <hr class="krama">
 
-  <!-- ---------------------------------------------------------- details -->
   <section id="details">
     <div class="wrap">
       <h2 class="display" data-reveal>Things worth knowing</h2>
-
       <div class="details" id="detail-list">
         <div data-reveal>
           <h3>What to wear</h3>
-          <p>Garden formal. The lawn is soft after the afternoon rain, so thin heels will sink.</p>
+          <p>Traditional dress if you have it, otherwise anything formal.</p>
         </div>
       </div>
     </div>
@@ -654,12 +654,11 @@ window.WEDDING_PHOTOS = {
     </div>
   </template>
 
-  <!-- ------------------------------------------------------------- rsvp -->
   <section id="rsvp" class="rsvp">
     <div class="wrap rsvp-inner">
       <div data-reveal>
         <h2 class="display">Will you come?</h2>
-        <p class="soft">Please reply by <span data-w="rsvp.deadlineLabel">Saturday 28 February 2026</span> so we can give the kitchen a number.</p>
+        <p class="soft">Please reply by <span data-w="rsvp.deadlineLabel">Saturday 28 February 2026</span> so the kitchen has a number.</p>
         <p class="soft" id="contact-line">Questions of any kind go to <a id="contact-email" href="mailto:hello@example.com">hello@example.com</a>.</p>
       </div>
 
@@ -698,7 +697,7 @@ window.WEDDING_PHOTOS = {
 
           <div class="field">
             <label for="notes">Anything we should know?</label>
-            <span class="hint">Allergies, a song you want played, an early flight.</span>
+            <span class="hint">Allergies, a song, an early flight.</span>
             <textarea id="notes" name="notes"></textarea>
           </div>
 
@@ -732,10 +731,6 @@ window.WEDDING_PHOTOS = {
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var data = window.WEDDING || null;
   var photos = window.WEDDING_PHOTOS || null;
-
-  /* ---- fill the page from WEDDING ------------------------------------
-     Every binding falls back to the markup already in the file, so the
-     template still reads correctly if the object is missing a field. */
 
   function pick(path) {
     return path.split(".").reduce(function (acc, key) {
@@ -772,34 +767,45 @@ window.WEDDING_PHOTOS = {
       cityShort: data.cityLabel ? data.cityLabel.split(",")[0].trim() : undefined
     };
 
+    /* Khmer bindings are cleared rather than left as sample text when the
+       data has no Khmer, so an English-only wedding does not ship with
+       somebody else's Khmer on the page. */
+    var khmerKeys = ["partnerOneKh", "partnerTwoKh", "invitationHeadingKh", "invitationNoteKh"];
+
     document.querySelectorAll("[data-w]").forEach(function (el) {
       var key = el.getAttribute("data-w");
       var value = derived[key] !== undefined ? derived[key] : pick(key);
       if (value !== undefined && value !== null && value !== "") el.textContent = value;
+      else if (khmerKeys.indexOf(key) !== -1) el.textContent = "";
     });
 
-    if (data.partnerOne && data.partnerTwo) {
-      document.title = data.partnerOne + " & " + data.partnerTwo +
-        (data.dateLabel ? " · " + data.dateLabel : "");
+    if (!pick("partnerOneKh") && !pick("partnerTwoKh")) {
+      var khNames = document.getElementById("hero-names-kh");
+      if (khNames) khNames.remove();
     }
 
-    /* schedule */
+    if (data.partnerOne && data.partnerTwo) {
+      document.title = data.partnerOne + " & " + data.partnerTwo;
+    }
+
     var slotTpl = document.getElementById("tpl-slot");
     var scheduleEl = document.getElementById("schedule");
     if (Array.isArray(data.schedule) && data.schedule.length && slotTpl && scheduleEl) {
       scheduleEl.textContent = "";
       data.schedule.forEach(function (item) {
         var node = slotTpl.content.cloneNode(true);
-        node.querySelector(".slot-time").textContent = item.time || "";
+        node.querySelector(".rite-time").textContent = item.time || "";
+        var kh = node.querySelector(".rite-kh");
+        if (item.titleKh) kh.textContent = item.titleKh;
+        else kh.remove();
         node.querySelector("h3").textContent = item.title || "";
-        var note = node.querySelector("p");
+        var note = node.querySelector("div > p:last-child");
         if (item.note) note.textContent = item.note;
         else note.remove();
         scheduleEl.appendChild(node);
       });
     }
 
-    /* details */
     var detailTpl = document.getElementById("tpl-detail");
     var detailEl = document.getElementById("detail-list");
     if (Array.isArray(data.details) && data.details.length && detailTpl && detailEl) {
@@ -812,11 +818,9 @@ window.WEDDING_PHOTOS = {
       });
     }
 
-    /* photographs: URLs come from WEDDING_PHOTOS, alt text from the AI */
     var slots = Array.isArray(data.photoSlots) ? data.photoSlots : [];
     var altFor = function (slot) {
-      var found = slots.filter(function (s) { return s.slot === slot; });
-      return found.map(function (s) { return s.alt; });
+      return slots.filter(function (s) { return s.slot === slot; }).map(function (s) { return s.alt; });
     };
 
     var portrait = document.getElementById("photo-portrait");
@@ -843,7 +847,6 @@ window.WEDDING_PHOTOS = {
       });
     }
 
-    /* venue extras */
     if (!pick("venue.staying")) {
       var staying = document.getElementById("staying-fact");
       if (staying) staying.remove();
@@ -853,7 +856,6 @@ window.WEDDING_PHOTOS = {
       mapLink.href = "https://maps.google.com/?q=" + encodeURIComponent(data.venue.address);
     }
 
-    /* rsvp */
     var email = pick("rsvp.email");
     var contactEmail = document.getElementById("contact-email");
     if (email && contactEmail) {
@@ -867,7 +869,7 @@ window.WEDDING_PHOTOS = {
     var max = pick("rsvp.maxGuestsPerReply");
     var guests = document.getElementById("guests");
     if (guests && typeof max === "number" && max > 0) {
-      var cap = Math.min(Math.floor(max), 12);   // a sane ceiling if the model overshoots
+      var cap = Math.min(Math.floor(max), 12);
       guests.textContent = "";
       for (var i = 1; i <= cap; i++) {
         var option = document.createElement("option");
@@ -880,10 +882,6 @@ window.WEDDING_PHOTOS = {
 
   hydrate();
 
-  /* ---- scroll reveals -------------------------------------------------
-     IntersectionObserver, never a scroll listener. Each element reveals
-     once and is then unobserved, so nothing keeps running as you scroll.
-     Runs after hydrate so cloned template nodes are observed too. */
   var targets = document.querySelectorAll("[data-reveal]");
 
   if (reduced || !("IntersectionObserver" in window)) {
@@ -900,11 +898,8 @@ window.WEDDING_PHOTOS = {
     targets.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---- RSVP form ---------------------------------------------------- */
-
-  // Set this to your form endpoint (Netlify Forms, Formspree, or your own
-  // backend). While it is null the form validates and shows the success
-  // state but does not send anything anywhere.
+  // Set this to your form endpoint. While it is null the form validates and
+  // shows the success state but does not send anything anywhere.
   var RSVP_ENDPOINT = null;
 
   var form      = document.getElementById("rsvp-form");
@@ -920,7 +915,6 @@ window.WEDDING_PHOTOS = {
     attending: { el: null,                             error: document.getElementById("attending-error") }
   };
 
-  /* Progressive disclosure: the guest count only matters if they are coming. */
   form.addEventListener("change", function (event) {
     if (event.target.name !== "attending") return;
     guestField.hidden = event.target.value !== "yes";
@@ -981,9 +975,6 @@ window.WEDDING_PHOTOS = {
     return !firstBad;
   }
 
-  /* Label swap on the submit button. This is a task surface, so the motion
-     does no more than confirm the press registered, and is skipped entirely
-     under reduced motion. */
   function setLabel(text) {
     if (reduced) { label.textContent = text; return; }
     label.classList.add("is-out");
