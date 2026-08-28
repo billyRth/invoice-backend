@@ -3,9 +3,27 @@
 Standalone single-file templates. No build step, no dependencies. Open one in a browser or drop it
 straight onto Netlify.
 
-| File | Direction |
+| File | What it is |
 | --- | --- |
-| `cobalt-porcelain.html` | Cobalt on cool porcelain. Bodoni Moda display, Instrument Sans body, all-sharp corners, print logic. Universal rather than culture-specific. |
+| `builder.html` | The tool. Describe a wedding in plain English, it calls `/api/fill-wedding`, fills the template, and hands back a finished single-file invitation. |
+| `cobalt-porcelain.html` | The template. Cobalt on cool porcelain, Bodoni Moda display, Instrument Sans body, all-sharp corners. Universal rather than culture-specific. |
+
+## Using the builder
+
+Serve the folder over http, because the builder fetches the template at runtime:
+
+```bash
+npx serve wedding-templates
+```
+
+Open `builder.html`, describe the wedding, press Generate. You get a live preview, a list of
+anything the model had to assume, and two downloads: the finished `.html` invitation, and the
+content as `.json` if you would rather edit it by hand.
+
+The template is data driven. All the words live in one `window.WEDDING` object near the top of
+`cobalt-porcelain.html`, and photo URLs live in `window.WEDDING_PHOTOS` right below it, kept
+separate so the model never touches them. Opening the template on its own still shows the sample
+invitation, so it works with or without the builder.
 
 ## Before a template goes live
 

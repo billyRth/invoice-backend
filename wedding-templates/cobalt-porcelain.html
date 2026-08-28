@@ -430,12 +430,78 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
   .swap, .swap.is-out { transition: none; opacity: 1; transform: none; filter: none; }
 }
 </style>
+
+<!--
+  CONTENT
+  Everything a guest reads lives in this one object. Edit it by hand, or let
+  POST /api/fill-wedding write it for you from a plain-English description.
+  Its shape is exactly what that endpoint returns.
+-->
+<script>
+window.WEDDING = {
+  "partnerOne": "Sophea",
+  "partnerTwo": "Elias",
+  "dateISO": "2026-04-11",
+  "dateLabel": "Saturday 11 April 2026",
+  "cityLabel": "Kampot, Cambodia",
+  "invitationNote": "Together with our families, we invite you to celebrate our marriage. We met in a queue for a broken ferry in 2019 and have been travelling badly together ever since. In April we would like to stop travelling for two days, stand under a tamarind tree with the people we love, and eat far too much.",
+  "schedule": [
+    { "time": "15:00", "title": "Blessing ceremony", "note": "In the garden. Seating is unassigned, so arrive by 14:45 and sit where you like." },
+    { "time": "16:30", "title": "Drinks in the courtyard", "note": "Cold beer, tamarind soda, and shade. Photographs happen around you, not to you." },
+    { "time": "18:00", "title": "Dinner", "note": "One long table under the trees. Khmer and Levantine dishes, served family style." },
+    { "time": "20:30", "title": "Speeches, then dancing", "note": "Four speeches, strictly timed by Sophea's aunt. The band plays until midnight." },
+    { "time": "23:45", "title": "Last shuttle to town", "note": "Two vans leave from the front gate. After that it is a 20 minute taxi ride." },
+    { "time": "09:00", "title": "Sunday breakfast", "note": "Open house at the guesthouse until noon. No dress code, no speeches, no plan." }
+  ],
+  "venue": {
+    "name": "Sala Ou Neaharung",
+    "oneLine": "A small riverside house 20 minutes upstream from Kampot town.",
+    "address": "Ou Neaharung, Kampot Province, Cambodia",
+    "gettingThere": "Shuttles leave the Old Market at 14:00 and 14:20. Parking is on the grass by the gate.",
+    "staying": "We hold ten rooms at Villa Chompou under the name Chhun until 1 March."
+  },
+  "details": [
+    { "heading": "What to wear", "body": "Garden formal. The lawn is soft after the afternoon rain, so thin heels will sink. Linen beats wool in April." },
+    { "heading": "Children", "body": "Very welcome. There is a quiet room with mats and a sitter next to the hall from 18:00 onwards." },
+    { "heading": "Gifts", "body": "Your presence is genuinely the gift. If you would rather not arrive empty handed, there is a box at the door." },
+    { "heading": "Weather", "body": "April in Kampot runs hot and dry, around 34 degrees by mid afternoon. We will have shade, fans and cold water." }
+  ],
+  "rsvp": {
+    "deadlineISO": "2026-02-28",
+    "deadlineLabel": "Saturday 28 February 2026",
+    "email": "hello@example.com",
+    "maxGuestsPerReply": 4
+  },
+  "photoSlots": [
+    { "slot": "portrait", "alt": "The two of us on the riverbank at dusk", "aspect": "3:4" },
+    { "slot": "venue", "alt": "The riverside courtyard where the ceremony will be held", "aspect": "3:2" },
+    { "slot": "gallery", "alt": "The river in the early morning", "aspect": "4:5" },
+    { "slot": "gallery", "alt": "The tamarind tree in the garden", "aspect": "4:5" },
+    { "slot": "gallery", "alt": "The long dinner table set under the trees", "aspect": "4:5" },
+    { "slot": "gallery", "alt": "Kampot town in the evening", "aspect": "4:5" }
+  ],
+  "warnings": []
+};
+
+/* Photograph URLs, kept apart from the words so the AI never touches them.
+   Replace each one with a real photograph before this page goes to guests. */
+window.WEDDING_PHOTOS = {
+  portrait: "https://picsum.photos/seed/sophea-elias-portrait/1200/1600",
+  venue:    "https://picsum.photos/seed/kampot-riverside-villa/1600/1067",
+  gallery: [
+    "https://picsum.photos/seed/kampot-river-morning/1000/1250",
+    "https://picsum.photos/seed/tamarind-tree-garden/1000/1250",
+    "https://picsum.photos/seed/long-table-dinner/1000/1250",
+    "https://picsum.photos/seed/kampot-town-evening/1000/1250"
+  ]
+};
+</script>
 </head>
 
 <body>
 
 <nav class="nav wrap" aria-label="Primary">
-  <a class="monogram" href="#top">S&amp;E</a>
+  <a class="monogram" href="#top" data-w="monogram">S&amp;E</a>
   <div class="nav-links">
     <a href="#day">The day</a>
     <a href="#where">Where</a>
@@ -449,9 +515,16 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
   <!-- ------------------------------------------------------------- hero -->
   <header class="hero wrap">
     <div>
-      <p class="hero-meta" data-enter style="--i:0">Saturday 11 April 2026 · Kampot, Cambodia</p>
-      <h1 class="display hero-names" data-enter style="--i:1">Sophea <span class="amp">&amp;</span> Elias</h1>
-      <p class="lede hero-lede" data-enter style="--i:2">
+      <p class="hero-meta" data-enter style="--i:0">
+        <span data-w="dateLabel">Saturday 11 April 2026</span> ·
+        <span data-w="cityLabel">Kampot, Cambodia</span>
+      </p>
+      <h1 class="display hero-names" data-enter style="--i:1">
+        <span data-w="partnerOne">Sophea</span>
+        <span class="amp">&amp;</span>
+        <span data-w="partnerTwo">Elias</span>
+      </h1>
+      <p class="lede hero-lede" data-enter style="--i:2" data-w="heroLine">
         We are getting married by the river, and we would love you there for the whole weekend.
       </p>
       <div class="actions" data-enter style="--i:3">
@@ -460,10 +533,10 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
       </div>
     </div>
 
-    <!-- TODO: replace with the couple's portrait, 3:4, at least 1200x1600 -->
     <div class="hero-figure" data-enter style="--i:2">
-      <img src="https://picsum.photos/seed/sophea-elias-portrait/1200/1600"
-           alt="Sophea and Elias standing together on the riverbank at dusk" width="1200" height="1600">
+      <img id="photo-portrait"
+           src="https://picsum.photos/seed/sophea-elias-portrait/1200/1600"
+           alt="The two of us on the riverbank at dusk" width="1200" height="1600">
     </div>
   </header>
 
@@ -472,13 +545,12 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
   <!-- ----------------------------------------------------------- letter -->
   <section>
     <div class="wrap letter" data-reveal>
-      <h2 class="display">Together with our families, we invite you to celebrate our marriage.</h2>
-      <p class="lede">
+      <h2 class="display" data-w="invitationLead">Together with our families, we invite you to celebrate our marriage.</h2>
+      <p class="lede" data-w="invitationRest">
         We met in a queue for a broken ferry in 2019 and have been travelling badly together ever
         since. In April we would like to stop travelling for two days, stand under a tamarind tree
         with the people we love, and eat far too much.
       </p>
-      <p class="soft">There is no gift table. Come, eat, dance, and stay late.</p>
     </div>
   </section>
 
@@ -487,10 +559,10 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
   <!-- --------------------------------------------------------- schedule -->
   <section id="day">
     <div class="wrap">
-      <p class="label" data-reveal>Saturday 11 April</p>
+      <p class="label" data-reveal data-w="dateLabel">Saturday 11 April 2026</p>
       <h2 class="display" data-reveal>The day, hour by hour</h2>
 
-      <div class="schedule">
+      <div class="schedule" id="schedule">
         <div class="slot" data-reveal>
           <span class="slot-time">15:00</span>
           <div>
@@ -498,79 +570,49 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
             <p>In the garden. Seating is unassigned, so arrive by 14:45 and sit where you like.</p>
           </div>
         </div>
-
-        <div class="slot" data-reveal>
-          <span class="slot-time">16:30</span>
-          <div>
-            <h3>Drinks in the courtyard</h3>
-            <p>Cold beer, tamarind soda, and shade. Photographs happen around you, not to you.</p>
-          </div>
-        </div>
-
-        <div class="slot" data-reveal>
-          <span class="slot-time">18:00</span>
-          <div>
-            <h3>Dinner</h3>
-            <p>One long table under the trees. Khmer and Levantine dishes, served family style.</p>
-          </div>
-        </div>
-
-        <div class="slot" data-reveal>
-          <span class="slot-time">20:30</span>
-          <div>
-            <h3>Speeches, then dancing</h3>
-            <p>Four speeches, strictly timed by Sophea's aunt. The band plays until midnight.</p>
-          </div>
-        </div>
-
-        <div class="slot" data-reveal>
-          <span class="slot-time">23:45</span>
-          <div>
-            <h3>Last shuttle to town</h3>
-            <p>Two vans leave from the front gate. After that it is a 20 minute taxi ride.</p>
-          </div>
-        </div>
-
-        <div class="slot" data-reveal>
-          <span class="slot-time">09:00</span>
-          <div>
-            <h3>Sunday breakfast</h3>
-            <p>Open house at the guesthouse until noon. No dress code, no speeches, no plan.</p>
-          </div>
-        </div>
       </div>
     </div>
   </section>
+
+  <template id="tpl-slot">
+    <div class="slot" data-reveal>
+      <span class="slot-time"></span>
+      <div>
+        <h3></h3>
+        <p></p>
+      </div>
+    </div>
+  </template>
 
   <hr class="rule">
 
   <!-- ------------------------------------------------------------ venue -->
   <section id="where">
     <div class="wrap venue">
-      <!-- TODO: replace with a real photograph of the venue, 3:2, at least 1600x1067 -->
       <div class="venue-figure" data-reveal>
-        <img src="https://picsum.photos/seed/kampot-riverside-villa/1600/1067"
+        <img id="photo-venue"
+             src="https://picsum.photos/seed/kampot-riverside-villa/1600/1067"
              alt="The riverside courtyard where the ceremony will be held" width="1600" height="1067">
       </div>
 
       <div data-reveal>
-        <h2 class="display">Sala Ou Neaharung</h2>
-        <p class="soft">A small riverside house 20 minutes upstream from Kampot town.</p>
+        <h2 class="display" data-w="venue.name">Sala Ou Neaharung</h2>
+        <p class="soft" data-w="venue.oneLine">A small riverside house 20 minutes upstream from Kampot town.</p>
 
         <dl class="venue-facts">
           <div>
             <dt>Address</dt>
-            <dd>Ou Neaharung, Kampot Province, Cambodia<br>
-              <a href="https://maps.google.com/?q=Kampot+Cambodia" target="_blank" rel="noreferrer noopener">Open in Maps</a>
+            <dd><span data-w="venue.address">Ou Neaharung, Kampot Province, Cambodia</span><br>
+              <a id="map-link" href="https://maps.google.com/?q=Kampot+Cambodia" target="_blank" rel="noreferrer noopener">Open in Maps</a>
             </dd>
           </div>
           <div>
             <dt>Getting there</dt>
-            <dd>Shuttles leave the Old Market at 14:00 and 14:20. Parking is on the grass by the gate.</dd>
+            <dd data-w="venue.gettingThere">Shuttles leave the Old Market at 14:00 and 14:20. Parking is on the grass by the gate.</dd>
           </div>
-          <div>
+          <div id="staying-fact">
             <dt>Staying over</dt>
-            <dd>We hold ten rooms at Villa Chompou under the name Chhun until 1 March.</dd>
+            <dd data-w="venue.staying">We hold ten rooms at Villa Chompou under the name Chhun until 1 March.</dd>
           </div>
         </dl>
       </div>
@@ -580,12 +622,8 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
   <!-- ---------------------------------------------------------- gallery -->
   <section aria-label="Photographs">
     <div class="wrap">
-      <div class="gallery" data-reveal>
-        <!-- TODO: replace all four with real photographs, 4:5, at least 1000x1250 -->
+      <div class="gallery" id="gallery" data-reveal>
         <figure><img src="https://picsum.photos/seed/kampot-river-morning/1000/1250" alt="The river in the early morning" width="1000" height="1250"></figure>
-        <figure><img src="https://picsum.photos/seed/tamarind-tree-garden/1000/1250" alt="The tamarind tree in the garden" width="1000" height="1250"></figure>
-        <figure><img src="https://picsum.photos/seed/long-table-dinner/1000/1250" alt="The long dinner table set under the trees" width="1000" height="1250"></figure>
-        <figure><img src="https://picsum.photos/seed/kampot-town-evening/1000/1250" alt="Kampot town in the evening" width="1000" height="1250"></figure>
       </div>
     </div>
   </section>
@@ -597,34 +635,29 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
     <div class="wrap">
       <h2 class="display" data-reveal>Things worth knowing</h2>
 
-      <div class="details">
+      <div class="details" id="detail-list">
         <div data-reveal>
           <h3>What to wear</h3>
-          <p>Garden formal. The lawn is soft after the afternoon rain, so thin heels will sink. Linen beats wool in April.</p>
-        </div>
-        <div data-reveal>
-          <h3>Children</h3>
-          <p>Very welcome. There is a quiet room with mats and a sitter next to the hall from 18:00 onwards.</p>
-        </div>
-        <div data-reveal>
-          <h3>Gifts</h3>
-          <p>Your presence is genuinely the gift. If you would rather not arrive empty handed, there is a box at the door.</p>
-        </div>
-        <div data-reveal>
-          <h3>Weather</h3>
-          <p>April in Kampot runs hot and dry, around 34 degrees by mid afternoon. We will have shade, fans and cold water.</p>
+          <p>Garden formal. The lawn is soft after the afternoon rain, so thin heels will sink.</p>
         </div>
       </div>
     </div>
   </section>
+
+  <template id="tpl-detail">
+    <div data-reveal>
+      <h3></h3>
+      <p></p>
+    </div>
+  </template>
 
   <!-- ------------------------------------------------------------- rsvp -->
   <section id="rsvp" class="rsvp">
     <div class="wrap rsvp-inner">
       <div data-reveal>
         <h2 class="display">Will you come?</h2>
-        <p class="soft">Please reply by Saturday 28 February 2026 so we can give the kitchen a number.</p>
-        <p class="soft">Questions of any kind go to <a href="mailto:hello@example.com">hello@example.com</a>.</p>
+        <p class="soft">Please reply by <span data-w="rsvp.deadlineLabel">Saturday 28 February 2026</span> so we can give the kitchen a number.</p>
+        <p class="soft" id="contact-line">Questions of any kind go to <a id="contact-email" href="mailto:hello@example.com">hello@example.com</a>.</p>
       </div>
 
       <div data-reveal>
@@ -685,8 +718,8 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
 </main>
 
 <footer>
-  <span class="monogram">S&amp;E</span>
-  <p>11 April 2026 · Kampot</p>
+  <span class="monogram" data-w="monogram">S&amp;E</span>
+  <p><span data-w="dateLabel">11 April 2026</span> · <span data-w="cityShort">Kampot</span></p>
 </footer>
 
 <script>
@@ -694,10 +727,159 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
   "use strict";
 
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var data = window.WEDDING || null;
+  var photos = window.WEDDING_PHOTOS || null;
+
+  /* ---- fill the page from WEDDING ------------------------------------
+     Every binding falls back to the markup already in the file, so the
+     template still reads correctly if the object is missing a field. */
+
+  function pick(path) {
+    return path.split(".").reduce(function (acc, key) {
+      return acc && acc[key] !== undefined ? acc[key] : undefined;
+    }, data);
+  }
+
+  function firstSentence(text) {
+    if (!text) return undefined;
+    var match = text.match(/^[^.!?]+[.!?]/);
+    return match ? match[0].trim() : text;
+  }
+
+  function restAfterFirstSentence(text) {
+    if (!text) return undefined;
+    var first = firstSentence(text);
+    var rest = text.slice(first.length).trim();
+    return rest || first;
+  }
+
+  function initials(a, b) {
+    if (!a || !b) return undefined;
+    return a.trim().charAt(0) + "&" + b.trim().charAt(0);
+  }
+
+  function hydrate() {
+    if (!data) return;
+
+    var derived = {
+      monogram: initials(data.partnerOne, data.partnerTwo),
+      heroLine: firstSentence(data.invitationNote),
+      invitationLead: firstSentence(data.invitationNote),
+      invitationRest: restAfterFirstSentence(data.invitationNote),
+      cityShort: data.cityLabel ? data.cityLabel.split(",")[0].trim() : undefined
+    };
+
+    document.querySelectorAll("[data-w]").forEach(function (el) {
+      var key = el.getAttribute("data-w");
+      var value = derived[key] !== undefined ? derived[key] : pick(key);
+      if (value !== undefined && value !== null && value !== "") el.textContent = value;
+    });
+
+    if (data.partnerOne && data.partnerTwo) {
+      document.title = data.partnerOne + " & " + data.partnerTwo +
+        (data.dateLabel ? " · " + data.dateLabel : "");
+    }
+
+    /* schedule */
+    var slotTpl = document.getElementById("tpl-slot");
+    var scheduleEl = document.getElementById("schedule");
+    if (Array.isArray(data.schedule) && data.schedule.length && slotTpl && scheduleEl) {
+      scheduleEl.textContent = "";
+      data.schedule.forEach(function (item) {
+        var node = slotTpl.content.cloneNode(true);
+        node.querySelector(".slot-time").textContent = item.time || "";
+        node.querySelector("h3").textContent = item.title || "";
+        var note = node.querySelector("p");
+        if (item.note) note.textContent = item.note;
+        else note.remove();
+        scheduleEl.appendChild(node);
+      });
+    }
+
+    /* details */
+    var detailTpl = document.getElementById("tpl-detail");
+    var detailEl = document.getElementById("detail-list");
+    if (Array.isArray(data.details) && data.details.length && detailTpl && detailEl) {
+      detailEl.textContent = "";
+      data.details.forEach(function (item) {
+        var node = detailTpl.content.cloneNode(true);
+        node.querySelector("h3").textContent = item.heading || "";
+        node.querySelector("p").textContent = item.body || "";
+        detailEl.appendChild(node);
+      });
+    }
+
+    /* photographs: URLs come from WEDDING_PHOTOS, alt text from the AI */
+    var slots = Array.isArray(data.photoSlots) ? data.photoSlots : [];
+    var altFor = function (slot) {
+      var found = slots.filter(function (s) { return s.slot === slot; });
+      return found.map(function (s) { return s.alt; });
+    };
+
+    var portrait = document.getElementById("photo-portrait");
+    var venueImg = document.getElementById("photo-venue");
+    if (photos && photos.portrait && portrait) portrait.src = photos.portrait;
+    if (photos && photos.venue && venueImg) venueImg.src = photos.venue;
+    if (portrait && altFor("portrait")[0]) portrait.alt = altFor("portrait")[0];
+    if (venueImg && altFor("venue")[0]) venueImg.alt = altFor("venue")[0];
+
+    var galleryEl = document.getElementById("gallery");
+    var galleryAlts = altFor("gallery");
+    var galleryUrls = (photos && Array.isArray(photos.gallery)) ? photos.gallery : [];
+    if (galleryEl && galleryUrls.length) {
+      galleryEl.textContent = "";
+      galleryUrls.forEach(function (url, i) {
+        var figure = document.createElement("figure");
+        var img = document.createElement("img");
+        img.src = url;
+        img.alt = galleryAlts[i] || "";
+        img.width = 1000;
+        img.height = 1250;
+        figure.appendChild(img);
+        galleryEl.appendChild(figure);
+      });
+    }
+
+    /* venue extras */
+    if (!pick("venue.staying")) {
+      var staying = document.getElementById("staying-fact");
+      if (staying) staying.remove();
+    }
+    var mapLink = document.getElementById("map-link");
+    if (mapLink && pick("venue.address")) {
+      mapLink.href = "https://maps.google.com/?q=" + encodeURIComponent(data.venue.address);
+    }
+
+    /* rsvp */
+    var email = pick("rsvp.email");
+    var contactEmail = document.getElementById("contact-email");
+    if (email && contactEmail) {
+      contactEmail.href = "mailto:" + email;
+      contactEmail.textContent = email;
+    } else if (!email) {
+      var line = document.getElementById("contact-line");
+      if (line) line.remove();
+    }
+
+    var max = pick("rsvp.maxGuestsPerReply");
+    var guests = document.getElementById("guests");
+    if (guests && typeof max === "number" && max > 0) {
+      guests.textContent = "";
+      for (var i = 1; i <= max; i++) {
+        var option = document.createElement("option");
+        option.value = String(i);
+        option.textContent = String(i);
+        guests.appendChild(option);
+      }
+    }
+  }
+
+  hydrate();
 
   /* ---- scroll reveals -------------------------------------------------
      IntersectionObserver, never a scroll listener. Each element reveals
-     once and is then unobserved, so nothing keeps running as you scroll. */
+     once and is then unobserved, so nothing keeps running as you scroll.
+     Runs after hydrate so cloned template nodes are observed too. */
   var targets = document.querySelectorAll("[data-reveal]");
 
   if (reduced || !("IntersectionObserver" in window)) {
@@ -795,9 +977,9 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
     return !firstBad;
   }
 
-  /* Label swap on the submit button. Emil's rule applies here: this is a
-     task surface, so the motion is only enough to confirm the press
-     registered, and it is skipped entirely under reduced motion. */
+  /* Label swap on the submit button. This is a task surface, so the motion
+     does no more than confirm the press registered, and is skipped entirely
+     under reduced motion. */
   function setLabel(text) {
     if (reduced) { label.textContent = text; return; }
     label.classList.add("is-out");
@@ -829,7 +1011,7 @@ footer .monogram { font-size: 1.75rem; display: inline-block; margin-bottom: 1re
         thanks.hidden = false;
         document.getElementById("thanks-title").textContent = coming ? "Thank you." : "We will miss you.";
         document.getElementById("thanks-body").textContent = coming
-          ? "We have you down. Look out for one confirmation email closer to April."
+          ? "We have you down. Look out for one confirmation email closer to the day."
           : "Thank you for letting us know. We will raise a glass to you on the night.";
         thanks.focus();
       })
