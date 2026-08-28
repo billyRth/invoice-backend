@@ -16,13 +16,26 @@ function extractJSON(text) {
     throw new Error('No JSON object found in AI response');
   }
   let jsonStr = cleaned.slice(start, end + 1);
-  try {
-    return JSON.parse(jsonStr);
-  } catch (e) {
-    // Common model slip-ups: trailing commas before ] or }
-    const repaired = jsonStr.replace(/,(\s*[\]}])/g, '$1');
-    return JSON.parse(repaired);
+
+  const attempts = [
+    (s) => s,
+    // trailing commas before ] or }
+    (s) => s.replace(/,(\s*[\]}])/g, '$1'),
+    // missing commas between adjacent objects/arrays: "} {" or "] ["
+    (s) => s.replace(/,(\s*[\]}])/g, '$1').replace(/}(\s*){/g, '},$1{').replace(/](\s*)\[/g, '],$1['),
+  ];
+
+  let lastErr;
+  for (const fix of attempts) {
+    try {
+      return JSON.parse(fix(jsonStr));
+    } catch (e) {
+      lastErr = e;
+    }
   }
+  const err = new Error('Could not parse AI response as JSON: ' + lastErr.message);
+  err.rawResponse = jsonStr.slice(0, 500);
+  throw err;
 }
 
 app.post('/api/fill-invoice', async (req, res) => {
@@ -41,6 +54,7 @@ app.post('/api/fill-invoice', async (req, res) => {
       body: JSON.stringify({
         model: 'openai/gpt-oss-120b',
         max_tokens: 1600,
+        temperature: 0,
         messages: [{
           role: 'user',
           content: `You are an invoice-extraction engine for a business tool. Read the description below and return ONLY a single raw JSON object — no markdown fences, no explanation, no questions, no comments, no trailing commas. The JSON must be strictly valid and parseable by JSON.parse().
