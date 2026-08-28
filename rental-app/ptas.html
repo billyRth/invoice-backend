@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B5F4A">
+<title>Ptas · rental prototype</title>
+
+<!--
+  PTAS (ផ្ទះ)  ·  rental app prototype
+
+  What this is
+    A working front-end prototype of a Cambodian rental app. Every screen,
+    transition and interaction below runs for real. There is no backend: the
+    listings are a fixed array at the bottom of this file.
+
+  The thesis, which the UI is built to express
+    Most local rentals are traded in Facebook groups. That is not a listings
+    problem, it is a trust and freshness problem. So the three things the
+    portals and the groups both fail at are the three things given the most
+    visual weight here:
+
+      1. Freshness   Every card states when the landlord last confirmed the
+                     place is still free. Anything past 14 days is marked
+                     stale and drops down the list. Facebook posts never expire.
+      2. Verified    A landlord who has had their ID checked is badged. An
+                     unbadged listing is still shown, and still labelled.
+      3. Deposit     Shown on the card, not buried in a chat. Deposit terms are
+                     the single most common surprise in a Khmer rental.
+
+  Khmer first
+    The language toggle is real. Khmer is the default because the people
+    priced out of the agent portals are searching in Khmer.
+
+  Not built yet
+    Auth, payments, chat, map view, landlord dashboard, photo upload.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'"
+      href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"></noscript>
+
+<style>
+/* ================================================================ tokens */
+:root {
+  --brand:        #0B5F4A;
+  --brand-press:  #08483A;
+  --brand-wash:   #E6F1ED;
+  --on-brand:     #FFFFFF;
+
+  --bg:           #F5F6F4;
+  --surface:      #FFFFFF;
+  --surface-2:    #FAFAF9;
+  --ink:          #14171A;
+  --ink-2:        #5B6470;
+  --ink-3:        #8A93A0;
+  --line:         #E6E8E6;
+
+  --ok:           #0B7A4B;
+  --ok-wash:      #E4F4EC;
+  --warn:         #9A5B00;
+  --warn-wash:    #FBF0DC;
+  --dead:         #6B7280;
+  --dead-wash:    #EEEFF1;
+
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-full: 999px;
+
+  --sh-1: 0 1px 2px rgba(16,24,32,.06), 0 0 0 1px rgba(16,24,32,.04);
+  --sh-2: 0 6px 16px -6px rgba(16,24,32,.16), 0 0 0 1px rgba(16,24,32,.04);
+  --sh-3: 0 -8px 32px -8px rgba(16,24,32,.22);
+
+  --ease:     cubic-bezier(.22, 1, .36, 1);
+  --ease-in:  cubic-bezier(.4, 0, 1, 1);
+  --spring:   linear(0,.42 7.2%,.74 14.6%,.955 22.4%,1.032,1.07 32%,1.075,1.066 41%,1.026 54%,1.006 66%,1);
+
+  --tab-h: 66px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --brand:       #4FBFA0;
+    --brand-press: #6FD3B6;
+    --brand-wash:  #12312A;
+    --on-brand:    #06231C;
+
+    --bg:          #0D0F11;
+    --surface:     #16191C;
+    --surface-2:   #1C2023;
+    --ink:         #ECEFF1;
+    --ink-2:       #A2ABB5;
+    --ink-3:       #78828D;
+    --line:        #262B2F;
+
+    --ok:          #5CCB8F;
+    --ok-wash:     #10301F;
+    --warn:        #E0B060;
+    --warn-wash:   #33280F;
+    --dead:        #8A929B;
+    --dead-wash:   #22262A;
+
+    --sh-1: 0 1px 2px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.05);
+    --sh-2: 0 6px 16px -6px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05);
+    --sh-3: 0 -8px 32px -8px rgba(0,0,0,.7);
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: #1A1D1F;
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+html[lang="km"] body { font-family: "Kantumruy Pro", "Plus Jakarta Sans", sans-serif; }
+
+img { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+:where(button, a, input, select):focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* ============================================================ phone shell
+   A frame on a desktop so the prototype can be shown to someone, and
+   full bleed on an actual handset where the frame would be silly. */
+.stage {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(900px 500px at 50% -10%, #24282B, #131517 70%);
+}
+.phone {
+  position: relative;
+  width: 390px;
+  height: 844px;
+  max-height: calc(100dvh - 48px);
+  background: var(--bg);
+  border-radius: 46px;
+  box-shadow: 0 0 0 10px #0A0C0D, 0 0 0 12px #2A2E31, 0 40px 80px -20px rgba(0,0,0,.7);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.notch {
+  position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
+  width: 122px; height: 30px; background: #0A0C0D; border-radius: var(--r-full); z-index: 60;
+}
+
+@media (max-width: 480px) {
+  .stage { padding: 0; background: var(--bg); }
+  .phone {
+    width: 100%; height: 100dvh; max-height: none;
+    border-radius: 0; box-shadow: none;
+  }
+  .notch { display: none; }
+}
+
+/* =============================================================== screens */
+.screens { position: relative; flex: 1; overflow: hidden; }
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  overflow: hidden;
+}
+.screen[hidden] { display: none; }
+
+/* Push and pop. Two named animations rather than one reversed, because a
+   pop should feel lighter than a push: the user is going back to something
+   they have already seen. */
+.js .screen.is-pushing  { animation: push-in 300ms var(--ease) both; }
+.js .screen.is-popping  { animation: pop-out 240ms var(--ease-in) both; z-index: 5; }
+.js .screen.is-behind   { animation: settle-back 300ms var(--ease) both; }
+
+@keyframes push-in     { from { transform: translateX(100%); }             to { transform: none; } }
+@keyframes pop-out     { from { transform: none; }                          to { transform: translateX(100%); } }
+@keyframes settle-back { from { transform: none; filter: brightness(1); }   to { transform: translateX(-22%); filter: brightness(.94); } }
+
+.scroll {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(var(--tab-h) + 16px);
+}
+
+/* ================================================================ header */
+.top {
+  padding: 52px 18px 12px;
+  background: var(--bg);
+  position: sticky; top: 0; z-index: 20;
+}
+@media (max-width: 480px) { .top { padding-top: max(20px, env(safe-area-inset-top)); } }
+
+.brandline { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.wordmark { display: flex; align-items: baseline; gap: 7px; }
+.wordmark b { font-size: 21px; font-weight: 700; letter-spacing: -.02em; }
+.wordmark span { font-size: 12px; color: var(--ink-3); }
+
+.lang {
+  display: flex; align-items: center; gap: 2px;
+  background: var(--surface); border-radius: var(--r-full);
+  padding: 3px; box-shadow: var(--sh-1);
+}
+.lang button {
+  font-size: 12px; font-weight: 600; padding: 5px 11px;
+  border-radius: var(--r-full); color: var(--ink-3);
+  transition: color 160ms var(--ease), background-color 160ms var(--ease);
+}
+.lang button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); }
+
+.searchbar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface); border-radius: var(--r-full);
+  padding: 12px 16px; box-shadow: var(--sh-1);
+}
+.searchbar input { flex: 1; border: 0; background: none; font: inherit; font-size: 14px; color: var(--ink); min-width: 0; }
+.searchbar input::placeholder { color: var(--ink-3); }
+.icon { width: 19px; height: 19px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+.filterbtn {
+  display: flex; align-items: center; gap: 6px;
+  color: var(--brand); font-size: 13px; font-weight: 600;
+  transition: transform 120ms var(--ease);
+}
+.filterbtn:active { transform: scale(.95); }
+.filterbtn .count {
+  background: var(--brand); color: var(--on-brand);
+  font-size: 10px; font-weight: 700; min-width: 16px; height: 16px;
+  border-radius: var(--r-full); display: grid; place-items: center; padding: 0 4px;
+}
+
+/* chips */
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 12px 18px 4px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; padding: 8px 14px; border-radius: var(--r-full);
+  background: var(--surface); box-shadow: var(--sh-1);
+  font-size: 13px; font-weight: 500; color: var(--ink-2);
+  transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 120ms var(--ease);
+}
+.chip:active { transform: scale(.96); }
+.chip[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); box-shadow: none; }
+
+.resultline { padding: 14px 18px 6px; font-size: 13px; color: var(--ink-2); display: flex; justify-content: space-between; align-items: baseline; }
+.resultline b { color: var(--ink); font-weight: 600; }
+
+/* ================================================================= cards */
+.feed { display: grid; gap: 14px; padding: 8px 18px 0; }
+
+.card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-1);
+  overflow: hidden;
+  text-align: left;
+  width: 100%;
+  display: block;
+  transition: transform 140ms var(--ease), box-shadow 200ms var(--ease);
+}
+.card:active { transform: scale(.985); box-shadow: var(--sh-2); }
+.card.is-stale { opacity: .72; }
+
+.card-media { position: relative; aspect-ratio: 4 / 3; background: var(--surface-2); }
+.card-media img { width: 100%; height: 100%; object-fit: cover; }
+
+.save {
+  position: absolute; top: 10px; right: 10px;
+  width: 36px; height: 36px; border-radius: var(--r-full);
+  background: rgba(255,255,255,.92); color: #14171A;
+  display: grid; place-items: center; box-shadow: var(--sh-1);
+  transition: transform 200ms var(--spring);
+}
+.save:active { transform: scale(.88); }
+.save.is-on { color: #D6335A; }
+.save.is-on .icon { fill: #D6335A; stroke: #D6335A; }
+.save.just-saved { transform: scale(1.18); }
+
+.stamp {
+  position: absolute; left: 10px; bottom: 10px;
+  display: flex; gap: 6px;
+}
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 9px; border-radius: var(--r-full);
+  font-size: 11px; font-weight: 600; letter-spacing: .01em;
+  backdrop-filter: blur(6px);
+}
+.badge .icon { width: 13px; height: 13px; stroke-width: 2.2; }
+.badge-ok   { background: var(--ok-wash);   color: var(--ok); }
+.badge-warn { background: var(--warn-wash); color: var(--warn); }
+.badge-dead { background: var(--dead-wash); color: var(--dead); }
+.badge-solid{ background: rgba(255,255,255,.94); color: #14171A; }
+
+.card-body { padding: 13px 15px 15px; }
+.price { display: flex; align-items: baseline; gap: 7px; margin-bottom: 3px; }
+.price b { font-size: 19px; font-weight: 700; letter-spacing: -.02em; }
+.price span { font-size: 12px; color: var(--ink-3); }
+
+.card-title { font-size: 14px; font-weight: 600; margin: 0 0 2px; }
+.card-where { font-size: 13px; color: var(--ink-2); margin: 0 0 10px; }
+
+.facts { display: flex; flex-wrap: wrap; gap: 6px; }
+.fact {
+  font-size: 11.5px; font-weight: 500; color: var(--ink-2);
+  background: var(--surface-2); border-radius: var(--r-sm);
+  padding: 4px 8px;
+}
+.fact.deposit { color: var(--brand); background: var(--brand-wash); font-weight: 600; }
+
+/* skeletons */
+.sk { background: var(--surface); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-1); }
+.sk-media { aspect-ratio: 4 / 3; }
+.sk-line { height: 12px; border-radius: 6px; margin: 12px 15px; }
+.sk-media, .sk-line { background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 37%, var(--surface-2) 63%); background-size: 400% 100%; }
+.js .sk-media, .js .sk-line { animation: shimmer 1.4s ease-in-out infinite; }
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+/* ================================================================ detail */
+.detail-media { position: relative; height: 300px; background: var(--surface-2); flex: none; }
+.detail-media img { width: 100%; height: 100%; object-fit: cover; }
+.detail-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.42) 0%, transparent 34%); }
+
+.backbtn {
+  position: absolute; top: 52px; left: 16px; z-index: 3;
+  width: 38px; height: 38px; border-radius: var(--r-full);
+  background: rgba(255,255,255,.94); color: #14171A;
+  display: grid; place-items: center; box-shadow: var(--sh-1);
+  transition: transform 120ms var(--ease);
+}
+.backbtn:active { transform: scale(.9); }
+@media (max-width: 480px) { .backbtn { top: max(20px, env(safe-area-inset-top)); } }
+
+.dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
+.dot { width: 6px; height: 6px; border-radius: var(--r-full); background: rgba(255,255,255,.55); transition: width 220ms var(--ease), background-color 220ms var(--ease); }
+.dot.is-on { width: 18px; background: #fff; }
+
+.sheetcard {
+  background: var(--bg);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  margin-top: -20px;
+  position: relative;
+  padding: 20px 18px 0;
+}
+
+.d-price { display: flex; align-items: baseline; gap: 8px; }
+.d-price b { font-size: 27px; font-weight: 700; letter-spacing: -.03em; }
+.d-price span { font-size: 13px; color: var(--ink-3); }
+.d-title { font-size: 17px; font-weight: 600; margin: 8px 0 3px; }
+.d-where { font-size: 14px; color: var(--ink-2); margin: 0 0 14px; }
+
+.panel { background: var(--surface); border-radius: var(--r-md); box-shadow: var(--sh-1); padding: 15px; margin-bottom: 12px; }
+.panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3); margin: 0 0 11px; font-weight: 600; }
+
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 9px 12px; font-size: 14px; }
+.kv dt { color: var(--ink-2); margin: 0; }
+.kv dd { margin: 0; font-weight: 600; text-align: right; }
+
+.who { display: flex; align-items: center; gap: 12px; }
+.avatar { width: 42px; height: 42px; border-radius: var(--r-full); background: var(--brand-wash); color: var(--brand); display: grid; place-items: center; font-weight: 700; font-size: 15px; flex: none; }
+.who-name { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.who-sub { font-size: 12.5px; color: var(--ink-2); margin-top: 1px; }
+
+.amenities { display: flex; flex-wrap: wrap; gap: 7px; }
+
+.trustnote {
+  font-size: 12.5px; color: var(--ink-2); line-height: 1.55;
+  background: var(--warn-wash); color: var(--warn);
+  border-radius: var(--r-md); padding: 12px 14px; margin-bottom: 12px;
+}
+
+/* ================================================================== bars */
+.actionbar {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 30;
+  display: flex; gap: 10px; align-items: center;
+  padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+}
+.btn {
+  flex: 1; min-height: 50px; border-radius: var(--r-md);
+  font-size: 15px; font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition: transform 120ms var(--ease), background-color 160ms var(--ease), opacity 160ms var(--ease);
+}
+.btn:active { transform: scale(.975); }
+.btn-primary { background: var(--brand); color: var(--on-brand); }
+.btn-primary:active { background: var(--brand-press); }
+.btn-ghost { flex: none; width: 50px; background: var(--surface); box-shadow: var(--sh-1); }
+
+.tabs {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 40;
+  height: calc(var(--tab-h) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+}
+.tab {
+  display: grid; place-items: center; gap: 3px;
+  font-size: 10.5px; font-weight: 500; color: var(--ink-3);
+  transition: color 160ms var(--ease);
+}
+.tab .icon { width: 22px; height: 22px; transition: transform 240ms var(--spring); }
+.tab[aria-selected="true"] { color: var(--brand); }
+.tab[aria-selected="true"] .icon { transform: translateY(-1px) scale(1.08); }
+.tab:active .icon { transform: scale(.86); }
+
+/* ================================================================= sheet */
+.scrim {
+  position: absolute; inset: 0; z-index: 50;
+  background: rgba(10,14,16,.42);
+  opacity: 0;
+  transition: opacity 260ms var(--ease);
+}
+.scrim.is-open { opacity: 1; }
+.scrim[hidden] { display: none; }
+
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 51;
+  background: var(--surface);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  box-shadow: var(--sh-3);
+  padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform 380ms var(--spring);
+  max-height: 78%;
+  overflow-y: auto;
+}
+.sheet.is-open { transform: none; }
+.sheet[hidden] { display: none; }
+
+.grabber { width: 38px; height: 4px; border-radius: var(--r-full); background: var(--line); margin: 4px auto 16px; }
+.sheet h2 { font-size: 17px; margin: 0 0 4px; }
+.sheet .sub { font-size: 13px; color: var(--ink-2); margin: 0 0 18px; }
+
+.field { margin-bottom: 20px; }
+.field > label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 9px; }
+.field .val { color: var(--brand); }
+
+input[type="range"] { width: 100%; accent-color: var(--brand); }
+
+.seg { display: grid; grid-auto-flow: column; gap: 7px; }
+.seg button {
+  padding: 11px 0; border-radius: var(--r-sm);
+  background: var(--surface-2); font-size: 13.5px; font-weight: 600; color: var(--ink-2);
+  transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 120ms var(--ease);
+}
+.seg button:active { transform: scale(.96); }
+.seg button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); }
+
+.sheet-actions { display: flex; gap: 10px; }
+
+/* ================================================================ states */
+.empty { padding: 64px 32px; text-align: center; color: var(--ink-2); }
+.empty .big { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.empty p { font-size: 13.5px; margin: 0 0 18px; line-height: 1.6; }
+
+.toast {
+  position: absolute; left: 18px; right: 18px; z-index: 70;
+  bottom: calc(var(--tab-h) + 16px);
+  background: #14171A; color: #fff;
+  border-radius: var(--r-md); padding: 13px 16px;
+  font-size: 13.5px; font-weight: 500;
+  box-shadow: var(--sh-2);
+  transform: translateY(16px); opacity: 0;
+  transition: transform 300ms var(--ease), opacity 300ms var(--ease);
+  pointer-events: none;
+}
+.toast.is-up { transform: none; opacity: 1; }
+
+/* ================================================== shared element flight
+   The card photo flies into the detail header. One element, positioned
+   absolutely over everything, animated once and then removed. */
+.flier {
+  position: absolute; z-index: 80;
+  overflow: hidden; pointer-events: none;
+  will-change: transform, width, height, border-radius;
+}
+.flier img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ============================================================== a11y off */
+@media (prefers-reduced-motion: reduce) {
+  .js .screen.is-pushing, .js .screen.is-popping, .js .screen.is-behind { animation: none; }
+  .js .sk-media, .js .sk-line { animation: none; }
+  .sheet { transition: none; }
+  .scrim { transition: none; }
+  .toast { transition: none; }
+  .card:active, .btn:active, .tab:active .icon, .save:active, .chip:active { transform: none; }
+  .flier { display: none; }
+  * { scroll-behavior: auto; }
+}
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+
+<body>
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2.2" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="2.2" fill="currentColor" stroke="none"/><circle cx="8" cy="18" r="2.2" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.6-7-9.4A4.1 4.1 0 0 1 12 7a4.1 4.1 0 0 1 7 3.6C19 15.4 12 20 12 20z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.4-3.6 4.2-5.3 7.5-5.3s6.1 1.7 7.5 5.3"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.5 4h3l1.5 4-2 1.4a12 12 0 0 0 5.6 5.6L16 13l4 1.5v3a2 2 0 0 1-2.2 2A15.8 15.8 0 0 1 4.5 6.2 2 2 0 0 1 6.5 4z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.5l7 2.7v5.2c0 4.3-2.9 7.6-7 9.1-4.1-1.5-7-4.8-7-9.1V6.2z"/><path d="M9 12l2.2 2.2L15.5 10"/></symbol>
+  </defs>
+</svg>
+
+<div class="stage">
+<div class="phone" id="phone">
+  <div class="notch"></div>
+
+  <div class="screens" id="screens">
+
+    <!-- ========================================================= EXPLORE -->
+    <section class="screen" id="s-explore" aria-label="Explore">
+      <header class="top">
+        <div class="brandline">
+          <div class="wordmark"><b>ផ្ទះ Ptas</b><span data-t="tagline">rentals people actually answer</span></div>
+          <div class="lang" role="group" aria-label="Language">
+            <button type="button" data-lang="km" aria-pressed="true">ខ្មែរ</button>
+            <button type="button" data-lang="en" aria-pressed="false">EN</button>
+          </div>
+        </div>
+        <div class="searchbar">
+          <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+          <input id="q" type="search" data-t-ph="searchPh" placeholder="Toul Kork, BKK, Sen Sok" aria-label="Search area">
+          <button class="filterbtn" type="button" id="open-filters">
+            <svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg>
+            <span data-t="filters">Filters</span>
+            <span class="count" id="filter-count" hidden>0</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="scroll" id="explore-scroll">
+        <div class="chips" role="group" aria-label="Quick filters">
+          <button class="chip" type="button" data-quick="verified" aria-pressed="false" data-t="qVerified">Verified only</button>
+          <button class="chip" type="button" data-quick="fresh" aria-pressed="false" data-t="qFresh">Confirmed this week</button>
+          <button class="chip" type="button" data-quick="nodeposit" aria-pressed="false" data-t="qLowDeposit">1 month deposit</button>
+          <button class="chip" type="button" data-quick="furnished" aria-pressed="false" data-t="qFurnished">Furnished</button>
+        </div>
+
+        <div class="resultline">
+          <span id="result-count">&nbsp;</span>
+          <span id="stale-note" class="sr"></span>
+        </div>
+
+        <div class="feed" id="feed"></div>
+        <div class="empty" id="empty" hidden>
+          <p class="big" data-t="emptyTitle">Nothing matches that</p>
+          <p data-t="emptyBody">Try widening the price, or turn off verified only. Most landlords verify within a week of posting.</p>
+          <button class="btn btn-primary" type="button" id="clear-all" style="max-width:200px;margin:0 auto" data-t="clearAll">Clear filters</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================== SAVED -->
+    <section class="screen" id="s-saved" hidden aria-label="Saved">
+      <header class="top">
+        <div class="brandline"><div class="wordmark"><b data-t="savedTitle">Saved</b></div></div>
+      </header>
+      <div class="scroll">
+        <div class="feed" id="saved-feed"></div>
+        <div class="empty" id="saved-empty">
+          <p class="big" data-t="savedEmptyTitle">No saved places yet</p>
+          <p data-t="savedEmptyBody">Tap the heart on any listing. Saved places tell you when the price changes or the landlord stops confirming.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ POST -->
+    <section class="screen" id="s-post" hidden aria-label="Post a listing">
+      <header class="top">
+        <div class="brandline"><div class="wordmark"><b data-t="postTitle">Post a room</b></div></div>
+      </header>
+      <div class="scroll" style="padding:0 18px">
+        <div class="panel">
+          <h3 data-t="postStepsTitle">Three steps, about four minutes</h3>
+          <dl class="kv">
+            <dt data-t="postStep1">Photos and address</dt><dd>1</dd>
+            <dt data-t="postStep2">Price and deposit</dt><dd>2</dd>
+            <dt data-t="postStep3">Verify your ID</dt><dd>3</dd>
+          </dl>
+        </div>
+        <div class="trustnote" data-t="postNote">
+          Listings expire after 14 days unless you confirm the room is still free. One tap keeps it live. This is the whole reason renters trust this over a Facebook post.
+        </div>
+        <button class="btn btn-primary" type="button" id="post-start" data-t="postStart">Start a listing</button>
+      </div>
+    </section>
+
+    <!-- ============================================================== ME -->
+    <section class="screen" id="s-me" hidden aria-label="Account">
+      <header class="top">
+        <div class="brandline"><div class="wordmark"><b data-t="meTitle">You</b></div></div>
+      </header>
+      <div class="scroll" style="padding:0 18px">
+        <div class="panel">
+          <div class="who">
+            <div class="avatar">S</div>
+            <div>
+              <div class="who-name">Sokha</div>
+              <div class="who-sub" data-t="meSub">Renting in Toul Kork since 2024</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3 data-t="mePrefs">Preferences</h3>
+          <dl class="kv">
+            <dt data-t="meLang">Language</dt><dd id="me-lang">ខ្មែរ</dd>
+            <dt data-t="meAlerts">Price alerts</dt><dd data-t="on">On</dd>
+            <dt data-t="meArea">Usual area</dt><dd>Toul Kork</dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== DETAIL -->
+    <section class="screen" id="s-detail" hidden aria-label="Listing">
+      <div class="scroll" id="detail-scroll" style="padding-bottom:96px">
+        <div class="detail-media">
+          <img id="d-photo" alt="">
+          <div class="detail-scrim"></div>
+          <button class="backbtn" type="button" id="back" aria-label="Back">
+            <svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>
+          </button>
+          <div class="dots" id="d-dots"></div>
+        </div>
+
+        <div class="sheetcard">
+          <div class="d-price"><b id="d-price"></b><span data-t="perMonth">/ month</span></div>
+          <h1 class="d-title" id="d-title"></h1>
+          <p class="d-where" id="d-where"></p>
+
+          <div class="stamp" style="position:static;margin-bottom:14px" id="d-badges"></div>
+
+          <div class="trustnote" id="d-fresh"></div>
+
+          <div class="panel">
+            <h3 data-t="theMoney">The money</h3>
+            <dl class="kv" id="d-money"></dl>
+          </div>
+
+          <div class="panel">
+            <h3 data-t="theRoom">The room</h3>
+            <div class="amenities" id="d-amenities"></div>
+          </div>
+
+          <div class="panel">
+            <h3 data-t="theLandlord">The landlord</h3>
+            <div class="who">
+              <div class="avatar" id="d-initial"></div>
+              <div>
+                <div class="who-name" id="d-landlord"></div>
+                <div class="who-sub" id="d-landlord-sub"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actionbar">
+        <button class="btn btn-ghost" type="button" id="d-save" aria-label="Save">
+          <svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>
+        </button>
+        <button class="btn btn-primary" type="button" id="d-contact">
+          <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>
+          <span data-t="contact">Contact landlord</span>
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ============================================================= tabs -->
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Main">
+    <button class="tab" type="button" role="tab" data-tab="s-explore" aria-selected="true">
+      <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span data-t="tabExplore">Explore</span>
+    </button>
+    <button class="tab" type="button" role="tab" data-tab="s-saved" aria-selected="false">
+      <svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg><span data-t="tabSaved">Saved</span>
+    </button>
+    <button class="tab" type="button" role="tab" data-tab="s-post" aria-selected="false">
+      <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span data-t="tabPost">Post</span>
+    </button>
+    <button class="tab" type="button" role="tab" data-tab="s-me" aria-selected="false">
+      <svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span data-t="tabMe">You</span>
+    </button>
+  </nav>
+
+  <!-- ============================================================ sheet -->
+  <div class="scrim" id="scrim" hidden></div>
+  <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="grabber"></div>
+    <h2 id="sheet-title" data-t="filterTitle">Filters</h2>
+    <p class="sub" data-t="filterSub">Everything here is a real filter over the listings.</p>
+
+    <div class="field">
+      <label for="f-price"><span data-t="fMax">Maximum rent</span> <span class="val" id="f-price-val">$400</span></label>
+      <input id="f-price" type="range" min="80" max="600" step="10" value="600">
+    </div>
+
+    <div class="field">
+      <label data-t="fBeds">Bedrooms</label>
+      <div class="seg" role="group" id="f-beds">
+        <button type="button" data-beds="any" aria-pressed="true" data-t="any">Any</button>
+        <button type="button" data-beds="1" aria-pressed="false">1</button>
+        <button type="button" data-beds="2" aria-pressed="false">2</button>
+        <button type="button" data-beds="3" aria-pressed="false">3+</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label data-t="fType">Type</label>
+      <div class="seg" role="group" id="f-type">
+        <button type="button" data-type="any" aria-pressed="true" data-t="any">Any</button>
+        <button type="button" data-type="room" aria-pressed="false" data-t="tRoom">Room</button>
+        <button type="button" data-type="apartment" aria-pressed="false" data-t="tApt">Apartment</button>
+        <button type="button" data-type="house" aria-pressed="false" data-t="tHouse">House</button>
+      </div>
+    </div>
+
+    <div class="sheet-actions">
+      <button class="btn btn-ghost" type="button" id="f-reset" style="flex:1;width:auto" data-t="reset">Reset</button>
+      <button class="btn btn-primary" type="button" id="f-apply" data-t="showResults">Show results</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  document.documentElement.classList.add("js");
+
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ============================================================== content
+     A fixed set of listings. Prices, areas and deposit terms are typical of
+     Phnom Penh in 2026. lastConfirmed is days since the landlord last said
+     the place is still free, which is the number this product is built on. */
+  var LISTINGS = [
+    { id:"tk-1", title:{en:"Bright studio near Toul Kork market", km:"បន្ទប់ស្ទូឌីយោ ជិតផ្សារទួលគោក"},
+      area:{en:"Toul Kork, Phnom Penh", km:"ទួលគោក ភ្នំពេញ"}, price:180, beds:0, type:"room", size:28,
+      deposit:1, verified:true, lastConfirmed:1, furnished:true,
+      landlord:{name:"Chan Sophal", since:2021, listings:3},
+      amenities:{en:["Furnished","Air con","Wi-Fi included","Private bathroom","2nd floor"],
+                 km:["មានគ្រឿងសង្ហារិម","ម៉ាស៊ីនត្រជាក់","វ៉ាយហ្វាយ","បន្ទប់ទឹកឯកជន","ជាន់ទី២"]},
+      photos:["toulkork-studio-a","toulkork-studio-b","toulkork-studio-c"] },
+
+    { id:"bkk3-1", title:{en:"One bedroom with balcony, BKK3", km:"អាផាតមិន ១បន្ទប់ មានយ៉រ បឹងកេងកង៣"},
+      area:{en:"Boeung Keng Kang 3", km:"បឹងកេងកង៣"}, price:320, beds:1, type:"apartment", size:45,
+      deposit:2, verified:true, lastConfirmed:3, furnished:true,
+      landlord:{name:"Meas Dara", since:2019, listings:8},
+      amenities:{en:["Furnished","Balcony","Lift","Security guard","Parking"],
+                 km:["មានគ្រឿងសង្ហារិម","យ៉រ","ជណ្តើរយន្ត","អ្នកយាម","ចំណតរថយន្ត"]},
+      photos:["bkk3-balcony-a","bkk3-balcony-b","bkk3-balcony-c"] },
+
+    { id:"ss-1", title:{en:"Two bedroom flat, Sen Sok", km:"ផ្ទះល្វែង ២បន្ទប់ សែនសុខ"},
+      area:{en:"Sen Sok, Phnom Penh", km:"សែនសុខ ភ្នំពេញ"}, price:250, beds:2, type:"apartment", size:60,
+      deposit:1, verified:false, lastConfirmed:2, furnished:false,
+      landlord:{name:"Ly Sreyneang", since:2023, listings:1},
+      amenities:{en:["Unfurnished","Kitchen","Water included","Ground floor"],
+                 km:["គ្មានគ្រឿងសង្ហារិម","ផ្ទះបាយ","រួមបញ្ចូលទឹក","ជាន់ផ្ទាល់ដី"]},
+      photos:["sensok-flat-a","sensok-flat-b"] },
+
+    { id:"rm-1", title:{en:"Room above a coffee shop, Russian Market", km:"បន្ទប់ជួល ខាងលើហាងកាហ្វេ ផ្សារទួលទំពូង"},
+      area:{en:"Toul Tom Poung", km:"ទួលទំពូង"}, price:140, beds:0, type:"room", size:22,
+      deposit:1, verified:true, lastConfirmed:6, furnished:true,
+      landlord:{name:"Kim Bunthoeun", since:2022, listings:2},
+      amenities:{en:["Furnished","Shared bathroom","Wi-Fi included","3rd floor, no lift"],
+                 km:["មានគ្រឿងសង្ហារិម","បន្ទប់ទឹករួម","វ៉ាយហ្វាយ","ជាន់ទី៣ គ្មានជណ្តើរយន្ត"]},
+      photos:["russianmarket-room-a","russianmarket-room-b"] },
+
+    { id:"cc-1", title:{en:"Riverside house, Chroy Changvar", km:"ផ្ទះមាត់ទន្លេ ជ្រោយចង្វារ"},
+      area:{en:"Chroy Changvar", km:"ជ្រោយចង្វារ"}, price:450, beds:3, type:"house", size:110,
+      deposit:2, verified:true, lastConfirmed:4, furnished:false,
+      landlord:{name:"Pen Chanthou", since:2018, listings:5},
+      amenities:{en:["Unfurnished","Garden","Parking for 2","Quiet street"],
+                 km:["គ្មានគ្រឿងសង្ហារិម","សួនច្បារ","ចំណតរថយន្ត ២","ផ្លូវស្ងាត់"]},
+      photos:["chroychangvar-house-a","chroychangvar-house-b","chroychangvar-house-c"] },
+
+    { id:"ca-1", title:{en:"Cheap room, Chbar Ampov", km:"បន្ទប់ជួលថោក ច្បារអំពៅ"},
+      area:{en:"Chbar Ampov", km:"ច្បារអំពៅ"}, price:95, beds:0, type:"room", size:18,
+      deposit:1, verified:false, lastConfirmed:19, furnished:false,
+      landlord:{name:"Sok Vanna", since:2024, listings:1},
+      amenities:{en:["Unfurnished","Shared bathroom","Fan only"],
+                 km:["គ្មានគ្រឿងសង្ហារិម","បន្ទប់ទឹករួម","មានតែកង្ហារ"]},
+      photos:["chbarampov-room-a"] },
+
+    { id:"tk-2", title:{en:"Quiet 2 bed near Institute of Technology", km:"អាផាតមិន ២បន្ទប់ ជិតវិទ្យាស្ថានបច្ចេកវិទ្យា"},
+      area:{en:"Toul Kork, Phnom Penh", km:"ទួលគោក ភ្នំពេញ"}, price:280, beds:2, type:"apartment", size:55,
+      deposit:1, verified:true, lastConfirmed:0, furnished:true,
+      landlord:{name:"Nou Sokhem", since:2020, listings:4},
+      amenities:{en:["Furnished","Air con","Study desk","Wi-Fi included","Lift"],
+                 km:["មានគ្រឿងសង្ហារិម","ម៉ាស៊ីនត្រជាក់","តុសិក្សា","វ៉ាយហ្វាយ","ជណ្តើរយន្ត"]},
+      photos:["toulkork-2bed-a","toulkork-2bed-b","toulkork-2bed-c"] },
+
+    { id:"bkk1-1", title:{en:"Serviced one bed, BKK1", km:"អាផាតមិនសេវាកម្ម ១បន្ទប់ បឹងកេងកង១"},
+      area:{en:"Boeung Keng Kang 1", km:"បឹងកេងកង១"}, price:520, beds:1, type:"apartment", size:50,
+      deposit:2, verified:true, lastConfirmed:8, furnished:true,
+      landlord:{name:"Tep Marina", since:2017, listings:12},
+      amenities:{en:["Furnished","Cleaning included","Gym","Pool","Lift"],
+                 km:["មានគ្រឿងសង្ហារិម","រួមបញ្ចូលការសម្អាត","កន្លែងហាត់ប្រាណ","អាងហែលទឹក","ជណ្តើរយន្ត"]},
+      photos:["bkk1-serviced-a","bkk1-serviced-b"] }
+  ];
+
+  var photoUrl = function (seed, w, h) {
+    return "https://picsum.photos/seed/" + seed + "/" + (w || 800) + "/" + (h || 600);
+  };
+
+  /* ================================================================ i18n */
+  var T = {
+    km: {
+      tagline:"ជួលផ្ទះដែលគេឆ្លើយតបពិត", filters:"តម្រង", searchPh:"ទួលគោក, បឹងកេងកង, សែនសុខ",
+      qVerified:"បានផ្ទៀងផ្ទាត់", qFresh:"បញ្ជាក់សប្តាហ៍នេះ", qLowDeposit:"កក់ ១ខែ", qFurnished:"មានគ្រឿងសង្ហារិម",
+      tabExplore:"ស្វែងរក", tabSaved:"រក្សាទុក", tabPost:"ដាក់ផ្សាយ", tabMe:"អ្នក",
+      savedTitle:"បានរក្សាទុក", savedEmptyTitle:"មិនទាន់មានផ្ទះរក្សាទុក",
+      savedEmptyBody:"ចុចរូបបេះដូងលើផ្ទះណាមួយ។ យើងនឹងប្រាប់អ្នកពេលតម្លៃប្តូរ ឬម្ចាស់ផ្ទះឈប់បញ្ជាក់។",
+      postTitle:"ដាក់ផ្សាយបន្ទប់", postStepsTitle:"បីជំហាន ប្រហែល ៤នាទី",
+      postStep1:"រូបភាព និងអាសយដ្ឋាន", postStep2:"តម្លៃ និងប្រាក់កក់", postStep3:"ផ្ទៀងផ្ទាត់អត្តសញ្ញាណ",
+      postNote:"ការផ្សាយផុតកំណត់ក្នុង ១៤ថ្ងៃ លុះត្រាតែអ្នកបញ្ជាក់ថាបន្ទប់នៅទំនេរ។ ចុចមួយដងគឺគ្រប់គ្រាន់។",
+      postStart:"ចាប់ផ្តើមផ្សាយ", meTitle:"អ្នក", meSub:"ជួលនៅទួលគោក តាំងពីឆ្នាំ២០២៤",
+      mePrefs:"ការកំណត់", meLang:"ភាសា", meAlerts:"ជូនដំណឹងតម្លៃ", meArea:"តំបន់ធម្មតា", on:"បើក",
+      perMonth:"/ ខែ", theMoney:"រឿងលុយ", theRoom:"បន្ទប់", theLandlord:"ម្ចាស់ផ្ទះ", contact:"ទាក់ទងម្ចាស់ផ្ទះ",
+      filterTitle:"តម្រង", filterSub:"តម្រងទាំងអស់ដំណើរការពិតប្រាកដ។",
+      fMax:"តម្លៃជួលអតិបរមា", fBeds:"បន្ទប់គេង", fType:"ប្រភេទ", any:"ទាំងអស់",
+      tRoom:"បន្ទប់", tApt:"អាផាតមិន", tHouse:"ផ្ទះ", reset:"កំណត់ឡើងវិញ", showResults:"បង្ហាញលទ្ធផល",
+      emptyTitle:"គ្មានលទ្ធផលត្រូវគ្នា", emptyBody:"សាកល្បងបង្កើនតម្លៃ ឬបិទតម្រងផ្ទៀងផ្ទាត់។", clearAll:"សម្អាតតម្រង",
+      rent:"ថ្លៃជួល", depositWord:"ប្រាក់កក់", months:"ខែ", moveIn:"ត្រូវបង់ពេលចូល",
+      confirmedToday:"ម្ចាស់ផ្ទះបានបញ្ជាក់ថ្ងៃនេះថានៅទំនេរ",
+      confirmedDays:"ម្ចាស់ផ្ទះបានបញ្ជាក់ថានៅទំនេរ កាលពី {n} ថ្ងៃមុន",
+      staleWarn:"មិនបានបញ្ជាក់ {n} ថ្ងៃហើយ។ ការផ្សាយនេះជិតផុតកំណត់។",
+      verified:"ផ្ទៀងផ្ទាត់", unverified:"មិនទាន់ផ្ទៀងផ្ទាត់",
+      landlordSince:"ម្ចាស់ផ្ទះតាំងពី {y} · ការផ្សាយ {n}",
+      results:"{n} កន្លែង", saved:"បានរក្សាទុក", unsaved:"បានដកចេញ",
+      contactToast:"នៅក្នុងកំណែពិត វានឹងបើកការជជែក ឬលេខទូរស័ព្ទ",
+      postToast:"ការដាក់ផ្សាយមិនទាន់មានក្នុងគំរូនេះ", sqm:"ម៉ែត្រការ៉េ", bedsLabel:"បន្ទប់គេង", studio:"ស្ទូឌីយោ"
+    },
+    en: {
+      tagline:"rentals people actually answer", filters:"Filters", searchPh:"Toul Kork, BKK, Sen Sok",
+      qVerified:"Verified only", qFresh:"Confirmed this week", qLowDeposit:"1 month deposit", qFurnished:"Furnished",
+      tabExplore:"Explore", tabSaved:"Saved", tabPost:"Post", tabMe:"You",
+      savedTitle:"Saved", savedEmptyTitle:"No saved places yet",
+      savedEmptyBody:"Tap the heart on any listing. We will tell you when the price changes or the landlord stops confirming.",
+      postTitle:"Post a room", postStepsTitle:"Three steps, about four minutes",
+      postStep1:"Photos and address", postStep2:"Price and deposit", postStep3:"Verify your ID",
+      postNote:"Listings expire after 14 days unless you confirm the room is still free. One tap keeps it live. This is the whole reason renters trust this over a Facebook post.",
+      postStart:"Start a listing", meTitle:"You", meSub:"Renting in Toul Kork since 2024",
+      mePrefs:"Preferences", meLang:"Language", meAlerts:"Price alerts", meArea:"Usual area", on:"On",
+      perMonth:"/ month", theMoney:"The money", theRoom:"The room", theLandlord:"The landlord", contact:"Contact landlord",
+      filterTitle:"Filters", filterSub:"Everything here is a real filter over the listings.",
+      fMax:"Maximum rent", fBeds:"Bedrooms", fType:"Type", any:"Any",
+      tRoom:"Room", tApt:"Apartment", tHouse:"House", reset:"Reset", showResults:"Show results",
+      emptyTitle:"Nothing matches that", emptyBody:"Try widening the price, or turn off verified only.", clearAll:"Clear filters",
+      rent:"Rent", depositWord:"Deposit", months:"months", moveIn:"Due on move in",
+      confirmedToday:"Landlord confirmed it is free today",
+      confirmedDays:"Landlord confirmed it is free {n} days ago",
+      staleWarn:"Not confirmed for {n} days. This listing is close to expiring.",
+      verified:"Verified", unverified:"Not verified",
+      landlordSince:"Landlord since {y} · {n} listings",
+      results:"{n} places", saved:"Saved", unsaved:"Removed",
+      contactToast:"In the real app this opens a chat or reveals the phone number",
+      postToast:"Posting is not built in this prototype", sqm:"sqm", bedsLabel:"bed", studio:"Studio"
+    }
+  };
+
+  var lang = "km";
+  function t(key, vars) {
+    var s = (T[lang] && T[lang][key]) || T.en[key] || key;
+    if (vars) Object.keys(vars).forEach(function (k) { s = s.replace("{" + k + "}", vars[k]); });
+    return s;
+  }
+
+  function applyLang(skipRender) {
+    document.documentElement.setAttribute("lang", lang === "km" ? "km" : "en");
+    document.querySelectorAll("[data-t]").forEach(function (el) {
+      el.textContent = t(el.getAttribute("data-t"));
+    });
+    document.querySelectorAll("[data-t-ph]").forEach(function (el) {
+      el.setAttribute("placeholder", t(el.getAttribute("data-t-ph")));
+    });
+    document.querySelectorAll(".lang button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
+    });
+    document.getElementById("me-lang").textContent = lang === "km" ? "ខ្មែរ" : "English";
+    if (skipRender) return;              // boot paints the skeleton instead
+    render();
+    if (current) openDetail(current, null, true);
+  }
+
+  /* ============================================================== filters */
+  var state = { q:"", maxPrice:600, beds:"any", type:"any", verified:false, fresh:false, lowDeposit:false, furnished:false };
+  var saved = {};
+  var current = null;
+
+  function activeFilterCount() {
+    var n = 0;
+    if (state.maxPrice < 600) n++;
+    if (state.beds !== "any") n++;
+    if (state.type !== "any") n++;
+    if (state.verified) n++;
+    if (state.fresh) n++;
+    if (state.lowDeposit) n++;
+    if (state.furnished) n++;
+    return n;
+  }
+
+  function matches(l) {
+    if (state.q) {
+      var hay = (l.title.en + " " + l.title.km + " " + l.area.en + " " + l.area.km).toLowerCase();
+      if (hay.indexOf(state.q.toLowerCase()) === -1) return false;
+    }
+    if (l.price > state.maxPrice) return false;
+    if (state.beds !== "any") {
+      if (state.beds === "3" ? l.beds < 3 : String(l.beds) !== state.beds) return false;
+    }
+    if (state.type !== "any" && l.type !== state.type) return false;
+    if (state.verified && !l.verified) return false;
+    if (state.fresh && l.lastConfirmed > 7) return false;
+    if (state.lowDeposit && l.deposit > 1) return false;
+    if (state.furnished && !l.furnished) return false;
+    return true;
+  }
+
+  /* Stale listings sink. This ordering is the product in one line. */
+  function ranked(list) {
+    return list.slice().sort(function (a, b) {
+      var as = a.lastConfirmed > 14 ? 1 : 0, bs = b.lastConfirmed > 14 ? 1 : 0;
+      if (as !== bs) return as - bs;
+      if (a.verified !== b.verified) return a.verified ? -1 : 1;
+      return a.lastConfirmed - b.lastConfirmed;
+    });
+  }
+
+  /* =============================================================== render */
+  function freshnessBadge(l) {
+    if (l.lastConfirmed > 14) return { cls:"badge-dead", icon:"i-clock", text:t("staleWarn", { n:l.lastConfirmed }) };
+    if (l.lastConfirmed === 0)  return { cls:"badge-ok",   icon:"i-check", text:t("confirmedToday") };
+    return { cls: l.lastConfirmed > 7 ? "badge-warn" : "badge-ok", icon:"i-clock",
+             text:t("confirmedDays", { n:l.lastConfirmed }) };
+  }
+
+  function shortFresh(l) {
+    if (l.lastConfirmed > 14) return { cls:"badge-dead", icon:"i-clock", text:l.lastConfirmed + "d" };
+    if (l.lastConfirmed === 0)  return { cls:"badge-ok",   icon:"i-check", text:lang === "km" ? "ថ្ងៃនេះ" : "today" };
+    return { cls: l.lastConfirmed > 7 ? "badge-warn" : "badge-ok", icon:"i-clock", text:l.lastConfirmed + "d" };
+  }
+
+  /* Khmer does not pluralise, English does. One helper rather than "1 months". */
+  function monthsWord(n) {
+    if (lang === "km") return "ខែ";
+    return n === 1 ? "month" : "months";
+  }
+
+  function bedLabel(l) {
+    if (l.beds === 0) return t("studio");
+    if (lang === "km") return l.beds + " " + t("bedsLabel");
+    return l.beds + " bed" + (l.beds === 1 ? "" : "s");
+  }
+
+  function cardHTML(l) {
+    var f = shortFresh(l);
+    return '' +
+      '<div class="card-media">' +
+        '<img src="' + photoUrl(l.photos[0], 800, 600) + '" alt="" loading="lazy" data-flip="' + l.id + '">' +
+        '<div class="stamp">' +
+          '<span class="badge ' + f.cls + '"><svg class="icon" aria-hidden="true"><use href="#' + f.icon + '"/></svg>' + f.text + '</span>' +
+          (l.verified ? '<span class="badge badge-solid"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>' + t("verified") + '</span>' : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="card-body">' +
+        '<div class="price"><b>$' + l.price + '</b><span>' + t("perMonth") + '</span></div>' +
+        '<p class="card-title">' + l.title[lang] + '</p>' +
+        '<p class="card-where">' + l.area[lang] + '</p>' +
+        '<div class="facts">' +
+          '<span class="fact">' + bedLabel(l) + '</span>' +
+          '<span class="fact">' + l.size + ' ' + t("sqm") + '</span>' +
+          '<span class="fact deposit">' + t("depositWord") + ' ' + l.deposit + ' ' + monthsWord(l.deposit) + '</span>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function buildCard(l) {
+    /* The card itself is the control. An invisible overlay button would sit
+       in front of the save button and give two controls the same shape. */
+    var wrap = document.createElement("div");
+    wrap.className = "card" + (l.lastConfirmed > 14 ? " is-stale" : "");
+    wrap.setAttribute("role", "button");
+    wrap.setAttribute("tabindex", "0");
+    wrap.setAttribute("data-card", l.id);
+    wrap.setAttribute("aria-label", l.title[lang] + ", $" + l.price + " " + t("perMonth"));
+    wrap.innerHTML = cardHTML(l);
+
+    var openIt = function () { openDetail(l, wrap.querySelector("[data-flip]")); };
+    wrap.addEventListener("click", openIt);
+    wrap.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      e.preventDefault();
+      openIt();
+    });
+
+    var save = document.createElement("button");
+    save.type = "button";
+    save.className = "save" + (saved[l.id] ? " is-on" : "");
+    save.setAttribute("data-save", l.id);
+    save.setAttribute("aria-label", (saved[l.id] ? "Remove " : "Save ") + l.title[lang]);
+    save.setAttribute("aria-pressed", String(!!saved[l.id]));
+    save.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>';
+    save.addEventListener("click", function (e) {
+      e.stopPropagation();          // never open the listing when saving it
+      toggleSave(l.id, save);
+      save.setAttribute("aria-label", (saved[l.id] ? "Remove " : "Save ") + l.title[lang]);
+    });
+    wrap.querySelector(".card-media").appendChild(save);
+
+    return wrap;
+  }
+
+  var feed = document.getElementById("feed");
+  var emptyBox = document.getElementById("empty");
+  var savedFeed = document.getElementById("saved-feed");
+  var savedEmpty = document.getElementById("saved-empty");
+
+  function render() {
+    var list = ranked(LISTINGS.filter(matches));
+    feed.textContent = "";
+    list.forEach(function (l) { feed.appendChild(buildCard(l)); });
+
+    emptyBox.hidden = list.length !== 0;
+    document.getElementById("result-count").textContent = t("results", { n: list.length });
+
+    var count = activeFilterCount();
+    var badge = document.getElementById("filter-count");
+    badge.hidden = count === 0;
+    badge.textContent = String(count);
+
+    renderSaved();
+  }
+
+  function renderSaved() {
+    var list = LISTINGS.filter(function (l) { return saved[l.id]; });
+    savedFeed.textContent = "";
+    list.forEach(function (l) { savedFeed.appendChild(buildCard(l)); });
+    savedEmpty.hidden = list.length !== 0;
+  }
+
+  function toggleSave(id, btn) {
+    saved[id] = !saved[id];
+    if (btn) {
+      btn.classList.toggle("is-on", saved[id]);
+      btn.setAttribute("aria-pressed", String(saved[id]));
+      if (saved[id] && !reduced) {
+        btn.classList.add("just-saved");
+        window.setTimeout(function () { btn.classList.remove("just-saved"); }, 220);
+      }
+    }
+    toast(saved[id] ? t("saved") : t("unsaved"));
+    renderSaved();
+    var d = document.getElementById("d-save");
+    if (current && current.id === id) d.classList.toggle("is-on", saved[id]);
+  }
+
+  /* ============================================================ detail nav
+     Push and pop with a shared element. The card photo is measured, a copy
+     is flown to where the detail photo will be, and then removed. Any
+     failure to measure falls back to a plain push, never to a broken frame. */
+  var screens = document.getElementById("screens");
+  var stack = [];
+
+  function showScreen(id) {
+    screens.querySelectorAll(".screen").forEach(function (s) {
+      s.hidden = s.id !== id;
+      s.classList.remove("is-pushing", "is-popping", "is-behind");
+    });
+  }
+
+  function fly(fromImg, toRect, done) {
+    if (reduced || !fromImg) { done(); return; }
+    var from = fromImg.getBoundingClientRect();
+    var host = document.getElementById("phone").getBoundingClientRect();
+    var flier = document.createElement("div");
+    flier.className = "flier";
+    flier.style.left = (from.left - host.left) + "px";
+    flier.style.top = (from.top - host.top) + "px";
+    flier.style.width = from.width + "px";
+    flier.style.height = from.height + "px";
+    flier.style.borderRadius = "22px";
+    flier.innerHTML = '<img src="' + fromImg.src + '" alt="">';
+    document.getElementById("phone").appendChild(flier);
+
+    // force layout, then animate to the detail header box
+    flier.getBoundingClientRect();
+    flier.style.transition = "all 340ms cubic-bezier(.22,1,.36,1)";
+    flier.style.left = "0px";
+    flier.style.top = "0px";
+    flier.style.width = host.width + "px";
+    flier.style.height = toRect.height + "px";
+    flier.style.borderRadius = "0px";
+
+    var cleared = false;
+    var clear = function () {
+      if (cleared) return;
+      cleared = true;
+      flier.remove();
+      done();
+    };
+    flier.addEventListener("transitionend", clear, { once: true });
+    window.setTimeout(clear, 420);   // never leave a flier stuck on screen
+  }
+
+  function openDetail(l, fromImg, silent) {
+    current = l;
+    paintDetail(l);
+
+    if (silent) return;
+
+    var detail = document.getElementById("s-detail");
+    var showIt = function () {
+      showScreen("s-detail");
+      if (!reduced) detail.classList.add("is-pushing");
+      document.getElementById("detail-scroll").scrollTop = 0;
+      stack.push(activeTab);
+      document.getElementById("tabs").style.display = "none";
+    };
+
+    if (fromImg && !reduced) {
+      fly(fromImg, { height: 300 }, showIt);
+    } else {
+      showIt();
+    }
+  }
+
+  function paintDetail(l) {
+    document.getElementById("d-photo").src = photoUrl(l.photos[0], 900, 700);
+    document.getElementById("d-photo").alt = l.title[lang];
+    document.getElementById("d-price").textContent = "$" + l.price;
+    document.getElementById("d-title").textContent = l.title[lang];
+    document.getElementById("d-where").textContent = l.area[lang];
+
+    var dots = document.getElementById("d-dots");
+    dots.textContent = "";
+    l.photos.forEach(function (_, i) {
+      var d = document.createElement("span");
+      d.className = "dot" + (i === 0 ? " is-on" : "");
+      dots.appendChild(d);
+    });
+
+    var badges = document.getElementById("d-badges");
+    badges.textContent = "";
+    var v = document.createElement("span");
+    v.className = "badge " + (l.verified ? "badge-ok" : "badge-dead");
+    v.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>' +
+                  (l.verified ? t("verified") : t("unverified"));
+    badges.appendChild(v);
+
+    var f = freshnessBadge(l);
+    var fresh = document.getElementById("d-fresh");
+    fresh.textContent = f.text;
+    fresh.style.background = l.lastConfirmed > 7 ? "var(--warn-wash)" : "var(--ok-wash)";
+    fresh.style.color = l.lastConfirmed > 7 ? "var(--warn)" : "var(--ok)";
+
+    var money = document.getElementById("d-money");
+    money.innerHTML =
+      "<dt>" + t("rent") + "</dt><dd>$" + l.price + "</dd>" +
+      "<dt>" + t("depositWord") + "</dt><dd>$" + (l.price * l.deposit) + " (" + l.deposit + " " + monthsWord(l.deposit) + ")</dd>" +
+      "<dt>" + t("moveIn") + "</dt><dd>$" + (l.price + l.price * l.deposit) + "</dd>";
+
+    var am = document.getElementById("d-amenities");
+    am.textContent = "";
+    l.amenities[lang].forEach(function (a) {
+      var s = document.createElement("span");
+      s.className = "fact";
+      s.textContent = a;
+      am.appendChild(s);
+    });
+
+    document.getElementById("d-initial").textContent = l.landlord.name.charAt(0);
+    document.getElementById("d-landlord").textContent = l.landlord.name;
+    document.getElementById("d-landlord-sub").textContent =
+      t("landlordSince", { y: l.landlord.since, n: l.landlord.listings });
+    document.getElementById("d-save").classList.toggle("is-on", !!saved[l.id]);
+  }
+
+  function closeDetail() {
+    var detail = document.getElementById("s-detail");
+    var back = stack.pop() || "s-explore";
+    document.getElementById("tabs").style.display = "";
+
+    if (reduced) { showScreen(back); current = null; return; }
+
+    detail.classList.add("is-popping");
+    document.getElementById(back).hidden = false;
+    window.setTimeout(function () {
+      showScreen(back);
+      current = null;
+    }, 240);
+  }
+
+  /* ================================================================= tabs
+     Tab switching is instant. Someone moves between tabs dozens of times a
+     session, and an animation there turns into friction rather than polish. */
+  var activeTab = "s-explore";
+  document.getElementById("tabs").addEventListener("click", function (e) {
+    var btn = e.target.closest(".tab");
+    if (!btn) return;
+    activeTab = btn.dataset.tab;
+    showScreen(activeTab);
+    document.querySelectorAll(".tab").forEach(function (b) {
+      b.setAttribute("aria-selected", String(b === btn));
+    });
+  });
+
+  document.getElementById("back").addEventListener("click", closeDetail);
+  document.getElementById("d-save").addEventListener("click", function () {
+    if (current) toggleSave(current.id, null);
+    this.classList.toggle("is-on", current && saved[current.id]);
+  });
+  document.getElementById("d-contact").addEventListener("click", function () { toast(t("contactToast")); });
+  document.getElementById("post-start").addEventListener("click", function () { toast(t("postToast")); });
+
+  /* =============================================================== sheet */
+  var sheet = document.getElementById("sheet");
+  var scrim = document.getElementById("scrim");
+
+  function openSheet() {
+    sheet.hidden = false; scrim.hidden = false;
+    sheet.getBoundingClientRect();
+    sheet.classList.add("is-open"); scrim.classList.add("is-open");
+  }
+  function closeSheet() {
+    sheet.classList.remove("is-open"); scrim.classList.remove("is-open");
+    var hide = function () { sheet.hidden = true; scrim.hidden = true; };
+    if (reduced) hide(); else window.setTimeout(hide, 340);
+  }
+  document.getElementById("open-filters").addEventListener("click", openSheet);
+  scrim.addEventListener("click", closeSheet);
+  document.getElementById("f-apply").addEventListener("click", function () { closeSheet(); render(); });
+
+  var price = document.getElementById("f-price");
+  var priceVal = document.getElementById("f-price-val");
+  function paintPrice() {
+    priceVal.textContent = price.value >= 600 ? "$600+" : "$" + price.value;
+    state.maxPrice = Number(price.value);
+  }
+  price.addEventListener("input", function () { paintPrice(); render(); });
+  paintPrice();
+
+  function segGroup(id, key) {
+    document.getElementById(id).addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      this.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+      state[key] = b.dataset[key === "beds" ? "beds" : "type"];
+      render();
+    });
+  }
+  segGroup("f-beds", "beds");
+  segGroup("f-type", "type");
+
+  document.getElementById("f-reset").addEventListener("click", function () {
+    state.maxPrice = 600; state.beds = "any"; state.type = "any";
+    state.verified = state.fresh = state.lowDeposit = state.furnished = false;
+    price.value = 600; paintPrice();
+    document.querySelectorAll("#f-beds button, #f-type button").forEach(function (b, i) {
+      b.setAttribute("aria-pressed", String(b.dataset.beds === "any" || b.dataset.type === "any"));
+    });
+    document.querySelectorAll(".chip").forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+    render();
+  });
+
+  document.getElementById("clear-all").addEventListener("click", function () {
+    document.getElementById("f-reset").click();
+  });
+
+  document.querySelectorAll(".chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      var on = chip.getAttribute("aria-pressed") === "true";
+      chip.setAttribute("aria-pressed", String(!on));
+      var map = { verified:"verified", fresh:"fresh", nodeposit:"lowDeposit", furnished:"furnished" };
+      state[map[chip.dataset.quick]] = !on;
+      render();
+    });
+  });
+
+  document.getElementById("q").addEventListener("input", function () {
+    state.q = this.value.trim();
+    render();
+  });
+
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () { lang = b.dataset.lang; applyLang(); });
+  });
+
+  /* =============================================================== toast */
+  var toastEl = document.getElementById("toast");
+  var toastTimer;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("is-up");
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(function () { toastEl.classList.remove("is-up"); }, 2200);
+  }
+
+  /* ============================================== first paint, with skeleton
+     The skeleton is not decoration. It reserves the exact card shape so the
+     feed does not jump when the real cards land. */
+  function skeleton() {
+    feed.textContent = "";
+    for (var i = 0; i < 3; i++) {
+      var s = document.createElement("div");
+      s.className = "sk";
+      s.innerHTML = '<div class="sk-media"></div><div class="sk-line" style="width:35%"></div>' +
+                    '<div class="sk-line" style="width:72%"></div><div class="sk-line" style="width:50%;margin-bottom:18px"></div>';
+      feed.appendChild(s);
+    }
+  }
+
+  applyLang(true);   // labels only, so the skeleton below is not wiped
+  skeleton();
+  window.setTimeout(function () { render(); }, reduced ? 0 : 650);
+})();
+</script>
+
+</body>
+</html>
