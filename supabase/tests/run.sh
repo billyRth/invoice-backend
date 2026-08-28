@@ -17,7 +17,7 @@ for t in rules payments; do
   psql -q -d postgres -c "drop database if exists ptas_test" >/dev/null 2>&1
   psql -q -d postgres -c "create database ptas_test" >/dev/null
   psql -q -d ptas_test -v ON_ERROR_STOP=1 -f supabase/tests/00-local-shim.sql >/dev/null
-  for m in 0001_init 0002_payments 0004_lock_down_functions; do
+  for m in 0001_init 0002_payments 0004_lock_down_functions 0005_districts; do
     psql -q -d ptas_test -v ON_ERROR_STOP=1 -f "supabase/migrations/$m.sql" >/dev/null
   done
   echo "### $t"

@@ -318,6 +318,11 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 .lang button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); }
 
+.datanote {
+  margin: 0 0 8px; padding: 7px 11px; border-radius: 10px;
+  background: #FFF4D6; color: #4A3706;
+  font-size: 12px; line-height: 1.35;
+}
 .searchbar {
   display: flex; align-items: center; gap: 10px;
   background: var(--surface); border-radius: var(--r-full);
@@ -522,6 +527,13 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   transition: transform 120ms var(--ease), background-color 160ms var(--ease), opacity 160ms var(--ease);
 }
 .btn:active { transform: scale(.975); }
+a.btn { text-decoration: none; }
+a.btn[aria-disabled="true"] { opacity: .5; pointer-events: none; }
+.btn-quiet {
+  background: transparent; color: var(--ink-2);
+  border: 0; font-weight: 600;
+}
+.btn-quiet:hover { color: var(--ink-1); }
 .btn-primary { background: var(--brand); color: var(--on-brand); }
 .btn-primary:active { background: var(--brand-press); }
 .btn-ghost { flex: none; width: 50px; background: var(--surface); box-shadow: var(--sh-1); }
@@ -982,6 +994,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
             <button type="button" data-lang="en" aria-pressed="false">EN</button>
           </div>
         </div>
+        <p class="datanote" id="data-note" role="status" hidden></p>
         <div class="searchbar">
           <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
           <input id="q" type="search" data-t-ph="searchPh" placeholder="Toul Kork, BKK, Sen Sok" aria-label="Search area">
@@ -1377,10 +1390,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         <button class="btn btn-ghost" type="button" id="d-save" aria-label="Save">
           <svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>
         </button>
-        <button class="btn btn-primary" type="button" id="d-call">
+        <a class="btn btn-primary" id="d-call" href="tel:">
           <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>
           <span data-t="call">Call</span>
-        </button>
+        </a>
         <button class="btn btn-ghost" type="button" id="d-telegram" aria-label="Telegram">
           <svg class="icon" aria-hidden="true"><use href="#i-send"/></svg>
         </button>
@@ -1421,6 +1434,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           <p class="error" id="gate-error" role="alert"></p>
         </div>
         <button class="btn btn-primary" type="button" id="gate-continue" style="width:100%" data-t="continue">Continue</button>
+        <button class="btn btn-quiet" type="button" id="gate-browse" style="width:100%;margin-top:10px" data-t="justLooking">Just looking</button>
       </div>
 
       <div id="gate-step-role" hidden>
@@ -1753,6 +1767,253 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     return "https://picsum.photos/seed/" + seed + "/" + (w || 800) + "/" + (h || 600);
   };
 
+  /* ================================================================= data
+     Everything above this line is the prototype: a fixed array, so the file
+     opens and works with no network at all. Everything below connects it to
+     the real database, and falls back to that array when it cannot.
+
+     There is no Supabase SDK here. The app has no build step, and eight
+     endpoints do not justify shipping a library to fetch them. */
+
+  var PTAS = {
+    url: "https://nreazrayjskpgyeeznda.supabase.co",
+    /* Publishable, and meant to be. It grants the `anon` role and nothing
+       more; what that role may read is decided by row level security in the
+       database, not by keeping this string secret. */
+    key: "sb_publishable_KOTZxD8USbN-XNOyoU7nbQ_ODPAxTZJ"
+  };
+
+  var live = false;            // true once real rows have arrived
+  /* Until the first fetch settles, the feed shows the skeleton and nothing
+     else. Anything that would otherwise render early - switching mode from
+     the gate, say - is held back, so a renter never watches sample listings
+     get replaced by real ones. */
+  var booted = false;
+  var districts = {};          // code -> { name_km, name_en }
+
+  function apiHeaders(extra) {
+    var h = {
+      apikey: PTAS.key,
+      authorization: "Bearer " + (session.token || PTAS.key),
+      "content-type": "application/json"
+    };
+    if (extra) Object.keys(extra).forEach(function (k) { h[k] = extra[k]; });
+    return h;
+  }
+
+  function apiFetch(path, opts) {
+    opts = opts || {};
+    return fetch(PTAS.url + path, {
+      method: opts.method || "GET",
+      headers: apiHeaders(opts.headers),
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    }).then(function (res) {
+      return res.text().then(function (text) {
+        var data = null;
+        try { data = text ? JSON.parse(text) : null; } catch (e) { data = text; }
+        if (!res.ok) {
+          /* PostgREST puts the raised message in .message; a plpgsql
+             `raise exception 'not your listing'` arrives there verbatim. */
+          var err = new Error((data && (data.message || data.error)) || ("HTTP " + res.status));
+          err.status = res.status;
+          throw err;
+        }
+        return data;
+      });
+    });
+  }
+
+  function rpc(name, args) {
+    return apiFetch("/rest/v1/rpc/" + name, { method: "POST", body: args || {} });
+  }
+
+  /* ---------------------------------------------------------- row mapping
+     The database columns are flat and snake_case; the renderer wants the
+     nested shape the prototype was written against. Rather than rewrite
+     every render function, translate once, here.
+
+     Two fields are derived rather than stored:
+       lastConfirmed  days since last_confirmed_at, because "6 days ago" is
+                      what a renter needs and a timestamp is what a database
+                      should keep.
+       billing        the status enum plus paid_until, collapsed into what
+                      the landlord's own list draws. */
+
+  function daysSince(iso) {
+    if (!iso) return 0;
+    return Math.max(0, Math.floor((Date.now() - Date.parse(iso)) / 86400000));
+  }
+
+  function daysUntil(iso) {
+    if (!iso) return 0;
+    return Math.max(0, Math.ceil((Date.parse(iso) - Date.now()) / 86400000));
+  }
+
+  function areaName(row, which) {
+    var d = districts[row.district];
+    var name = d ? (which === "km" ? d.name_km : d.name_en) : row.district;
+    return row.address_note ? row.address_note + ", " + name : name;
+  }
+
+  function fromRow(row) {
+    return {
+      id: row.id,
+      lat: row.lat, lng: row.lng,
+      /* A landlord writes the title once, in their own language. Showing the
+         same string under both keys keeps the existing search and render
+         code working without pretending a translation exists. */
+      title: { en: row.title, km: row.title },
+      area:  { en: areaName(row, "en"), km: areaName(row, "km") },
+      price: Number(row.price_usd),
+      beds: row.beds, type: row.kind,
+      size: row.size_sqm, floor: row.floor,
+      deposit: Number(row.deposit_months),
+      term: row.term, minStay: row.min_stay_months,
+      availableNow: row.available_now,
+      power: row.power_riel, water: row.water_riel, internet: row.internet,
+      parking: { car: row.car_parking, moto: row.moto_parking },
+      has: {
+        aircon: row.aircon, furnished: row.furnished, privateBath: row.private_bath,
+        lift: row.lift, washer: row.washer, pets: row.pets,
+        balcony: row.balcony, security: row.security, kitchen: row.kitchen
+      },
+      reports: 0,
+      verified: row.verified,
+      lastConfirmed: daysSince(row.last_confirmed_at),
+      owner: (session.userId && row.owner_id === session.userId) ? "me" : row.owner_id,
+      billing: {
+        state: row.status === "draft" ? "paused" : row.status,
+        daysLeft: daysUntil(row.paid_until)
+      },
+      landlord: {
+        name: row.contact_name,
+        phone: row.contact_phone,
+        since: row.created_at ? new Date(row.created_at).getFullYear() : 2026,
+        listings: 1,
+        telegram: ""
+      },
+      photos: (row.listing_photos || [])
+        .sort(function (a, b) { return a.position - b.position; })
+        .map(function (ph) {
+          return PTAS.url + "/storage/v1/object/public/listing-photos/" + ph.path;
+        })
+    };
+  }
+
+  /* A seeded listing has no uploaded photos yet, so it falls back to the
+     placeholder the prototype always used. A real one returns a full URL,
+     which photoUrl must not touch. */
+  function photoSrc(name, w, h) {
+    return /^https?:/.test(name) ? name : photoUrl(name, w, h);
+  }
+
+  function toRow(d) {
+    return {
+      title: d.title,
+      kind: d.type,
+      term: d.term,
+      min_stay_months: d.term === "monthly" ? 1 : Number(d.term),
+      district: d.district,
+      address_note: d.area || null,
+      lat: d.lat, lng: d.lng,
+      price_usd: Number(d.rent),
+      deposit_months: Number(d.deposit),
+      power_riel: d.power === "" || d.power == null ? null : Number(d.power),
+      water_riel: null,
+      internet: !!(d.has && d.has.internet),
+      beds: Number(d.beds),
+      size_sqm: d.size ? Number(d.size) : null,
+      floor: d.floor === "" || d.floor == null ? null : Number(d.floor),
+      car_parking: d.parking && d.parking.car ? 1 : 0,
+      moto_parking: !!(d.parking && d.parking.moto),
+      aircon: !!d.has.aircon, furnished: !!d.has.furnished,
+      private_bath: !!d.has.privateBath, lift: !!d.has.lift,
+      washer: !!d.has.washer, pets: !!d.has.pets,
+      balcony: !!d.has.balcony, security: !!d.has.security,
+      kitchen: !!d.has.kitchen,
+      contact_name: session.name || "\u2014",
+      contact_phone: session.phone || ""
+    };
+  }
+
+  /* -------------------------------------------------------------- the api */
+
+  var SELECT = "*,listing_photos(path,position)";
+
+  var api = {
+    districts: function () {
+      return apiFetch("/rest/v1/districts?select=*&order=position")
+        .then(function (rows) {
+          rows.forEach(function (d) { districts[d.code] = d; });
+          return rows;
+        });
+    },
+
+    /* The feed. search_listings applies the stale-sinks rule server-side; the
+       client re-sorts the same way when the renter changes the sort, so the
+       rule is written twice. That is a real duplication, and the reason it is
+       tolerated is that re-sorting fifty cards must not cost a round trip.
+       STALE_DAYS below is the single number both sides agree on. */
+    search: function () {
+      return rpc("search_listings", { p_limit: 60 }).then(function (rows) {
+        return rows.map(fromRow);
+      });
+    },
+
+    /* A landlord's own listings, including the ones no renter can see.
+       listings_owner_read is what makes this different from search. */
+    mine: function () {
+      return apiFetch("/rest/v1/listings?select=" + encodeURIComponent(SELECT) +
+                      "&owner_id=eq." + session.userId + "&order=created_at.desc")
+        .then(function (rows) { return rows.map(fromRow); });
+    },
+
+    publish: function (draft) {
+      return apiFetch("/rest/v1/listings?select=" + encodeURIComponent(SELECT), {
+        method: "POST",
+        headers: { prefer: "return=representation" },
+        body: Object.assign(toRow(draft), { owner_id: session.userId })
+      }).then(function (rows) { return rows[0]; });
+    },
+
+    startTrial:   function (id)          { return rpc("start_trial", { p_listing: id }); },
+    startPayment: function (id, months)  { return rpc("start_payment", { p_listing: id, p_months: months || 1 }); },
+    submitProof:  function (order, path, ref) {
+      return rpc("submit_proof", { p_order: order, p_path: path, p_reference: ref || null });
+    },
+    confirm:      function (id)          { return rpc("confirm_listing", { p_listing: id }); },
+
+    report: function (id, reason) {
+      return apiFetch("/rest/v1/reports", {
+        method: "POST",
+        body: { listing_id: id, reporter_id: session.userId, reason: reason || "already_rented" }
+      });
+    },
+
+    save: function (id, on) {
+      if (on) {
+        return apiFetch("/rest/v1/saved", {
+          method: "POST",
+          headers: { prefer: "resolution=merge-duplicates" },
+          body: { renter_id: session.userId, listing_id: id }
+        });
+      }
+      return apiFetch("/rest/v1/saved?renter_id=eq." + session.userId +
+                      "&listing_id=eq." + id, { method: "DELETE" });
+    },
+
+    savedIds: function () {
+      return apiFetch("/rest/v1/saved?select=listing_id&renter_id=eq." + session.userId)
+        .then(function (rows) { return rows.map(function (r) { return r.listing_id; }); });
+    },
+
+    receivingAccount: function () {
+      return apiFetch("/rest/v1/receiving_accounts?select=*&is_active=is.true")
+        .then(function (rows) { return rows[0] || null; });
+    }
+  };
+
+
   /* ================================================================ i18n */
   var T = {
     km: {
@@ -1817,6 +2078,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       reportHint:"បើអ្នកទូរស័ព្ទទៅ ហើយគេថាជួលរួច សូមប្រាប់យើង។ ការរាយការណ៍ពីរដង នឹងផ្អាកការផ្សាយ រហូតដល់ម្ចាស់ផ្ទះបញ្ជាក់ថានៅទំនេរ។",
       similar:"ស្រដៀងគ្នា", recent:"បានមើលថ្មីៗ", shareToast:"បានចម្លងតំណ",
 
+      offlineNote:"បង្ហាញទិន្នន័យសាកល្បង។ មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។",
+      justLooking:"មើលសិន",
       renting:"កំពុងជួល", agreeCta:"យល់ព្រមហើយ កត់ត្រាការជួល",
       recordTitle:"កត់ត្រាការជួល", recordSub:"បំពេញជាមួយគ្នា ពេលជួបផ្ទាល់។ នេះមិនមែនកិច្ចសន្យាផ្លូវច្បាប់ទេ។",
       startDate:"ចាប់ផ្តើមថ្ងៃ", termMonths:"រយៈពេល (ខែ)", dueDay:"បង់ថ្លៃជួលថ្ងៃទី",
@@ -1919,6 +2182,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       reportHint:"If you call and the room is already taken, tell us. Two reports pause a listing until the landlord confirms it is still free.",
       similar:"Similar places", recent:"Recently viewed", shareToast:"Link copied",
 
+      offlineNote:"Showing sample listings. Could not reach the server.",
+      justLooking:"Just looking",
       renting:"Currently renting", agreeCta:"We agreed, record it",
       recordTitle:"Record the tenancy", recordSub:"Fill this in together when you meet. It is a shared record, not a legal contract.",
       startDate:"Start date", termMonths:"Term in months", dueDay:"Rent due on day",
@@ -2046,12 +2311,17 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     return ok;
   }
 
+  /* The same threshold the database uses in search_listings(). Both sides
+     need it: the server so paging is correct, the client so changing the
+     sort does not cost a round trip. Change it in both or in neither. */
+  var STALE_DAYS = 14;
+
   /* Stale listings sink. This ordering is the product in one line. */
   function ranked(list) {
     return list.slice().sort(function (a, b) {
       /* Stale always sinks, whatever the sort. A listing nobody has
          confirmed in two weeks is not a good result at any price. */
-      var as = a.lastConfirmed > 14 ? 1 : 0, bs = b.lastConfirmed > 14 ? 1 : 0;
+      var as = a.lastConfirmed > STALE_DAYS ? 1 : 0, bs = b.lastConfirmed > STALE_DAYS ? 1 : 0;
       if (as !== bs) return as - bs;
 
       if (state.sort === "low")  return a.price - b.price;
@@ -2064,14 +2334,14 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   /* =============================================================== render */
   function freshnessBadge(l) {
-    if (l.lastConfirmed > 14) return { cls:"badge-dead", icon:"i-clock", text:t("staleWarn", { n:l.lastConfirmed }) };
+    if (l.lastConfirmed > STALE_DAYS) return { cls:"badge-dead", icon:"i-clock", text:t("staleWarn", { n:l.lastConfirmed }) };
     if (l.lastConfirmed === 0)  return { cls:"badge-ok",   icon:"i-check", text:t("confirmedToday") };
     return { cls: l.lastConfirmed > 7 ? "badge-warn" : "badge-ok", icon:"i-clock",
              text:t("confirmedDays", { n:l.lastConfirmed }) };
   }
 
   function shortFresh(l) {
-    if (l.lastConfirmed > 14) return { cls:"badge-dead", icon:"i-clock", text:l.lastConfirmed + "d" };
+    if (l.lastConfirmed > STALE_DAYS) return { cls:"badge-dead", icon:"i-clock", text:l.lastConfirmed + "d" };
     if (l.lastConfirmed === 0)  return { cls:"badge-ok",   icon:"i-check", text:lang === "km" ? "ថ្ងៃនេះ" : "today" };
     return { cls: l.lastConfirmed > 7 ? "badge-warn" : "badge-ok", icon:"i-clock", text:l.lastConfirmed + "d" };
   }
@@ -2127,7 +2397,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     var p = powerInfo(l);
     return '' +
       '<div class="card-media">' +
-        '<img src="' + photoUrl(l.photos[0], 800, 600) + '" alt="" loading="lazy" data-flip="' + l.id + '">' +
+        '<img src="' + photoSrc(l.photos[0], 800, 600) + '" alt="" loading="lazy" data-flip="' + l.id + '">' +
         '<div class="stamp">' +
           '<span class="badge ' + f.cls + '"><svg class="icon" aria-hidden="true"><use href="#' + f.icon + '"/></svg>' + f.text + '</span>' +
           (l.verified ? '<span class="badge badge-solid"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>' + t("verified") + '</span>' : '') +
@@ -2222,6 +2492,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   }
 
   function render() {
+    if (!booted) return;             // the skeleton holds the space until data lands
     var list = ranked(LISTINGS.filter(matches));
     feed.textContent = "";
     list.forEach(function (l, i) {
@@ -2449,11 +2720,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   }
 
   function paintDetail(l) {
+    setCallTarget(l);
     var strip = document.getElementById("d-strip");
     strip.textContent = "";
     l.photos.forEach(function (seed, i) {
       var img = document.createElement("img");
-      img.src = photoUrl(seed, 900, 700);
+      img.src = photoSrc(seed, 900, 700);
       img.alt = l.title[lang] + " " + (i + 1);
       strip.appendChild(img);
     });
@@ -2550,7 +2822,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       row.className = "simrow";
       row.setAttribute("data-sim", o.id);
       row.innerHTML =
-        '<img src="' + photoUrl(o.photos[0], 200, 200) + '" alt="">' +
+        '<img src="' + photoSrc(o.photos[0], 200, 200) + '" alt="">' +
         '<span><span class="s-title">' + o.title[lang] + '</span><br>' +
         '<span class="s-meta">$' + o.price + " " + t("perMonth") + " · " + o.area[lang] + '</span></span>';
       row.addEventListener("click", function () {
@@ -2587,7 +2859,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       b.setAttribute("data-recent", l.id);
       b.setAttribute("aria-label", l.title[lang]);
       b.innerHTML =
-        '<img src="' + photoUrl(l.photos[0], 300, 220) + '" alt="">' +
+        '<img src="' + photoSrc(l.photos[0], 300, 220) + '" alt="">' +
         '<div class="r-price">$' + l.price + '</div>' +
         '<div class="r-area">' + l.area[lang] + '</div>';
       b.addEventListener("click", function () { openDetail(l, b.querySelector("img")); });
@@ -2734,7 +3006,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
      Phone number rather than email, because that is what people actually
      have and what KHQR is tied to. */
-  var session = { signedIn:false, phone:"", mode:"renter" };
+  /* userId and token are what turn every api call from anonymous into
+     authenticated: the token goes in the Authorization header, and the
+     database reads auth.uid() out of it. Signed out, the calls still work
+     for anything a visitor is allowed to see. */
+  var session = { signedIn:false, phone:"", name:"", mode:"renter",
+                  userId:null, token:null, isAdmin:false };
 
   var THIRD_TAB = { renter:{ id:"s-renting", key:"tabRenting" },
                     landlord:{ id:"s-post",  key:"tabListings" } };
@@ -2940,7 +3217,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     draft.photos.forEach(function (seed, i) {
       var cell = document.createElement("div");
       cell.className = "photocell";
-      cell.innerHTML = '<img src="' + photoUrl(seed, 300, 300) + '" alt="">';
+      cell.innerHTML = '<img src="' + photoSrc(seed, 300, 300) + '" alt="">';
       var del = document.createElement("button");
       del.type = "button";
       del.setAttribute("aria-label", "Remove photo " + (i + 1));
@@ -3101,7 +3378,30 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   });
 
   /* ---- the gate ------------------------------------------------------ */
+  /* Browsing needs no account, and the database agrees: search_listings is
+     granted to `anon`. Demanding a phone number before a renter has seen a
+     single room is how a marketplace loses the half of its market that has
+     nothing to gain from signing up. The gate stays for landlords, who are
+     paying anyway; it now has a door in it for everyone else.
+
+     Anything that writes - saving, reporting, posting - asks for the phone
+     number at the moment it is actually needed. */
   var gatePhone = document.getElementById("gate-phone");
+
+  function needAccount() {
+    if (session.signedIn) return true;
+    document.getElementById("gate").hidden = false;
+    document.getElementById("gate-step-phone").hidden = false;
+    document.getElementById("gate-step-role").hidden = true;
+    window.setTimeout(function () { gatePhone.focus(); }, 60);
+    return false;
+  }
+
+  document.getElementById("gate-browse").addEventListener("click", function () {
+    document.getElementById("gate").hidden = true;
+    session.mode = "renter";
+    applyMode();
+  });
   document.getElementById("gate-continue").addEventListener("click", function () {
     var v = gatePhone.value.replace(/[^0-9]/g, "");
     var err = document.getElementById("gate-error");
@@ -3147,7 +3447,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   });
 
   document.getElementById("sign-out").addEventListener("click", function () {
-    session = { signedIn:false, phone:"", mode:"renter" };
+    session = { signedIn:false, phone:"", name:"", mode:"renter",
+                userId:null, token:null, isAdmin:false };
     document.getElementById("gate-step-phone").hidden = false;
     document.getElementById("gate-step-role").hidden = true;
     gatePhone.value = "";
@@ -3218,12 +3519,17 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     closeDetail();
   });
 
-  document.getElementById("d-call").addEventListener("click", function () {
-    if (!current) return;
-    /* A real tel: link, because a phone call is how a Khmer rental actually
-       starts. Nothing here tries to keep the conversation in the app. */
-    window.location.href = "tel:" + current.landlord.phone.replace(/\s/g, "");
-  });
+  /* Call is an anchor, not a button that assigns window.location. A phone
+     call is how a Khmer rental actually starts, and a real link can be long
+     pressed to copy the number, opened in a new tab, and read out by a screen
+     reader as a phone number. None of that is true of a scripted navigation.
+     Nothing here tries to keep the conversation in the app. */
+  function setCallTarget(l) {
+    var a = document.getElementById("d-call");
+    var num = (l && l.landlord && l.landlord.phone || "").replace(/[^0-9+]/g, "");
+    if (num) { a.href = "tel:" + num; a.removeAttribute("aria-disabled"); }
+    else     { a.removeAttribute("href"); a.setAttribute("aria-disabled", "true"); }
+  }
 
   document.getElementById("d-telegram").addEventListener("click", function () {
     if (!current) return;
@@ -3457,7 +3763,36 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   applyLang(true);   // labels only, so the skeleton below is not wiped
   document.querySelector('.tab[data-tab-slot="third"] span').textContent = t("tabRenting");
   skeleton();
-  window.setTimeout(function () { render(); }, reduced ? 0 : 650);
+
+  /* Ask the database for the real feed. If it answers, those rows replace the
+     built-in array entirely. If it does not - no network, project asleep, key
+     rotated - the built-in array stays and the app is still fully walkable,
+     which is what keeps this file useful as a demo on a phone with no signal.
+
+     The skeleton stays up for at least 400ms either way. A feed that flashes
+     in at 90ms reads as a glitch; one that arrives after a beat reads as
+     having loaded. */
+  var noteEl = document.getElementById("data-note");
+
+  function boot(rows, note) {
+    booted = true;
+    if (rows && rows.length) { LISTINGS = rows; live = true; }
+    noteEl.textContent = note || "";
+    noteEl.hidden = !note;
+    render();
+  }
+
+  var floor = new Promise(function (r) { window.setTimeout(r, reduced ? 0 : 400); });
+
+  Promise.all([api.districts(), api.search(), floor])
+    .then(function (out) { boot(out[1], null); })
+    .catch(function (err) {
+      if (booted) throw err;         // a render bug must not be reported as an outage
+      floor.then(function () {
+        boot(null, t("offlineNote"));
+        if (window.console) console.warn("Ptas: using built-in data -", err.message);
+      });
+    });
 })();
 </script>
 

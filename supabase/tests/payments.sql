@@ -19,8 +19,8 @@ insert into receiving_accounts (version, display_name, qr_path, is_active, activ
 
 insert into listings (id, owner_id, title, kind, term, district, lat, lng, price_usd, contact_name, contact_phone)
 values
- ('bbbbbbbb-0000-0000-0000-000000000001','11111111-1111-1111-1111-111111111111','Room near Toul Kork','room','monthly','TK',11.57,104.90,150,'Sok','012 000 001'),
- ('bbbbbbbb-0000-0000-0000-000000000002','11111111-1111-1111-1111-111111111111','Second room','room','monthly','TK',11.57,104.90,160,'Sok','012 000 001');
+ ('bbbbbbbb-0000-0000-0000-000000000001','11111111-1111-1111-1111-111111111111','Room near Toul Kork','room','monthly','toulkork',11.57,104.90,150,'Sok','012 000 001'),
+ ('bbbbbbbb-0000-0000-0000-000000000002','11111111-1111-1111-1111-111111111111','Second room','room','monthly','toulkork',11.57,104.90,160,'Sok','012 000 001');
 
 \echo == a draft is invisible
 set role anon; select 'P1 anon-sees: ' || count(*) from listings; reset role;

@@ -12,15 +12,20 @@ insert into auth.users (id, phone) values
 insert into listings (id, owner_id, title, kind, term, district, lat, lng, price_usd,
                       contact_name, contact_phone, status, paid_until, last_confirmed_at)
 values
- ('aaaaaaaa-0000-0000-0000-000000000001','11111111-1111-1111-1111-111111111111','Fresh room','room','monthly','TK',11.57,104.90,150,'Sok','012 000 001','live', now()+interval '20 days', now()),
- ('aaaaaaaa-0000-0000-0000-000000000002','11111111-1111-1111-1111-111111111111','Stale cheap room','room','monthly','TK',11.57,104.90,90,'Sok','012 000 001','live', now()+interval '20 days', now()-interval '30 days'),
- ('aaaaaaaa-0000-0000-0000-000000000003','11111111-1111-1111-1111-111111111111','Draft','room','monthly','TK',11.57,104.90,100,'Sok','012 000 001','draft', null, now());
+ ('aaaaaaaa-0000-0000-0000-000000000001','11111111-1111-1111-1111-111111111111','Fresh room','room','monthly','toulkork',11.57,104.90,150,'Sok','012 000 001','live', now()+interval '20 days', now()),
+ ('aaaaaaaa-0000-0000-0000-000000000002','11111111-1111-1111-1111-111111111111','Stale cheap room','room','monthly','toulkork',11.57,104.90,90,'Sok','012 000 001','live', now()+interval '20 days', now()-interval '30 days'),
+ ('aaaaaaaa-0000-0000-0000-000000000003','11111111-1111-1111-1111-111111111111','Draft','room','monthly','toulkork',11.57,104.90,100,'Sok','012 000 001','draft', null, now());
 
 insert into profiles (id, phone) select id, phone from auth.users on conflict do nothing;
 
 -- 1. stale sinks even when sorting by price
 select 'T1 stale-sinks: ' || string_agg(title, ' | ' order by ord)
 from (select title, row_number() over () ord from search_listings(p_sort=>'low')) t;
+
+-- 1b. the district filter, and the query matching a district name in Khmer
+select 'T1b by-district: ' || count(*) from search_listings(p_districts=>array['toulkork']);
+select 'T1c wrong-district: ' || count(*) from search_listings(p_districts=>array['sensok']);
+select 'T1d khmer-query: ' || count(*) from search_listings(p_q=>'ទួលគោក');
 
 -- 2. anon only sees paid listings (draft hidden)
 set role anon;
