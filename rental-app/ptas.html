@@ -45,18 +45,23 @@
 <style>
 /* ================================================================ tokens */
 :root {
-  --brand:        #0B5F4A;
-  --brand-press:  #08483A;
-  --brand-wash:   #E6F1ED;
+  --brand:        #0E7A5F;
+  --brand-press:  #0A5F4A;
+  --brand-wash:   #E4F3ED;
   --on-brand:     #FFFFFF;
 
-  --bg:           #F5F6F4;
-  --surface:      #FFFFFF;
-  --surface-2:    #FAFAF9;
-  --ink:          #14171A;
-  --ink-2:        #5B6470;
-  --ink-3:        #8A93A0;
-  --line:         #E6E8E6;
+  /* one warm highlight, used only for delight moments: the save burst and
+     the "confirmed today" badge. Never for structure. */
+  --pop:          #F2724B;
+  --pop-wash:     #FDECE5;
+
+  --bg:           #F7F5F2;
+  --surface:      #FFFDFC;
+  --surface-2:    #F4F2EF;
+  --ink:          #17191C;
+  --ink-2:        #5E6670;
+  --ink-3:        #8D949D;
+  --line:         #E9E5E0;
 
   --ok:           #0B7A4B;
   --ok-wash:      #E4F4EC;
@@ -65,14 +70,14 @@
   --dead:         #6B7280;
   --dead-wash:    #EEEFF1;
 
-  --r-sm: 10px;
-  --r-md: 16px;
-  --r-lg: 22px;
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 26px;
   --r-full: 999px;
 
-  --sh-1: 0 1px 2px rgba(16,24,32,.06), 0 0 0 1px rgba(16,24,32,.04);
-  --sh-2: 0 6px 16px -6px rgba(16,24,32,.16), 0 0 0 1px rgba(16,24,32,.04);
-  --sh-3: 0 -8px 32px -8px rgba(16,24,32,.22);
+  --sh-1: 0 1px 2px rgba(32,24,16,.05), 0 2px 10px -4px rgba(32,24,16,.07), 0 0 0 1px rgba(32,24,16,.035);
+  --sh-2: 0 10px 26px -10px rgba(32,24,16,.22), 0 0 0 1px rgba(32,24,16,.04);
+  --sh-3: 0 -10px 40px -10px rgba(32,24,16,.26);
 
   --ease:     cubic-bezier(.22, 1, .36, 1);
   --ease-in:  cubic-bezier(.4, 0, 1, 1);
@@ -83,14 +88,17 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --brand:       #4FBFA0;
-    --brand-press: #6FD3B6;
-    --brand-wash:  #12312A;
+    --brand:       #52C9A6;
+    --brand-press: #74DCBC;
+    --brand-wash:  #123028;
     --on-brand:    #06231C;
 
-    --bg:          #0D0F11;
-    --surface:     #16191C;
-    --surface-2:   #1C2023;
+    --pop:         #FF8C63;
+    --pop-wash:    #35211A;
+
+    --bg:          #0E0F11;
+    --surface:     #17191C;
+    --surface-2:   #1D2023;
     --ink:         #ECEFF1;
     --ink-2:       #A2ABB5;
     --ink-3:       #78828D;
@@ -204,11 +212,18 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 @media (max-width: 480px) { .top { padding-top: max(20px, env(safe-area-inset-top)); } }
 
 .brandline { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
-.wordmark { display: flex; align-items: baseline; gap: 7px; }
-.wordmark b { font-size: 21px; font-weight: 700; letter-spacing: -.02em; }
-.wordmark span { font-size: 12px; color: var(--ink-3); }
+.wordmark { display: flex; align-items: baseline; gap: 7px; min-width: 0; flex: 1; }
+.wordmark b { font-size: 21px; font-weight: 700; letter-spacing: -.02em; flex: none; }
+/* The tagline is the first thing allowed to lose the fight for space: Khmer
+   runs longer than English and must never push the language toggle around. */
+.wordmark span {
+  font-size: 12px; color: var(--ink-3);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+}
+@media (max-width: 400px) { .wordmark span { display: none; } }
 
 .lang {
+  flex: none;
   display: flex; align-items: center; gap: 2px;
   background: var(--surface); border-radius: var(--r-full);
   padding: 3px; box-shadow: var(--sh-1);
@@ -482,6 +497,96 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 }
 .toast.is-up { transform: none; opacity: 1; }
 
+/* ====================================================== entrance stagger
+   Cards cascade in when the feed changes. This fires on a filter change,
+   not on every scroll frame, so it stays a moment rather than a tic. */
+.js .card {
+  animation: cardIn 460ms var(--ease) both;
+  animation-delay: calc(min(var(--i, 0), 6) * 45ms);
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(14px) scale(.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Parallax inside the card photo. Scroll driven, so the browser runs it off
+   the main thread and there is no scroll listener anywhere in this file. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .card-media img {
+      animation: drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+      will-change: transform;
+    }
+    @keyframes drift {
+      from { transform: scale(1.08) translateY(-2.5%); }
+      to   { transform: scale(1.08) translateY(2.5%); }
+    }
+  }
+}
+
+/* ---------------------------------------------------------- save burst */
+.burst { position: absolute; inset: 0; pointer-events: none; }
+.burst i {
+  position: absolute; top: 50%; left: 50%;
+  width: 6px; height: 6px; margin: -3px 0 0 -3px;
+  border-radius: var(--r-full); background: var(--pop);
+  animation: burst 620ms var(--ease) both;
+}
+@keyframes burst {
+  from { opacity: 1; transform: translate(0,0) scale(1); }
+  to   { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(.3); }
+}
+
+/* -------------------------------------------------- header condense */
+.top { transition: padding 260ms var(--ease), box-shadow 260ms var(--ease), background-color 260ms var(--ease); }
+.top.is-condensed {
+  padding-top: 14px; padding-bottom: 10px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 1px 0 var(--line);
+}
+.top .brandline { transition: opacity 220ms var(--ease), max-height 260ms var(--ease), margin 260ms var(--ease); overflow: hidden; }
+.top.is-condensed .brandline { opacity: 0; max-height: 0; margin-bottom: 0; }
+
+/* ------------------------------------------------------ count roll */
+.roll { display: inline-block; }
+.js .roll.is-rolling { animation: roll 420ms var(--ease) both; }
+@keyframes roll {
+  0%   { opacity: 0; transform: translateY(9px); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* ------------------------------------------------- tab pill indicator */
+.tabs { position: absolute; }
+.tab-pill {
+  position: absolute; top: 8px; left: 0;
+  width: 25%; height: 42px;
+  pointer-events: none;
+  transition: transform 420ms var(--spring);
+}
+.tab-pill::before {
+  content: ""; position: absolute; inset: 0 auto 0 50%;
+  width: 58px; margin-left: -29px;
+  border-radius: var(--r-full);
+  background: var(--brand-wash);
+}
+
+/* --------------------------------------------------- detail gallery */
+.gallery-strip {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 100%;
+  height: 100%; overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: none; overscroll-behavior-x: contain;
+}
+.gallery-strip::-webkit-scrollbar { display: none; }
+.gallery-strip img { width: 100%; height: 100%; object-fit: cover; scroll-snap-align: center; }
+
+/* --------------------------------------------------------- chip pop */
+.chip { position: relative; }
+.chip[aria-pressed="true"] { animation: chipPop 380ms var(--spring); }
+@keyframes chipPop { 0% { transform: scale(.9); } 100% { transform: none; } }
+
 /* ================================================== shared element flight
    The card photo flies into the detail header. One element, positioned
    absolutely over everything, animated once and then removed. */
@@ -495,6 +600,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 /* ============================================================== a11y off */
 @media (prefers-reduced-motion: reduce) {
   .js .screen.is-pushing, .js .screen.is-popping, .js .screen.is-behind { animation: none; }
+  .js .card { animation: none; }
+  .js .roll.is-rolling { animation: none; }
+  .chip[aria-pressed="true"] { animation: none; }
+  .burst { display: none; }
+  .tab-pill { transition: none; }
+  .top, .top .brandline { transition: none; }
   .js .sk-media, .js .sk-line { animation: none; }
   .sheet { transition: none; }
   .scrim { transition: none; }
@@ -554,6 +665,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       </header>
 
       <div class="scroll" id="explore-scroll">
+        <div id="top-sentinel" style="height:1px"></div>
         <div class="chips" role="group" aria-label="Quick filters">
           <button class="chip" type="button" data-quick="verified" aria-pressed="false" data-t="qVerified">Verified only</button>
           <button class="chip" type="button" data-quick="fresh" aria-pressed="false" data-t="qFresh">Confirmed this week</button>
@@ -562,7 +674,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         </div>
 
         <div class="resultline">
-          <span id="result-count">&nbsp;</span>
+          <span class="roll" id="result-count">&nbsp;</span>
           <span id="stale-note" class="sr"></span>
         </div>
 
@@ -640,7 +752,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     <section class="screen" id="s-detail" hidden aria-label="Listing">
       <div class="scroll" id="detail-scroll" style="padding-bottom:96px">
         <div class="detail-media">
-          <img id="d-photo" alt="">
+          <div class="gallery-strip" id="d-strip"></div>
           <div class="detail-scrim"></div>
           <button class="backbtn" type="button" id="back" aria-label="Back">
             <svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>
@@ -695,6 +807,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   <!-- ============================================================= tabs -->
   <nav class="tabs" id="tabs" role="tablist" aria-label="Main">
+    <span class="tab-pill" id="tab-pill" aria-hidden="true"></span>
     <button class="tab" type="button" role="tab" data-tab="s-explore" aria-selected="true">
       <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span data-t="tabExplore">Explore</span>
     </button>
@@ -1045,13 +1158,47 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   var savedFeed = document.getElementById("saved-feed");
   var savedEmpty = document.getElementById("saved-empty");
 
+  /* The count re-enters rather than swapping silently, so a filter change is
+     legible without the user having to hunt for what moved. */
+  var countEl = document.getElementById("result-count");
+  function rollCount(text) {
+    if (countEl.textContent === text) return;
+    countEl.textContent = text;
+    if (reduced) return;
+    countEl.classList.remove("is-rolling");
+    void countEl.offsetWidth;
+    countEl.classList.add("is-rolling");
+  }
+
+  /* Six dots thrown outward from the heart. Rare interaction, so it earns
+     the flourish. Removed on a timer, never left in the DOM. */
+  function burst(host) {
+    if (reduced) return;
+    var b = document.createElement("span");
+    b.className = "burst";
+    for (var i = 0; i < 6; i++) {
+      var dot = document.createElement("i");
+      var a = (Math.PI * 2 * i) / 6;
+      dot.style.setProperty("--dx", Math.cos(a) * 26 + "px");
+      dot.style.setProperty("--dy", Math.sin(a) * 26 + "px");
+      dot.style.animationDelay = (i * 12) + "ms";
+      b.appendChild(dot);
+    }
+    host.appendChild(b);
+    window.setTimeout(function () { b.remove(); }, 700);
+  }
+
   function render() {
     var list = ranked(LISTINGS.filter(matches));
     feed.textContent = "";
-    list.forEach(function (l) { feed.appendChild(buildCard(l)); });
+    list.forEach(function (l, i) {
+      var card = buildCard(l);
+      card.style.setProperty("--i", i);
+      feed.appendChild(card);
+    });
 
     emptyBox.hidden = list.length !== 0;
-    document.getElementById("result-count").textContent = t("results", { n: list.length });
+    rollCount(t("results", { n: list.length }));
 
     var count = activeFilterCount();
     var badge = document.getElementById("filter-count");
@@ -1076,6 +1223,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       if (saved[id] && !reduced) {
         btn.classList.add("just-saved");
         window.setTimeout(function () { btn.classList.remove("just-saved"); }, 220);
+        burst(btn);
       }
     }
     toast(saved[id] ? t("saved") : t("unsaved"));
@@ -1109,7 +1257,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     flier.style.width = from.width + "px";
     flier.style.height = from.height + "px";
     flier.style.borderRadius = "22px";
-    flier.innerHTML = '<img src="' + fromImg.src + '" alt="">';
+    flier.innerHTML = '<img alt="">';
+    flier.firstChild.src = fromImg.currentSrc || fromImg.src;
     document.getElementById("phone").appendChild(flier);
 
     // force layout, then animate to the detail header box
@@ -1154,9 +1303,35 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     }
   }
 
+  /* Dots follow the gallery through an observer on the slides themselves.
+     A scroll listener would fire on every frame for the same information. */
+  var stripObserver = null;
+  function watchStrip(strip) {
+    if (stripObserver) stripObserver.disconnect();
+    if (!("IntersectionObserver" in window)) return;
+    stripObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var i = Array.prototype.indexOf.call(strip.children, e.target);
+        document.querySelectorAll("#d-dots .dot").forEach(function (d, di) {
+          d.classList.toggle("is-on", di === i);
+        });
+      });
+    }, { root: strip, threshold: 0.6 });
+    Array.prototype.forEach.call(strip.children, function (c) { stripObserver.observe(c); });
+  }
+
   function paintDetail(l) {
-    document.getElementById("d-photo").src = photoUrl(l.photos[0], 900, 700);
-    document.getElementById("d-photo").alt = l.title[lang];
+    var strip = document.getElementById("d-strip");
+    strip.textContent = "";
+    l.photos.forEach(function (seed, i) {
+      var img = document.createElement("img");
+      img.src = photoUrl(seed, 900, 700);
+      img.alt = l.title[lang] + " " + (i + 1);
+      strip.appendChild(img);
+    });
+    strip.scrollLeft = 0;
+    watchStrip(strip);
     document.getElementById("d-price").textContent = "$" + l.price;
     document.getElementById("d-title").textContent = l.title[lang];
     document.getElementById("d-where").textContent = l.area[lang];
@@ -1224,15 +1399,32 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
      Tab switching is instant. Someone moves between tabs dozens of times a
      session, and an animation there turns into friction rather than polish. */
   var activeTab = "s-explore";
+  var pill = document.getElementById("tab-pill");
+
+  function movePill(index) { pill.style.transform = "translateX(" + (index * 100) + "%)"; }
+
   document.getElementById("tabs").addEventListener("click", function (e) {
     var btn = e.target.closest(".tab");
     if (!btn) return;
     activeTab = btn.dataset.tab;
-    showScreen(activeTab);
-    document.querySelectorAll(".tab").forEach(function (b) {
-      b.setAttribute("aria-selected", String(b === btn));
-    });
+    showScreen(activeTab);            // content swaps instantly, on purpose
+    var all = Array.prototype.slice.call(document.querySelectorAll(".tab"));
+    all.forEach(function (b) { b.setAttribute("aria-selected", String(b === btn)); });
+    movePill(all.indexOf(btn));       // only the pill animates
   });
+  movePill(0);
+
+  /* ------------------------------------------------- header condense
+     A sentinel at the top of the feed, watched by an observer. The header
+     shrinks once, when you leave the top, and restores when you return. */
+  var topBar = document.querySelector("#s-explore .top");
+  var sentinel = document.getElementById("top-sentinel");
+  if ("IntersectionObserver" in window && topBar && sentinel) {
+    new IntersectionObserver(function (entries) {
+      topBar.classList.toggle("is-condensed", !entries[0].isIntersecting);
+    }, { root: document.getElementById("explore-scroll"), threshold: 1 }).observe(sentinel);
+  }
+
 
   document.getElementById("back").addEventListener("click", closeDetail);
   document.getElementById("d-save").addEventListener("click", function () {
@@ -1259,6 +1451,42 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   document.getElementById("open-filters").addEventListener("click", openSheet);
   scrim.addEventListener("click", closeSheet);
   document.getElementById("f-apply").addEventListener("click", function () { closeSheet(); render(); });
+
+  /* ------------------------------------------------ drag the sheet down
+     A sheet you can throw away with your thumb, which is what the gesture
+     is for on a phone. Falls back to the scrim tap and the buttons. */
+  (function dragSheet() {
+    var startY = 0, startT = 0, dy = 0, dragging = false;
+    var handleZone = function (target) {
+      return target.closest(".grabber") || target.closest("h2") || target === sheet;
+    };
+
+    sheet.addEventListener("pointerdown", function (e) {
+      if (!handleZone(e.target)) return;
+      dragging = true; startY = e.clientY; startT = Date.now(); dy = 0;
+      sheet.style.transition = "none";
+      sheet.setPointerCapture(e.pointerId);
+    });
+
+    sheet.addEventListener("pointermove", function (e) {
+      if (!dragging) return;
+      dy = Math.max(0, e.clientY - startY);
+      sheet.style.transform = "translateY(" + dy + "px)";
+      scrim.style.opacity = String(Math.max(0, 1 - dy / 320));
+    });
+
+    var end = function () {
+      if (!dragging) return;
+      dragging = false;
+      sheet.style.transition = "";
+      sheet.style.transform = "";
+      scrim.style.opacity = "";
+      var velocity = dy / Math.max(1, Date.now() - startT);
+      if (dy > 90 || velocity > 0.5) closeSheet();
+    };
+    sheet.addEventListener("pointerup", end);
+    sheet.addEventListener("pointercancel", end);
+  })();
 
   var price = document.getElementById("f-price");
   var priceVal = document.getElementById("f-price-val");

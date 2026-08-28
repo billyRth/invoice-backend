@@ -32,17 +32,40 @@ array at the bottom of `ptas.html`.
 
 ## Motion
 
-Weighted for a mobile app: polish on the moments that matter, nothing on the ones that repeat.
+One rule decides everything here: animate the moments people meet rarely, never the ones they
+repeat all day.
 
-- **Push and pop between screens.** A pop is faster and lighter than a push, because the user is
-  returning to something already seen.
+**Earns a flourish, because it happens occasionally**
+
+- **Card cascade.** Cards stagger in when the feed changes. Fires on a filter change, not on scroll.
 - **Shared element.** The card photo flies into the detail header, so the listing keeps its identity
-  across the transition. It cleans itself up on a timer as well as on `transitionend`, so a dropped
-  event can never leave an image stranded over the UI.
-- **Tab switching is instant.** People move between tabs dozens of times a session, and animating
-  that turns polish into friction.
-- **Skeletons** reserve the exact card shape, so the feed does not jump when real cards land.
-- Everything collapses under `prefers-reduced-motion`, and the whole app stays usable.
+  across the transition. It cleans up on a timer as well as on `transitionend`, so a dropped event
+  can never strand an image over the UI.
+- **Save burst.** Six dots thrown out of the heart. Saving is rare, so it can afford to be fun.
+- **Push and pop.** The pop is lighter and faster than the push: you are returning to something you
+  have already seen.
+- **Sheet drag.** The filter sheet follows your thumb and can be thrown away, closing on distance or
+  on velocity, so a short fast flick works as well as a long drag.
+- **Count roll.** The result count re-enters when it changes, so a filter change is legible without
+  hunting for what moved.
+- **Header condense.** The title bar collapses into a slim search bar as you leave the top, watched
+  by an observer on a sentinel rather than a scroll listener.
+- **Card parallax.** The photo drifts inside its frame, driven by `animation-timeline: view()` so
+  the browser runs it off the main thread. Skipped entirely where unsupported.
+
+**Deliberately not animated**
+
+- **Tab switching.** People hit tabs dozens of times a session. The content swaps instantly and only
+  the pill slides, so it reads as responsive rather than slow.
+- **Typing in search.** Results update on the keystroke with no transition.
+
+**Always**
+
+- Skeletons reserve the exact card shape, so the feed does not jump when real cards land.
+- Every animation above collapses under `prefers-reduced-motion`, and nothing becomes unusable:
+  the burst, the parallax, the cascade and the pill transition all switch off.
+- No `scroll` listener exists anywhere in the file. Everything scroll-aware uses
+  `IntersectionObserver` or CSS scroll-driven animation.
 
 ## Before this becomes real
 
