@@ -83,6 +83,11 @@
   --ease-in:  cubic-bezier(.4, 0, 1, 1);
   --spring:   linear(0,.42 7.2%,.74 14.6%,.955 22.4%,1.032,1.07 32%,1.075,1.066 41%,1.026 54%,1.006 66%,1);
 
+  /* Clearance for the notch on the desktop frame, and for the real safe area
+     on a handset. Every sticky header uses this, and no state may shrink it:
+     the condensed header saves space by collapsing its title row instead. */
+  --safe-top: 52px;
+
   --tab-h: 68px;
   --tab-icon-row: 34px;   /* the pill and the icon share this row */
   --tab-pad-top: 9px;
@@ -276,11 +281,11 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 /* ================================================================ header */
 .top {
-  padding: 52px 18px 12px;
+  padding: var(--safe-top) 18px 12px;
   background: var(--bg);
   position: sticky; top: 0; z-index: 20;
 }
-@media (max-width: 480px) { .top { padding-top: max(20px, env(safe-area-inset-top)); } }
+@media (max-width: 480px) { :root { --safe-top: max(20px, env(safe-area-inset-top)); } }
 
 .brandline { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .wordmark { display: flex; align-items: baseline; gap: 7px; min-width: 0; flex: 1; }
@@ -447,7 +452,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .detail-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.42) 0%, transparent 34%); }
 
 .backbtn {
-  position: absolute; top: 46px; left: 10px; z-index: 3;
+  position: absolute; top: var(--safe-top); left: 10px; z-index: 3;
   width: 48px; height: 48px; border-radius: var(--r-full);
   background: none; color: #14171A;
   display: grid; place-items: center;
@@ -461,7 +466,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 .backbtn .icon { position: relative; }
 .backbtn:active { transform: scale(.9); }
-@media (max-width: 480px) { .backbtn { top: max(20px, env(safe-area-inset-top)); } }
+
 
 .dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
 .dot { width: 6px; height: 6px; border-radius: var(--r-full); background: rgba(255,255,255,.55); transition: width 220ms var(--ease), background-color 220ms var(--ease); }
@@ -777,7 +782,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   position: absolute; inset: 0; z-index: 90;
   background: var(--bg);
   display: grid; align-items: center;
-  padding: 32px 24px;
+  padding: var(--safe-top) 24px 32px;
   overflow-y: auto;
 }
 .gate[hidden] { display: none; }
@@ -857,7 +862,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 /* -------------------------------------------------- header condense */
 .top { transition: padding 260ms var(--ease), box-shadow 260ms var(--ease), background-color 260ms var(--ease); }
 .top.is-condensed {
-  padding-top: 14px; padding-bottom: 10px;
+  /* The space comes from the collapsing title row above, never from the
+     notch clearance, which is why padding-top is unchanged here. */
+  padding-bottom: 10px;
   background: color-mix(in srgb, var(--bg) 88%, transparent);
   backdrop-filter: blur(16px);
   box-shadow: 0 1px 0 var(--line);
