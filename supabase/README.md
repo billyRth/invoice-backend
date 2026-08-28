@@ -1,0 +1,60 @@
+# Ptas database
+
+One migration, `migrations/0001_init.sql`. Read it top to bottom; it is ordered
+the way the product works, not the way SQL textbooks are.
+
+## The three rules the database enforces by itself
+
+A client cannot get these wrong, because they are triggers and policies rather
+than app code:
+
+1. **A listing is visible only while somebody is paying for it.**
+   `status in ('trial','live')` is the public read policy. `expire_unpaid()`
+   runs nightly and pauses anything whose `paid_until` has passed.
+2. **Paying is never automatic.** There is no subscription token anywhere —
+   `listing_periods` is one row per month actually bought. If renewal were
+   automatic, a rented room would keep paying and keep showing, which is
+   exactly the failure every Cambodian rental page has today.
+3. **A rented room leaves the market.** Inserting a `tenancies` row flips the
+   listing to `rented`. The landlord does it because they want the rent record,
+   and the market gets a cleaner index for free.
+
+Plus the two supporting ones: two renter reports pause a listing until the
+landlord confirms it again (`confirm_listing()` clears the reports and restarts
+the clock), and anything unconfirmed for 14 days sinks below everything else in
+`search_listings()` whatever the sort — including below more expensive rooms
+when the renter asked for cheapest first.
+
+## Who can see what
+
+| table | anon | signed-in renter | owner |
+|---|---|---|---|
+| `listings` | paid ones only | paid ones only | all of their own |
+| `listing_photos` | on paid listings | on paid listings | all of their own |
+| `profiles` | – | own row | own row |
+| `saved` | – | own rows | – |
+| `reports` | – | insert; read own | count via their listing |
+| `tenancies` | – | own tenancy | own tenancy |
+| `listing_periods` | – | own payments | own payments |
+
+Contact name and phone are copied onto the listing rather than joined from
+`profiles`, for two reasons: the contact is often an agent or a relative, and
+nobody should be able to browse the user table to harvest numbers.
+
+## Running the tests
+
+The rules above are checked, not assumed:
+
+```sh
+supabase/tests/run.sh        # against any local Postgres
+```
+
+`00-local-shim.sql` fakes the only two things Supabase adds (`auth.users` and
+`auth.uid()`), so this needs no Supabase account and no network.
+
+## Not in this migration yet
+
+* KHQR payment webhook — writes `listing_periods` with the service role.
+  Needs an ABA PayWay merchant account first.
+* The `listing-photos` storage bucket and its policies.
+* `pg_cron` schedule for `expire_unpaid()` (one line, once the project exists).
