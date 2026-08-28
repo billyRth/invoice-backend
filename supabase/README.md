@@ -58,3 +58,25 @@ supabase/tests/run.sh        # against any local Postgres
   Needs an ABA PayWay merchant account first.
 * The `listing-photos` storage bucket and its policies.
 * `pg_cron` schedule for `expire_unpaid()` (one line, once the project exists).
+
+## Migrations, and why each exists
+
+| | |
+|---|---|
+| `0001_init` | the seven tables and the three rules |
+| `0002_payments` | KHQR by hand: orders, receipts, approval |
+| `0003_storage_and_cron` | buckets, and the nightly sweep (Supabase-only) |
+| `0004_lock_down_functions` | Postgres grants EXECUTE to PUBLIC; this takes it back |
+| `0005_districts` | the fourteen khans, as a foreign key rather than free text |
+| `0006_district_centres` | where a new listing's pin starts, and that it is approximate |
+| `0007_null_uid_guards` | `owner_id <> auth.uid()` does not fire when uid is null |
+| `0008_default_privileges` | Supabase grants new functions to anon; 0004's promise made real |
+
+The last two are worth reading before adding anything. Both were places where a
+check existed, looked right, and did nothing.
+
+## Run the linter after every migration
+
+`get_advisors` found both of the real holes in this schema. Neither was
+reachable in production — the outer lock held while the inner one was open —
+and neither was visible in the function's own text.

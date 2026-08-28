@@ -8,10 +8,30 @@
 import { chromium } from "playwright";
 import http from "node:http";
 import fs from "node:fs";
+import { spawn } from "node:child_process";
 
 const SUPA = "https://nreazrayjskpgyeeznda.supabase.co";
 const SHIM = "http://127.0.0.1:54321";
+
+// The shim is started here rather than by hand, so one command runs the suite
+// and nothing is left listening afterwards.
+const shim = spawn(process.execPath, [new URL("postgrest-shim.mjs", import.meta.url).pathname],
+  { stdio: ["ignore", "pipe", "inherit"] });
+process.on("exit", () => shim.kill());
+await new Promise((resolve, reject) => {
+  const timer = setTimeout(() => reject(new Error("shim did not start")), 10000);
+  shim.stdout.on("data", d => {
+    if (String(d).includes("shim on")) { clearTimeout(timer); resolve(); }
+  });
+  shim.on("exit", c => reject(new Error("shim exited with " + c)));
+});
 let pass = 0, fail = 0;
+
+// A fresh phone number per run. The free fortnight is once per landlord ever,
+// so reusing one number makes every run after the first a different test than
+// the one that was written.
+let seq = 0;
+const newPhone = () => "012 " + String(700000 + Date.now() % 90000 + (seq++)).slice(0, 6);
 const ok = (name, cond, detail) => {
   if (cond) { pass++; console.log("  ok   " + name); }
   else { fail++; console.log("  FAIL " + name + (detail ? "  -> " + detail : "")); }
@@ -68,8 +88,15 @@ console.log("\n== connected to the database ==");
   const noteHidden = await page.$eval("#data-note", e => e.hidden);
   ok("no offline note when the server answered", noteHidden);
 
+  // Compared against what the server actually returns, not a fixed number:
+  // the database accumulates listings as these tests post them.
+  const served = await page.evaluate(async () => {
+    const r = await fetch("https://nreazrayjskpgyeeznda.supabase.co/rest/v1/rpc/search_listings",
+      { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ p_limit: 60 }) });
+    return (await r.json()).length;
+  });
   const count = await page.$eval("#result-count", e => e.textContent);
-  ok("result count matches the server", /10/.test(count), count);
+  ok("result count matches the server", count.includes(String(served)), count + " vs " + served);
 
   // The rule the whole product rests on.
   await ctx.close();
@@ -121,7 +148,165 @@ console.log("\n== detail view on a real row ==");
   await ctx.close();
 }
 
+console.log("\n== a landlord posts, and it reaches the feed ==");
+{
+  const { ctx, page } = await open();
+  await page.waitForSelector(".card", { timeout: 8000 });
+
+  // Sign in. The shim accepts 000000 and hands back an identity; every query
+  // after this runs as that user under the real policies.
+  await page.evaluate(() => document.getElementById("gate").hidden = false);
+  await page.fill("#gate-phone", newPhone());
+  await page.click("#gate-continue");
+  await page.waitForSelector("#gate-step-code:not([hidden])", { timeout: 5000 });
+  ok("a code is asked for before an account exists", true);
+
+  await page.fill("#gate-code", "000000");
+  await page.click("#gate-verify");
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 5000 });
+  await page.click('.rolecard[data-role="landlord"]');
+  await page.waitForTimeout(600);
+
+  // Post a room.
+  await page.click("#post-start");
+  await page.waitForTimeout(400);
+  await page.evaluate(() => document.getElementById("new-addphoto").click());
+  await page.waitForTimeout(200);
+
+  // Offline the button stands in a placeholder; connected it opens a picker,
+  // so the file is handed over directly.
+  await page.setInputFiles("#new-files", {
+    name: "room.jpg", mimeType: "image/jpeg",
+    buffer: Buffer.from("ffd8ffdb0000", "hex")
+  });
+  await page.waitForTimeout(300);
+  await page.click("#new-next");
+  await page.waitForTimeout(300);
+
+  const TITLE = "បន្ទប់សាកល្បង " + Date.now();
+  await page.fill("#new-title", TITLE);
+  await page.selectOption("#new-district", "sensok");
+  await page.fill("#new-area", "ក្បែរផ្សារ");
+  await page.click("#new-next");
+  await page.waitForTimeout(300);
+  await page.fill("#new-rent", "175");
+  await page.click("#new-next");
+  await page.waitForTimeout(300);
+  await page.click("#new-next");                 // publish
+  await page.waitForTimeout(1800);
+
+  const mine = await page.textContent("#my-listings");
+  ok("the new listing is on the landlord's own list", mine.includes(TITLE), mine.slice(0, 120));
+  const pill = await page.$eval("#my-listings .pill", e => e.className);
+  ok("and it started on the free fortnight", /\btrial\b/.test(pill), pill);
+
+  // A renter, signed out, must be able to find it.
+  const { ctx: ctx2, page: page2 } = await open();
+  await page2.waitForSelector(".card", { timeout: 8000 });
+  const feed = await page2.$$eval(".card-title", els => els.map(e => e.textContent));
+  const server = await page2.evaluate(async () => {
+    const r = await fetch("https://nreazrayjskpgyeeznda.supabase.co/rest/v1/rpc/search_listings",
+      { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ p_limit: 60 }) });
+    return (await r.json()).map(x => x.title);
+  });
+  ok("a renter sees it in the feed", feed.includes(TITLE),
+     "cards=" + feed.length + " server=" + server.length + " serverHas=" + server.includes(TITLE));
+  await ctx2.close();
+
+  await ctx.close();
+}
+
+console.log("\n== the dollar ==");
+{
+  const { ctx, page } = await open();
+  await page.waitForSelector(".card", { timeout: 8000 });
+  await page.evaluate(() => document.getElementById("gate").hidden = false);
+  await page.fill("#gate-phone", newPhone());
+  await page.click("#gate-continue");
+  await page.waitForSelector("#gate-step-code:not([hidden])", { timeout: 5000 });
+  await page.fill("#gate-code", "000000");
+  await page.click("#gate-verify");
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 5000 });
+  await page.click('.rolecard[data-role="landlord"]');
+  await page.waitForTimeout(600);
+
+  // Post, then take the trial away, so paying is the only way through. That is
+  // the state every landlord reaches on their second listing.
+  await page.click("#post-start");
+  await page.waitForTimeout(400);
+  await page.setInputFiles("#new-files", {
+    name: "b.jpg", mimeType: "image/jpeg", buffer: Buffer.from("ffd8ffdb0000", "hex")
+  });
+  await page.waitForTimeout(200);
+  await page.click("#new-next"); await page.waitForTimeout(250);
+  const T2 = "បន្ទប់ទីពីរ " + Date.now();
+  await page.fill("#new-title", T2);
+  await page.selectOption("#new-district", "toulkork");
+  await page.fill("#new-area", "ក្បែរវិទ្យាល័យ");
+  await page.click("#new-next"); await page.waitForTimeout(250);
+  await page.fill("#new-rent", "200");
+  await page.click("#new-next"); await page.waitForTimeout(250);
+  await page.click("#new-next");
+  await page.waitForTimeout(1800);
+
+  // Second listing: the fortnight is spent, so the payment sheet opens itself.
+  await page.click("#post-start");
+  await page.waitForTimeout(400);
+  await page.setInputFiles("#new-files", {
+    name: "c.jpg", mimeType: "image/jpeg", buffer: Buffer.from("ffd8ffdb0000", "hex")
+  });
+  await page.waitForTimeout(200);
+  await page.click("#new-next"); await page.waitForTimeout(250);
+  const T3 = "បន្ទប់ទីបី " + Date.now();
+  await page.fill("#new-title", T3);
+  await page.selectOption("#new-district", "meanchey");
+  await page.fill("#new-area", "ក្បែរផ្លូវ");
+  await page.click("#new-next"); await page.waitForTimeout(250);
+  await page.fill("#new-rent", "150");
+  await page.click("#new-next"); await page.waitForTimeout(250);
+  await page.click("#new-next");
+  await page.waitForTimeout(2000);
+
+  const sheetOpen = await page.$eval("#pay-sheet", e => !e.hidden);
+  ok("with the fortnight spent, the second listing asks for the dollar", sheetOpen);
+
+  await page.waitForFunction(
+    () => document.getElementById("pay-code").textContent.trim() !== "\u2014",
+    null, { timeout: 6000 }
+  ).catch(() => {});
+  const code = await page.textContent("#pay-code");
+  const payErr = await page.textContent("#pay-error");
+  ok("and it carries a transfer code to quote", /^P-[A-Z0-9]{6}$/.test(code.trim()),
+     JSON.stringify({ code, payErr }));
+
+  // A receipt is required: the whole check is a person matching it to a code.
+  await page.click("#pay-send");
+  await page.waitForTimeout(300);
+  const err = await page.textContent("#pay-error");
+  ok("sending without a receipt is refused", err.trim().length > 0, err);
+
+  await page.setInputFiles("#pay-proof", {
+    name: "receipt.jpg", mimeType: "image/jpeg", buffer: Buffer.from("ffd8ffdb0000", "hex")
+  });
+  await page.click("#pay-send");
+  await page.waitForFunction(() => !document.getElementById("pay-state").hidden,
+    null, { timeout: 6000 }).catch(() => {});
+  const state = await page.$eval("#pay-state", e => ({ hidden: e.hidden, text: e.textContent }));
+  ok("with one, it says it is waiting to be checked", !state.hidden && state.text.length > 0,
+     JSON.stringify(state));
+
+  // Still invisible: nobody has approved anything.
+  const { ctx: ctx3, page: page3 } = await open();
+  await page3.waitForSelector(".card", { timeout: 8000 });
+  const feed3 = await page3.$$eval(".card-title", els => els.map(e => e.textContent));
+  ok("an unpaid listing stays out of the feed", !feed3.includes(T3));
+  await ctx3.close();
+
+  await ctx.close();
+}
+
 await browser.close();
 site.close();
+shim.kill();
 console.log("\n" + pass + " passed, " + fail + " failed\n");
 process.exit(fail ? 1 : 0);

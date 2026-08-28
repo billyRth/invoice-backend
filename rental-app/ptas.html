@@ -591,6 +591,23 @@ a.btn[aria-disabled="true"] { opacity: .5; pointer-events: none; }
 .sheet.is-open { transform: none; }
 .sheet[hidden] { display: none; }
 
+.payqr { text-align: center; margin-bottom: 16px; }
+.payqr img {
+  width: 220px; height: 220px; object-fit: contain;
+  background: #fff; border-radius: 14px; padding: 8px; border: 1px solid var(--line);
+}
+.payqr .payto { margin: 10px 0 0; font-size: 13px; font-weight: 600; color: var(--ink-1); }
+.paycode {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; margin-bottom: 14px;
+  border: 1.5px dashed var(--line); border-radius: 12px;
+}
+.paycode span { font-size: 12.5px; color: var(--ink-2); }
+.paycode b { font-size: 18px; letter-spacing: .06em; font-variant-numeric: tabular-nums; }
+.paystate {
+  margin: 4px 0 0; padding: 11px 13px; border-radius: 12px;
+  background: var(--brand-tint, rgba(0,0,0,.05)); color: var(--ink-1); font-size: 13px;
+}
 .grabber { width: 38px; height: 4px; border-radius: var(--r-full); background: var(--line); margin: 4px auto 16px; }
 .sheet h2 { font-size: 17px; margin: 0 0 4px; }
 .sheet .sub { font-size: 13px; color: var(--ink-2); margin: 0 0 18px; }
@@ -600,6 +617,20 @@ a.btn[aria-disabled="true"] { opacity: .5; pointer-events: none; }
 .field .val { color: var(--brand); }
 
 input[type="range"] { width: 100%; accent-color: var(--brand); }
+
+.field input:not([type="range"]),
+.field select,
+.field textarea {
+  width: 100%; box-sizing: border-box;
+  padding: 12px 13px; min-height: 46px;      /* comfortably over the 44pt target */
+  border: 1.5px solid var(--line); border-radius: 12px;
+  background: var(--surface); color: var(--ink-1);
+  font: inherit; font-size: 16px;            /* under 16px, iOS zooms on focus */
+}
+.field input::placeholder { color: var(--ink-3); }
+.field input[aria-invalid="true"] { border-color: var(--bad, #B3261E); }
+.field select { appearance: none; padding-right: 34px; background-image: none; }
+.field .hint { margin: 6px 0 0; font-size: 12px; color: var(--ink-3); }
 
 .seg { display: grid; grid-auto-flow: column; gap: 7px; }
 /* Wrapping variant, for the option groups that outgrew a single row. */
@@ -1107,6 +1138,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
             <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>
             <span data-t="addPhotos">Add photos</span>
           </button>
+          <input type="file" id="new-files" accept="image/*" multiple hidden>
           <p class="powernote" data-t="photoHint"></p>
           <p class="error" id="err-photos" role="alert"></p>
         </div>
@@ -1119,8 +1151,14 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
             <p class="error" id="err-title" role="alert"></p>
           </div>
           <div class="field">
-            <label for="new-area" data-t="areaLabel">Area</label>
+            <label for="new-district" data-t="districtLabel">District</label>
+            <select id="new-district"></select>
+            <p class="error" id="err-district" role="alert"></p>
+          </div>
+          <div class="field">
+            <label for="new-area" data-t="areaLabel">Nearest landmark</label>
             <input type="text" id="new-area" data-t-ph="areaPh">
+            <p class="hint" data-t="pinHint">Your pin starts at the middle of the district.</p>
             <p class="error" id="err-area" role="alert"></p>
           </div>
           <div class="field">
@@ -1437,6 +1475,19 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         <button class="btn btn-quiet" type="button" id="gate-browse" style="width:100%;margin-top:10px" data-t="justLooking">Just looking</button>
       </div>
 
+      <div id="gate-step-code" hidden>
+        <h2 class="gate-h" data-t="codeTitle">Enter the code</h2>
+        <p class="gate-p" id="gate-code-sub" data-t="codeSub">We sent a six digit code by SMS.</p>
+        <div class="field">
+          <label for="gate-code" data-t="codeLabel">Code</label>
+          <input type="text" id="gate-code" inputmode="numeric" autocomplete="one-time-code"
+                 maxlength="6" placeholder="000000">
+          <p class="error" id="gate-code-error" role="alert"></p>
+        </div>
+        <button class="btn btn-primary" type="button" id="gate-verify" style="width:100%" data-t="verify">Verify</button>
+        <button class="btn btn-quiet" type="button" id="gate-back-phone" style="width:100%;margin-top:10px" data-t="changeNumber">Change number</button>
+      </div>
+
       <div id="gate-step-role" hidden>
         <h2 class="gate-h" data-t="roleTitle">What are you here for?</h2>
         <p class="gate-p" data-t="roleSub">You can switch at any time.</p>
@@ -1449,6 +1500,39 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           <span class="r-sub" data-t="roleLandlordSub">Manage listings and tenants</span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <div class="sheet" id="pay-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="pay-title">
+    <div class="grabber"></div>
+    <h2 id="pay-title" data-t="payTitle">Pay for this listing</h2>
+    <p class="sub" id="pay-sub"></p>
+
+    <div class="sheet-body">
+      <div class="payqr">
+        <img id="pay-qr" alt="" width="220" height="220">
+        <p class="payto" id="pay-to"></p>
+      </div>
+
+      <div class="paycode">
+        <span data-t="payRef">Put this in the transfer note</span>
+        <b id="pay-code">—</b>
+      </div>
+
+      <p class="hint" data-t="payHint">We check it by hand, usually within a few hours. Your listing goes live as soon as it clears.</p>
+
+      <div class="field">
+        <label for="pay-proof" data-t="payProof">Photo of the receipt</label>
+        <input type="file" id="pay-proof" accept="image/*,application/pdf">
+        <p class="error" id="pay-error" role="alert"></p>
+      </div>
+
+      <p class="paystate" id="pay-state" hidden></p>
+    </div>
+
+    <div class="sheet-actions">
+      <button class="btn btn-ghost" type="button" id="pay-close" data-t="close">Close</button>
+      <button class="btn btn-primary" type="button" id="pay-send" style="flex:1" data-t="paySend">I have paid</button>
     </div>
   </div>
 
@@ -1915,7 +1999,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       min_stay_months: d.term === "monthly" ? 1 : Number(d.term),
       district: d.district,
       address_note: d.area || null,
-      lat: d.lat, lng: d.lng,
+      /* The posting flow never asks for a pin, so the listing starts at the
+         centre of its district and says so. location_exact is what stops the
+         map from drawing a guess the same way it draws an address. */
+      lat: (districts[d.district] || {}).lat,
+      lng: (districts[d.district] || {}).lng,
+      location_exact: false,
       price_usd: Number(d.rent),
       deposit_months: Number(d.deposit),
       power_riel: d.power === "" || d.power == null ? null : Number(d.power),
@@ -2010,8 +2099,114 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     receivingAccount: function () {
       return apiFetch("/rest/v1/receiving_accounts?select=*&is_active=is.true")
         .then(function (rows) { return rows[0] || null; });
+    },
+
+    /* ---- who you are -----------------------------------------------------
+       Phone, because that is the identity people have in Cambodia. Supabase
+       sends the code; sending it needs an SMS provider configured on the
+       project, which is the one part of this file that costs money.
+
+       Nothing a renter does needs an account, so this only runs when someone
+       is about to write something. */
+
+    requestCode: function (phone) {
+      return apiFetch("/auth/v1/otp", { method: "POST", body: { phone: e164(phone) } });
+    },
+
+    verifyCode: function (phone, code) {
+      return apiFetch("/auth/v1/verify", {
+        method: "POST",
+        body: { phone: e164(phone), token: code, type: "sms" }
+      }).then(function (out) {
+        session.token  = out.access_token;
+        session.userId = out.user && out.user.id;
+        return out;
+      });
+    },
+
+    profile: function () {
+      return apiFetch("/rest/v1/profiles?select=*&id=eq." + session.userId)
+        .then(function (rows) { return rows[0] || null; });
+    },
+
+    saveProfile: function (patch) {
+      return apiFetch("/rest/v1/profiles?id=eq." + session.userId,
+        { method: "PATCH", headers: { prefer: "return=representation" }, body: patch })
+        .then(function (rows) { return rows[0] || null; });
+    },
+
+    /* One listing's photos, uploaded straight to storage under the listing id.
+       The storage policy checks that folder against listings.owner_id, so a
+       path is only writable by the person who owns the row it names. */
+    uploadPhoto: function (listingId, file, position) {
+      var name = listingId + "/" + position + "-" + Date.now() +
+                 "." + (file.type === "image/png" ? "png" : "jpg");
+      return fetch(PTAS.url + "/storage/v1/object/listing-photos/" + name, {
+        method: "POST",
+        headers: {
+          apikey: PTAS.key,
+          authorization: "Bearer " + (session.token || PTAS.key),
+          "content-type": file.type || "image/jpeg"
+        },
+        body: file
+      }).then(function (res) {
+        if (!res.ok) throw new Error("upload failed (" + res.status + ")");
+        return apiFetch("/rest/v1/listing_photos", {
+          method: "POST",
+          body: { listing_id: listingId, path: name, position: position }
+        }).then(function () { return name; });
+      });
+    },
+
+    uploadProof: function (orderId, file) {
+      var name = orderId + "/receipt-" + Date.now() +
+                 "." + (file.type === "application/pdf" ? "pdf" : "jpg");
+      return fetch(PTAS.url + "/storage/v1/object/payment-proofs/" + name, {
+        method: "POST",
+        headers: {
+          apikey: PTAS.key,
+          authorization: "Bearer " + (session.token || PTAS.key),
+          "content-type": file.type || "image/jpeg"
+        },
+        body: file
+      }).then(function (res) {
+        if (!res.ok) throw new Error("upload failed (" + res.status + ")");
+        return name;
+      });
     }
   };
+
+  /* Cambodian numbers are written 012 345 678 and stored +85512345678. The
+     leading zero is a national trunk prefix and is dropped, which is the one
+     rule everybody gets wrong. */
+  function e164(input) {
+    var d = String(input || "").replace(/[^0-9]/g, "");
+    if (d.indexOf("855") === 0) return "+" + d;
+    return "+855" + d.replace(/^0+/, "");
+  }
+
+  /* A session survives a reload; a landlord confirming a listing every month
+     should not re-verify a code every time they open the app. */
+  function rememberSession() {
+    store("ptas-session", JSON.stringify({
+      token: session.token, userId: session.userId,
+      phone: session.phone, name: session.name, mode: session.mode
+    }));
+  }
+
+  function restoreSession() {
+    var raw = readStored("ptas-session");
+    if (!raw) return false;
+    try {
+      var v = JSON.parse(raw);
+      if (!v || !v.token || !v.userId) return false;
+      session.token = v.token; session.userId = v.userId;
+      session.phone = v.phone || ""; session.name = v.name || "";
+      session.mode = v.mode || "renter";
+      session.signedIn = true;
+      return true;
+    } catch (e) { return false; }
+  }
 
 
   /* ================================================================ i18n */
@@ -2080,6 +2275,18 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
       offlineNote:"បង្ហាញទិន្នន័យសាកល្បង។ មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។",
       justLooking:"មើលសិន",
+      districtLabel:"ខណ្ឌ", pinHint:"ចំណុចនៅលើផែនទីចាប់ផ្តើមនៅកណ្តាលខណ្ឌ។",
+      stillFree:"នៅទំនេរ", confirmedToast:"អរគុណ។ បានធ្វើបច្ចុប្បន្នភាព",
+      payTitle:"បង់ថ្លៃប្រកាស", payRef:"ដាក់លេខនេះក្នុងកំណត់ចំណាំផ្ទេរប្រាក់", paySend:"ខ្ញុំបានបង់ហើយ",
+      payProof:"រូបភាពបញ្ជាក់ការបង់ប្រាក់", payHint:"យើងពិនិត្យដោយដៃ ជាធម្មតាក្នុងរយៈពេលពីរបីម៉ោង។ ប្រកាសរបស់អ្នកនឹងបង្ហាញភ្លាមនៅពេលបញ្ជាក់រួច។",
+      payFor:"$1 ក្នុងមួយខែ សម្រាប់ ", payWait:"បានទទួលហើយ។ កំពុងរង់ចាំការពិនិត្យ។",
+      payNoAccount:"មិនទាន់មានគណនីទទួលប្រាក់នៅឡើយទេ។", payNeedProof:"សូមភ្ជាប់រូបភាពបញ្ជាក់",
+      pickDistrict:"សូមជ្រើសរើសខណ្ឌ", approxPin:"ទីតាំងប្រហាក់ប្រហែល",
+      codeTitle:"បញ្ចូលលេខកូដ", codeSub:"យើងបានផ្ញើលេខកូដ ៦ ខ្ទង់តាម SMS។",
+      codeLabel:"លេខកូដ", verify:"ផ្ទៀងផ្ទាត់", changeNumber:"ប្តូរលេខទូរស័ព្ទ",
+      codeWrong:"លេខកូដមិនត្រឹមត្រូវ", sending:"កំពុងផ្ញើ...",
+      smsOff:"ការផ្ញើ SMS មិនទាន់ដំណើរការនៅឡើយទេ។",
+      signInFirst:"សូមចូលគណនីជាមុនសិន",
       renting:"កំពុងជួល", agreeCta:"យល់ព្រមហើយ កត់ត្រាការជួល",
       recordTitle:"កត់ត្រាការជួល", recordSub:"បំពេញជាមួយគ្នា ពេលជួបផ្ទាល់។ នេះមិនមែនកិច្ចសន្យាផ្លូវច្បាប់ទេ។",
       startDate:"ចាប់ផ្តើមថ្ងៃ", termMonths:"រយៈពេល (ខែ)", dueDay:"បង់ថ្លៃជួលថ្ងៃទី",
@@ -2107,7 +2314,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       stPhotos:"រូបភាព", stPlace:"កន្លែង", stMoney:"តម្លៃ", stCheck:"ពិនិត្យ",
       addPhotos:"បន្ថែមរូបភាព", photoHint:"យ៉ាងតិច ១សន្លឹក។ រូបភាពពិតទទួលបានការទាក់ទងច្រើនជាង។",
       photoCount:"{n} រូបភាព", titleLabel:"ចំណងជើង", titlePh:"បន្ទប់ស្អាត ជិតផ្សារ",
-      areaLabel:"តំបន់", areaPh:"ទួលគោក ភ្នំពេញ",
+      areaLabel:"ចំណុចសម្គាល់ជិតបំផុត", areaPh:"ក្បែរផ្សារទួលគោក",
       sizeLabel:"ទំហំ (ម៉ែត្រការ៉េ)", floorLabel:"ជាន់",
       rentLabel:"ថ្លៃជួល ($ ក្នុងមួយខែ)", depositLabel:"ប្រាក់កក់ (ខែ)",
       powerLabel:"អគ្គិសនី (៛/kWh)", powerPh:"០ = រួមបញ្ចូល",
@@ -2184,6 +2391,18 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
       offlineNote:"Showing sample listings. Could not reach the server.",
       justLooking:"Just looking",
+      districtLabel:"District", pinHint:"Your pin starts at the middle of the district.",
+      stillFree:"Still free", confirmedToast:"Thanks. Updated.",
+      payTitle:"Pay for this listing", payRef:"Put this in the transfer note", paySend:"I have paid",
+      payProof:"Photo of the receipt", payHint:"We check it by hand, usually within a few hours. Your listing goes live as soon as it clears.",
+      payFor:"$1 a month for ", payWait:"Received. Waiting to be checked.",
+      payNoAccount:"No receiving account is set up yet.", payNeedProof:"Attach a photo of the receipt",
+      pickDistrict:"Choose a district", approxPin:"Approximate location",
+      codeTitle:"Enter the code", codeSub:"We sent a six digit code by SMS.",
+      codeLabel:"Code", verify:"Verify", changeNumber:"Change number",
+      codeWrong:"That code did not work.", sending:"Sending...",
+      smsOff:"Sending codes is not switched on yet.",
+      signInFirst:"Sign in first",
       renting:"Currently renting", agreeCta:"We agreed, record it",
       recordTitle:"Record the tenancy", recordSub:"Fill this in together when you meet. It is a shared record, not a legal contract.",
       startDate:"Start date", termMonths:"Term in months", dueDay:"Rent due on day",
@@ -2211,7 +2430,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       stPhotos:"Photos", stPlace:"The place", stMoney:"Money", stCheck:"Check",
       addPhotos:"Add photos", photoHint:"At least one. Real photos get far more calls than stock ones.",
       photoCount:"{n} photos", titleLabel:"Title", titlePh:"Bright room near the market",
-      areaLabel:"Area", areaPh:"Toul Kork, Phnom Penh",
+      areaLabel:"Nearest landmark", areaPh:"Behind Toul Kork market",
       sizeLabel:"Size in sqm", floorLabel:"Floor",
       rentLabel:"Rent in dollars per month", depositLabel:"Deposit in months",
       powerLabel:"Electricity in riel per kWh", powerPh:"0 means included",
@@ -2247,6 +2466,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     /* The third tab is contextual, so its label comes from the mode rather
        than from a static data-t key. */
     if (typeof applyMode === "function" && session.signedIn) applyMode();
+    /* The district names are the one piece of listing data that really does
+       exist in both languages, so the picker is relabelled rather than left
+       in whichever language it was built in. */
+    if (typeof paintDistricts === "function") paintDistricts();
     if (skipRender) return;              // boot paints the skeleton instead
     render();
     if (current) openDetail(current, null, true);
@@ -2564,13 +2787,45 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           pay.setAttribute("data-pay", l.id);
           pay.textContent = t("payNow");
           pay.addEventListener("click", function () {
-            l.billing.state = "live";
-            l.billing.daysLeft = 30;
-            toast(t("paidToast"));
-            renderMine();
-            render();
+            if (!live) {                       // the offline prototype path
+              l.billing.state = "live";
+              l.billing.daysLeft = 30;
+              toast(t("paidToast"));
+              renderMine();
+              render();
+              return;
+            }
+            openPayment(l);
           });
           actions.appendChild(pay);
+        }
+
+        /* Confirming is the cheapest thing a landlord can do and the most
+           valuable thing the market gets, so it is one tap and it is on every
+           listing that is still on the market. */
+        if (st === "live" || st === "trial") {
+          var still = document.createElement("button");
+          still.type = "button";
+          still.className = "mini";
+          still.setAttribute("data-confirm", l.id);
+          still.textContent = t("stillFree");
+          still.addEventListener("click", function () {
+            var b = this;
+            b.disabled = true;
+            var done = function () {
+              l.lastConfirmed = 0;
+              l.reports = 0;
+              toast(t("confirmedToast"));
+              renderMine();
+              render();
+            };
+            if (!live) { done(); return; }
+            api.confirm(l.id).then(done).catch(function (e) {
+              b.disabled = false;
+              toast(e.message);
+            });
+          });
+          actions.appendChild(still);
         }
 
         var rented = document.createElement("button");
@@ -2619,6 +2874,15 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     renderSaved();
     var d = document.getElementById("d-save");
     if (current && current.id === id) d.classList.toggle("is-on", saved[id]);
+
+    /* The heart responds immediately either way. Signed out it lives only in
+       this tab, which is the right trade: making somebody sign up before they
+       can shortlist a room is how you lose them at the first tap. */
+    if (live && session.signedIn) {
+      api.save(id, saved[id]).catch(function (e) {
+        if (window.console) console.warn("Ptas: save not stored -", e.message);
+      });
+    }
   }
 
   /* ============================================================ detail nav
@@ -3043,6 +3307,24 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     session.phone = phone;
     document.getElementById("me-phone").textContent = phone;
     document.getElementById("gate").hidden = true;
+    rememberSession();
+    if (live) refreshMine();
+  }
+
+  /* A landlord's own listings include the ones no renter can see - drafts,
+     paused, rented - so they come from a different query than the feed, and
+     have to be merged in rather than replacing it. */
+  function refreshMine() {
+    if (!session.userId) return Promise.resolve();
+    return api.mine().then(function (mine) {
+      var byId = {};
+      mine.forEach(function (l) { byId[l.id] = true; });
+      LISTINGS = mine.concat(LISTINGS.filter(function (l) { return !byId[l.id]; }));
+      render();
+      renderMine();
+    }).catch(function (e) {
+      if (window.console) console.warn("Ptas: could not load your listings -", e.message);
+    });
   }
 
   var activeTab = "s-explore";
@@ -3182,7 +3464,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   function blankDraft() {
     return {
-      photos: [], title:"", area:"", type:"room", beds:0, size:30, floor:1,
+      photos: [], title:"", area:"", district:"", type:"room", beds:0, size:30, floor:1,
       rent:null, deposit:1, term:"monthly", power:730,
       parking:{ car:false, moto:true },
       has:{ aircon:false, furnished:false, privateBath:true, kitchen:false, lift:false,
@@ -3247,10 +3529,34 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     document.getElementById("new-fee").textContent = t("feeReminder", { d: FREE_DAYS, f: LISTING_FEE });
   }
 
+  /* The list is closed and comes from the database, so it is filled in once
+     the districts arrive rather than written into the markup. In the offline
+     path there are none, and the field says so instead of offering nothing. */
+  function paintDistricts() {
+    var sel = document.getElementById("new-district");
+    if (!sel) return;
+    var codes = Object.keys(districts);
+    sel.textContent = "";
+
+    var first = document.createElement("option");
+    first.value = "";
+    first.textContent = t("pickDistrict");
+    sel.appendChild(first);
+
+    codes.sort(function (a, b) { return districts[a].position - districts[b].position; })
+      .forEach(function (code) {
+        var o = document.createElement("option");
+        o.value = code;
+        o.textContent = lang === "km" ? districts[code].name_km : districts[code].name_en;
+        sel.appendChild(o);
+      });
+    sel.value = draft && draft.district ? draft.district : "";
+  }
+
   function validateStep() {
     var ok = true;
     var clear = function (id) { var e = document.getElementById(id); if (e) e.textContent = ""; };
-    ["err-photos", "err-title", "err-area", "err-rent"].forEach(clear);
+    ["err-photos", "err-title", "err-area", "err-rent", "err-district"].forEach(clear);
 
     if (step === 0 && draft.photos.length === 0) {
       document.getElementById("err-photos").textContent = t("required");
@@ -3259,6 +3565,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     if (step === 1) {
       if (!draft.title.trim()) { document.getElementById("err-title").textContent = t("required"); ok = false; }
       if (!draft.area.trim())  { document.getElementById("err-area").textContent  = t("required"); ok = false; }
+      /* Only required against a real database, where district is a foreign
+         key. Offline it is decoration. */
+      if (live && !draft.district) {
+        document.getElementById("err-district").textContent = t("required");
+        ok = false;
+      }
     }
     if (step === 2 && (!draft.rent || Number(draft.rent) <= 0)) {
       document.getElementById("err-rent").textContent = t("required");
@@ -3273,6 +3585,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     ["new-title", "new-area"].forEach(function (id) { document.getElementById(id).value = ""; });
     document.getElementById("new-rent").value = "";
     document.getElementById("new-power").value = "730";
+    paintDistricts();
     paintPhotos();
     paintSteps();
     showScreen("s-new");
@@ -3280,16 +3593,27 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   }
 
   function closeCompose() {
+    /* Object URLs for the chosen photos are held by the browser until they
+       are released. A landlord who opens and abandons the form ten times
+       should not be carrying ten sets of images in memory. */
+    (draft && draft.photos || []).forEach(function (src) {
+      if (typeof src === "string" && src.indexOf("blob:") === 0) URL.revokeObjectURL(src);
+    });
     document.getElementById("tabs").style.display = "";
     showScreen("s-post");
   }
 
-  function publishDraft() {
-    var id = "new-" + Date.now();
-    var listing = {
+  /* What the app shows while the round trip is in flight. Offline this is the
+     whole of publishing; online it is replaced by the row the database
+     actually wrote, which is the one with the real id. */
+  function localListing(id) {
+    var d = districts[draft.district];
+    return {
       id: id,
+      lat: d ? d.lat : null, lng: d ? d.lng : null, locationExact: false,
       title: { en: draft.title, km: draft.title },
-      area:  { en: draft.area,  km: draft.area },
+      area:  { en: draft.area + (d ? ", " + d.name_en : ""),
+               km: draft.area + (d ? ", " + d.name_km : "") },
       price: Number(draft.rent), beds: Number(draft.beds), type: draft.type,
       size: Number(draft.size), floor: Number(draft.floor),
       deposit: Number(draft.deposit), term: draft.term,
@@ -3303,19 +3627,84 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       lastConfirmed: 0,
       owner: "me",
       billing: { state: "trial", daysLeft: FREE_DAYS },
-      landlord: { name: "You", since: 2026, listings: 1, phone: session.phone || "012 000 000", telegram: "@you" },
+      landlord: { name: session.name || "You", since: new Date().getFullYear(),
+                  listings: 1, phone: session.phone || "", telegram: "" },
       photos: draft.photos
     };
-    LISTINGS.unshift(listing);
-    toast(t("publishedToast", { d: FREE_DAYS }));
-    render();
-    closeCompose();
   }
 
+  function publishDraft() {
+    if (!live) {                                  // the offline prototype path
+      LISTINGS.unshift(localListing("new-" + Date.now()));
+      toast(t("publishedToast", { d: FREE_DAYS }));
+      render();
+      closeCompose();
+      return;
+    }
+
+    if (!needAccount()) { toast(t("signInFirst")); return; }
+
+    var btn = document.getElementById("new-next");
+    btn.disabled = true;
+
+    /* Three steps, in this order and no other: the row must exist before a
+       photo can name it, and the trial must not start until there is
+       something for a renter to look at. */
+    api.publish(draft)
+      .then(function (row) {
+        var files = draft.files || [];
+        if (!files.length) return row;
+        return Promise.all(files.map(function (f, i) {
+          return api.uploadPhoto(row.id, f, i);
+        })).then(function () { return row; });
+      })
+      .then(function (row) {
+        return api.startTrial(row.id)
+          /* A landlord who has used their fortnight goes straight to paying,
+             which is the intended path, not an error. */
+          .catch(function (e) {
+            if (/trial already used/i.test(e.message)) return null;
+            throw e;
+          })
+          .then(function () { return row.id; });
+      })
+      .then(function (id) {
+        closeCompose();
+        return refreshMine().then(function () {
+          var made = LISTINGS.filter(function (l) { return l.id === id; })[0];
+          if (made && made.billing.state === "trial") {
+            toast(t("publishedToast", { d: made.billing.daysLeft || FREE_DAYS }));
+          } else if (made) {
+            openPayment(made);            // no trial left, so it needs the dollar
+          }
+        });
+      })
+      .catch(function (e) { toast(e.message); })
+      .then(function () { btn.disabled = false; });
+  }
+
+  var fileInput = document.getElementById("new-files");
+
   document.getElementById("new-addphoto").addEventListener("click", function () {
-    /* A real app opens the camera roll. The prototype stands in a photo so
-       the rest of the flow can be walked end to end. */
-    draft.photos.push("upload-" + draft.photos.length + "-" + Math.floor(Math.random() * 9999));
+    /* Offline there is no camera roll worth opening, and the point of that
+       path is to walk the flow, so a placeholder still stands in. */
+    if (!live) {
+      draft.photos.push("upload-" + draft.photos.length + "-" + Math.floor(Math.random() * 9999));
+      paintPhotos();
+      document.getElementById("err-photos").textContent = "";
+      return;
+    }
+    fileInput.click();
+  });
+
+  fileInput.addEventListener("change", function () {
+    var files = Array.prototype.slice.call(this.files || []);
+    draft.files = (draft.files || []).concat(files);
+    /* The grid draws from object URLs so the landlord sees their own photos
+       immediately; nothing is uploaded until the listing row exists to hang
+       them off. They are revoked when the compose screen closes. */
+    files.forEach(function (f) { draft.photos.push(URL.createObjectURL(f)); });
+    this.value = "";
     paintPhotos();
     document.getElementById("err-photos").textContent = "";
   });
@@ -3345,6 +3734,11 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           v > EDC_TOP_TIER ? t("powerOver", { p: Math.round(((v - EDC_TOP_TIER) / EDC_TOP_TIER) * 100) }) : t("powerFair");
       }
     });
+  });
+
+  document.getElementById("new-district").addEventListener("change", function () {
+    draft.district = this.value;
+    document.getElementById("err-district").textContent = "";
   });
 
   function composePick(id, attr, apply) {
@@ -3377,6 +3771,105 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     if (k === "internet") draft.internet = on; else draft.has[k] = on;
   });
 
+  /* ---- paying ---------------------------------------------------------
+     No bank API. The landlord scans the owner's KHQR in whichever banking app
+     they already have, types the order code into the transfer note, and sends
+     back a photo of the receipt. Somebody matches the two and approves it.
+
+     That is not a placeholder for a real integration; it is how the sibling
+     product already collects money, and it needs no merchant account, so the
+     business can take its first dollar before ABA PayWay exists. When a
+     webhook does arrive it calls the same approve_payment_order(), and none
+     of this screen changes. */
+
+  var paySheet   = document.getElementById("pay-sheet");
+  var payTarget  = null;      // the listing being paid for
+  var payOrder   = null;      // the open order, from start_payment()
+  var payAccount = null;      // cached: the QR does not change between orders
+
+  function openPayment(listing) {
+    if (!needAccount()) { toast(t("signInFirst")); return; }
+    payTarget = listing;
+    payOrder  = null;
+
+    document.getElementById("pay-sub").textContent   = t("payFor") + listing.title[lang];
+    document.getElementById("pay-code").textContent  = "—";
+    document.getElementById("pay-error").textContent = "";
+    document.getElementById("pay-proof").value = "";
+    document.getElementById("pay-state").hidden = true;
+    document.getElementById("pay-send").disabled = false;
+
+    scrim.hidden = false;
+    paySheet.hidden = false;
+    window.requestAnimationFrame(function () { paySheet.classList.add("is-open"); });
+
+    var qr = document.getElementById("pay-qr");
+    var to = document.getElementById("pay-to");
+
+    /* Two calls, but only the order is per-listing; the account is the same
+       image every time, so it is fetched once and kept. */
+    (payAccount ? Promise.resolve(payAccount) : api.receivingAccount())
+      .then(function (acct) {
+        payAccount = acct;
+        if (!acct) {
+          to.textContent = t("payNoAccount");
+          qr.removeAttribute("src");
+          qr.alt = "";
+          return;
+        }
+        qr.src = PTAS.url + "/storage/v1/object/public/khqr/" + acct.qr_path;
+        qr.alt = acct.display_name;
+        to.textContent = acct.display_name;
+      })
+      .catch(function (e) { to.textContent = e.message; });
+
+    api.startPayment(listing.id, 1)
+      .then(function (order) {
+        payOrder = order;
+        document.getElementById("pay-code").textContent = order.order_code;
+        /* Re-opening an order that already has a receipt against it should
+           say so rather than inviting a second payment. */
+        if (order.state === "submitted") {
+          document.getElementById("pay-state").textContent = t("payWait");
+          document.getElementById("pay-state").hidden = false;
+          document.getElementById("pay-send").disabled = true;
+        }
+      })
+      .catch(function (e) { document.getElementById("pay-error").textContent = e.message; });
+  }
+
+  function closePayment() {
+    paySheet.classList.remove("is-open");
+    scrim.hidden = true;
+    window.setTimeout(function () { paySheet.hidden = true; }, 320);
+  }
+
+  document.getElementById("pay-close").addEventListener("click", closePayment);
+
+  document.getElementById("pay-send").addEventListener("click", function () {
+    var btn = this;
+    var file = document.getElementById("pay-proof").files[0];
+    var err  = document.getElementById("pay-error");
+
+    if (!payOrder) { err.textContent = t("payNoAccount"); return; }
+    /* The receipt is the whole of the evidence, so it is required rather than
+       optional. Without it there is nothing for a person to check against. */
+    if (!file) { err.textContent = t("payNeedProof"); return; }
+
+    err.textContent = "";
+    btn.disabled = true;
+
+    api.uploadProof(payOrder.id, file)
+      .then(function (path) { return api.submitProof(payOrder.id, path); })
+      .then(function () {
+        var st = document.getElementById("pay-state");
+        st.textContent = t("payWait");
+        st.hidden = false;
+        toast(t("payWait"));
+      })
+      .catch(function (e) { err.textContent = e.message; btn.disabled = false; });
+  });
+
   /* ---- the gate ------------------------------------------------------ */
   /* Browsing needs no account, and the database agrees: search_listings is
      granted to `anon`. Demanding a phone number before a renter has seen a
@@ -3402,7 +3895,14 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     session.mode = "renter";
     applyMode();
   });
+  function gateStep(name) {
+    ["phone", "code", "role"].forEach(function (k) {
+      document.getElementById("gate-step-" + k).hidden = (k !== name);
+    });
+  }
+
   document.getElementById("gate-continue").addEventListener("click", function () {
+    var btn = this;
     var v = gatePhone.value.replace(/[^0-9]/g, "");
     var err = document.getElementById("gate-error");
     if (v.length < 8) {
@@ -3414,8 +3914,53 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     err.textContent = "";
     gatePhone.removeAttribute("aria-invalid");
     session.phone = gatePhone.value.trim();
-    document.getElementById("gate-step-phone").hidden = true;
-    document.getElementById("gate-step-role").hidden = false;
+
+    /* With no server there is nobody to send a code and nobody to check one,
+       so the offline file goes straight through. That is not a security hole
+       being waved past: offline there is no data belonging to anyone else to
+       protect, and a demo whose landlord half cannot be opened is not a demo. */
+    if (!live) { gateStep("role"); return; }
+
+    btn.disabled = true;
+    var was = btn.textContent;
+    btn.textContent = t("sending");
+    api.requestCode(session.phone)
+      .then(function () {
+        gateStep("code");
+        document.getElementById("gate-code-sub").textContent =
+          t("codeSub") + " " + session.phone;
+        window.setTimeout(function () { document.getElementById("gate-code").focus(); }, 60);
+      })
+      .catch(function (e) {
+        /* The project has no SMS provider until somebody pays for one, and
+           the error that comes back says so in Supabase's words, not the
+           user's. Translate it once, here. */
+        err.textContent = /provider|not enabled|unsupported/i.test(e.message)
+          ? t("smsOff") : e.message;
+      })
+      .then(function () { btn.disabled = false; btn.textContent = was; });
+  });
+
+  document.getElementById("gate-back-phone").addEventListener("click", function () {
+    gateStep("phone");
+    gatePhone.focus();
+  });
+
+  document.getElementById("gate-verify").addEventListener("click", function () {
+    var btn = this;
+    var code = document.getElementById("gate-code").value.replace(/[^0-9]/g, "");
+    var err = document.getElementById("gate-code-error");
+    if (code.length < 4) { err.textContent = t("codeWrong"); return; }
+    err.textContent = "";
+    btn.disabled = true;
+    api.verifyCode(session.phone, code)
+      .then(function () { return api.profile(); })
+      .then(function (prof) {
+        session.name = (prof && prof.display_name) || "";
+        gateStep("role");
+      })
+      .catch(function (e) { err.textContent = e.message || t("codeWrong"); })
+      .then(function () { btn.disabled = false; });
   });
 
   document.querySelectorAll(".rolecard").forEach(function (card) {
@@ -3449,9 +3994,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   document.getElementById("sign-out").addEventListener("click", function () {
     session = { signedIn:false, phone:"", name:"", mode:"renter",
                 userId:null, token:null, isAdmin:false };
-    document.getElementById("gate-step-phone").hidden = false;
-    document.getElementById("gate-step-role").hidden = true;
+    store("ptas-session", "");
+    gateStep("phone");
     gatePhone.value = "";
+    document.getElementById("gate-code").value = "";
     document.getElementById("gate").hidden = false;
     activeTab = "s-explore";
     showScreen(activeTab);
@@ -3554,18 +4100,40 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   var REPORTS_TO_PAUSE = 2;
   document.getElementById("d-report").addEventListener("click", function () {
     if (!current) return;
-    current.reports = (current.reports || 0) + 1;
-    if (current.reports >= REPORTS_TO_PAUSE) {
-      current.billing = current.billing || {};
-      current.billing.state = "paused";
-      current.billing.daysLeft = 0;
-      toast(t("reportedPaused"));
-      render();
-      closeDetail();
-      return;
-    }
-    this.disabled = true;
-    toast(t("reported"));
+    /* Reports need a name against them. One anonymous tap should never be able
+       to take a paying landlord's listing down, and the database enforces one
+       report per person per listing. */
+    if (!needAccount()) { toast(t("signInFirst")); return; }
+
+    var btn = this;
+    btn.disabled = true;
+    var l = current;
+
+    var done = function () {
+      /* The second report is what pauses it, and that decision is the
+         database's, not the app's: pause_on_reports() counts the rows. The
+         app finds out by asking again rather than by guessing. */
+      l.reports = (l.reports || 0) + 1;
+      if (l.reports >= REPORTS_TO_PAUSE) {
+        l.billing = l.billing || {};
+        l.billing.state = "paused";
+        l.billing.daysLeft = 0;
+        toast(t("reportedPaused"));
+        render();
+        closeDetail();
+        return;
+      }
+      toast(t("reported"));
+    };
+
+    if (!live) { done(); return; }
+    api.report(l.id).then(done).catch(function (e) {
+      btn.disabled = false;
+      /* A duplicate is not a failure worth alarming anyone about: it means
+         this person already told us. */
+      if (/duplicate|unique/i.test(e.message)) { toast(t("reported")); return; }
+      toast(e.message);
+    });
   });
   document.getElementById("post-start").addEventListener("click", openCompose);
 
@@ -3760,6 +4328,15 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   var storedLang = readStored("ptas-lang");
   if (storedLang === "en" || storedLang === "km") lang = storedLang;
 
+  /* A stored session is restored before the first paint, so a landlord who
+     opens the app sees their own listings rather than the gate. The token may
+     have expired, in which case the first write fails and sends them back
+     through it - which is the right moment to find out, not now. */
+  if (restoreSession()) {
+    document.getElementById("gate").hidden = true;
+    document.getElementById("me-phone").textContent = session.phone;
+  }
+
   applyLang(true);   // labels only, so the skeleton below is not wiped
   document.querySelector('.tab[data-tab-slot="third"] span').textContent = t("tabRenting");
   skeleton();
@@ -3785,7 +4362,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   var floor = new Promise(function (r) { window.setTimeout(r, reduced ? 0 : 400); });
 
   Promise.all([api.districts(), api.search(), floor])
-    .then(function (out) { boot(out[1], null); })
+    .then(function (out) {
+      boot(out[1], null);
+      if (session.signedIn) refreshMine();
+    })
     .catch(function (err) {
       if (booted) throw err;         // a render bug must not be reported as an outage
       floor.then(function () {

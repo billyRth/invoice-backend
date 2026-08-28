@@ -60,6 +60,18 @@ do $$ begin
   raise notice 'T5 FAIL: renter confirmed a listing they do not own';
 exception when others then raise notice 'T5 blocked: %', sqlerrm; end $$;
 
+-- 5b. and neither can a caller with no identity at all. Before 0007 this
+--     succeeded: `owner_id <> auth.uid()` is NULL rather than true when there
+--     is no uid, so the guard was skipped and any listing's freshness clock
+--     could be reset by anyone who reached the function.
+reset role; reset request.jwt.claim.sub;
+set role authenticated;
+do $$ begin
+  perform confirm_listing('aaaaaaaa-0000-0000-0000-000000000001');
+  raise notice 'T5b FAIL: an anonymous caller confirmed a listing';
+exception when others then raise notice 'T5b blocked: %', sqlerrm; end $$;
+set request.jwt.claim.sub = '22222222-2222-2222-2222-222222222222';
+
 -- 6. a renter cannot edit someone else's listing
 update listings set price_usd = 1 where id='aaaaaaaa-0000-0000-0000-000000000001';
 reset role; reset request.jwt.claim.sub;
