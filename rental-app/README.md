@@ -97,6 +97,37 @@ Two effects beyond convenience:
   is the main risk with a monthly fee. A landlord whose tenancy end date lives in the app has a
   reason to come back on that date, which is exactly when they need to list again.
 
+## Putting it on a phone
+
+It is one file, so this takes about a minute and needs no build step:
+
+1. Open https://app.netlify.com/drop
+2. Drag the `rental-app` folder onto the page
+3. You get a public URL. Open it on a phone, or send it to a landlord.
+
+`index.html` is a copy of `ptas.html` so the URL works without a filename, and
+`netlify.toml` routes every path to it. To test locally on your own phone instead, run
+`npx serve rental-app` and open the network address it prints while both devices are on the
+same wifi.
+
+## Themes
+
+Four: Auto, Light, Dark and Khmer, in You then Preferences. Auto removes the theme attribute
+entirely so the system preference takes over again, rather than freezing whichever mode happened to
+be showing. The choice is remembered in the browser, wrapped in try/catch so private mode does not
+break the app.
+
+The Khmer theme is silk crimson on ivory card stock, the palette of a printed Khmer card rather than
+of a software product. Gold appears only as the delight colour and never as structure, because
+gold-on-everything is the version of Khmer design everybody already makes.
+
+## Posting a listing
+
+Four steps, each short enough to finish standing in the doorway of the room being listed, which is
+where a landlord will actually do this: photos, the place, the money, then a check screen that shows
+what the listing will say and what it will cost. Publishing puts it straight into search on the free
+trial.
+
 ## What is not built
 
 Auth, real payments, in-app chat, photo upload, the landlord side of posting. The listings are a

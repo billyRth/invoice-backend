@@ -1,0 +1,11 @@
+# Drag this folder onto https://app.netlify.com/drop, or connect the repo and
+# set the publish directory to rental-app. Either way the prototype is live on
+# a URL you can open on a phone and send to a landlord.
+
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/*"
+  to = "/ptas.html"
+  status = 200
