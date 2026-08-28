@@ -1,6 +1,11 @@
 # Drag this folder onto https://app.netlify.com/drop, or connect the repo and
-# set the publish directory to rental-app. Either way the prototype is live on
-# a URL you can open on a phone and send to a landlord.
+# set the publish directory to rental-app. Either way the app is live on a URL
+# you can open on a phone and send to a landlord.
+#
+# There is deliberately no index.html checked in beside ptas.html. There used
+# to be, as a copy, and it silently fell a dozen commits behind the file it was
+# copied from - so a deploy would have shipped an old build that still looked
+# plausible. The redirect below does the same job and cannot go stale.
 
 [build]
   publish = "."
