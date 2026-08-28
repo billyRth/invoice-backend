@@ -231,9 +231,16 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   padding: 3px; box-shadow: var(--sh-1);
 }
 .lang button {
-  font-size: 12px; font-weight: 600; padding: 5px 11px;
+  position: relative;
+  font-size: 12px; font-weight: 600; padding: 9px 13px;
   border-radius: var(--r-full); color: var(--ink-3);
   transition: color 160ms var(--ease), background-color 160ms var(--ease);
+}
+/* The pill stays small so the header stays calm, but the tappable area is
+   pushed out to the platform minimum. */
+.lang button::after {
+  content: ""; position: absolute; left: 0; right: 0;
+  top: 50%; height: 44px; transform: translateY(-50%);
 }
 .lang button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); }
 
@@ -244,10 +251,13 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 .searchbar input { flex: 1; border: 0; background: none; font: inherit; font-size: 14px; color: var(--ink); min-width: 0; }
 .searchbar input::placeholder { color: var(--ink-3); }
+.icon.tiny { width: 13px; height: 13px; margin-right: 4px; vertical-align: -2px; }
+.fact .icon.tiny { stroke-width: 2.2; }
 .icon { width: 19px; height: 19px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 
 .filterbtn {
   display: flex; align-items: center; gap: 6px;
+  align-self: stretch; min-height: 44px; margin-block: -12px; padding-inline-start: 4px;
   color: var(--brand); font-size: 13px; font-weight: 600;
   transition: transform 120ms var(--ease);
 }
@@ -262,7 +272,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .chips { display: flex; gap: 8px; overflow-x: auto; padding: 12px 18px 4px; scrollbar-width: none; }
 .chips::-webkit-scrollbar { display: none; }
 .chip {
-  flex: none; padding: 8px 14px; border-radius: var(--r-full);
+  flex: none; min-height: 44px; padding: 8px 16px; border-radius: var(--r-full);
+  display: inline-flex; align-items: center;
   background: var(--surface); box-shadow: var(--sh-1);
   font-size: 13px; font-weight: 500; color: var(--ink-2);
   transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 120ms var(--ease);
@@ -292,13 +303,25 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .card-media { position: relative; aspect-ratio: 4 / 3; background: var(--surface-2); }
 .card-media img { width: 100%; height: 100%; object-fit: cover; }
 
+/* The visual button stays 36px, but the hit area is padded out to 48 so it
+   meets the platform minimum without changing how it looks. */
 .save {
-  position: absolute; top: 10px; right: 10px;
-  width: 36px; height: 36px; border-radius: var(--r-full);
-  background: rgba(255,255,255,.92); color: #14171A;
-  display: grid; place-items: center; box-shadow: var(--sh-1);
+  position: absolute; top: 4px; right: 4px;
+  width: 48px; height: 48px; border-radius: var(--r-full);
+  background: none; box-shadow: none;
+}
+.save::before {
+  content: ""; position: absolute; inset: 6px;
+  border-radius: var(--r-full);
+  background: rgba(255,255,255,.92);
+  box-shadow: var(--sh-1);
+}
+.save {
+  color: #14171A;
+  display: grid; place-items: center;
   transition: transform 200ms var(--spring);
 }
+.save .icon { position: relative; }
 .save:active { transform: scale(.88); }
 .save.is-on { color: #D6335A; }
 .save.is-on .icon { fill: #D6335A; stroke: #D6335A; }
@@ -350,12 +373,19 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .detail-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.42) 0%, transparent 34%); }
 
 .backbtn {
-  position: absolute; top: 52px; left: 16px; z-index: 3;
-  width: 38px; height: 38px; border-radius: var(--r-full);
-  background: rgba(255,255,255,.94); color: #14171A;
-  display: grid; place-items: center; box-shadow: var(--sh-1);
+  position: absolute; top: 46px; left: 10px; z-index: 3;
+  width: 48px; height: 48px; border-radius: var(--r-full);
+  background: none; color: #14171A;
+  display: grid; place-items: center;
   transition: transform 120ms var(--ease);
 }
+.backbtn::before {
+  content: ""; position: absolute; inset: 5px;
+  border-radius: var(--r-full);
+  background: rgba(255,255,255,.94);
+  box-shadow: var(--sh-1);
+}
+.backbtn .icon { position: relative; }
 .backbtn:active { transform: scale(.9); }
 @media (max-width: 480px) { .backbtn { top: max(20px, env(safe-area-inset-top)); } }
 
@@ -499,7 +529,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 .myrow .meta { font-size: 12.5px; color: var(--ink-2); margin-top: 2px; }
 .myrow .actions2 { grid-column: 1 / -1; display: flex; gap: 8px; margin-top: 8px; }
 .myrow .mini {
-  padding: 8px 12px; border-radius: var(--r-sm); font-size: 12.5px; font-weight: 600;
+  min-height: 44px;
+  padding: 8px 14px; border-radius: var(--r-sm); font-size: 12.5px; font-weight: 600;
   background: var(--surface-2); color: var(--ink-2);
   transition: transform 120ms var(--ease), background-color 160ms var(--ease);
 }
@@ -530,6 +561,43 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 .sheet-actions { display: flex; gap: 10px; }
 
 /* ================================================================ states */
+.similar { display: grid; gap: 10px; }
+.simrow { display: flex; align-items: center; gap: 11px; width: 100%; text-align: left; min-height: 44px; }
+.simrow img { width: 56px; height: 56px; border-radius: var(--r-sm); object-fit: cover; flex: none; background: var(--surface-2); }
+.simrow .s-title { font-size: 13.5px; font-weight: 600; }
+.simrow .s-meta { font-size: 12.5px; color: var(--ink-2); }
+.simrow:active { opacity: .7; }
+
+.reportbtn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; min-height: 44px; border-radius: var(--r-sm);
+  background: var(--surface-2); color: var(--ink-2);
+  font-size: 13.5px; font-weight: 600;
+  transition: background-color 160ms var(--ease), color 160ms var(--ease);
+}
+.reportbtn:active { background: var(--warn-wash); color: var(--warn); }
+.reportbtn[disabled] { opacity: .55; }
+
+.iconbtn {
+  width: 44px; height: 44px; flex: none;
+  display: grid; place-items: center; border-radius: var(--r-full);
+  color: var(--ink-2);
+  transition: background-color 160ms var(--ease), transform 120ms var(--ease);
+}
+.iconbtn:active { transform: scale(.9); background: var(--surface-2); }
+
+.recent-strip {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 116px;
+  gap: 10px; overflow-x: auto; padding: 0 18px 4px;
+  scrollbar-width: none; overscroll-behavior-x: contain;
+}
+.recent-strip::-webkit-scrollbar { display: none; }
+.recent-card { text-align: left; }
+.recent-card img { width: 116px; height: 84px; border-radius: var(--r-sm); object-fit: cover; background: var(--surface-2); }
+.recent-card .r-price { font-size: 13px; font-weight: 700; margin-top: 5px; }
+.recent-card .r-area { font-size: 11.5px; color: var(--ink-2); }
+.recent-card:active { opacity: .7; }
+
 .empty { padding: 64px 32px; text-align: center; color: var(--ink-2); }
 .empty .big { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
 .empty p { font-size: 13.5px; margin: 0 0 18px; line-height: 1.6; }
@@ -683,6 +751,11 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
     <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.4-3.6 4.2-5.3 7.5-5.3s6.1 1.7 7.5 5.3"/></symbol>
     <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.5 4h3l1.5 4-2 1.4a12 12 0 0 0 5.6 5.6L16 13l4 1.5v3a2 2 0 0 1-2.2 2A15.8 15.8 0 0 1 4.5 6.2 2 2 0 0 1 6.5 4z"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5L5.5 13.5H11l-1 8 8.5-11H13z"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M4 16v-3.2l1.7-4.3A2 2 0 0 1 7.6 7h8.8a2 2 0 0 1 1.9 1.5L20 12.8V16"/><path d="M4 16h16v2.5h-3V16M7 18.5V16"/><circle cx="7.5" cy="14" r="1"/><circle cx="16.5" cy="14" r="1"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V4M6 4h11l-2 3.5L17 11H6"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 4L3 11l7 3 3 7z"/><path d="M10 14l4-4"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V4M8.5 7.5L12 4l3.5 3.5"/><path d="M5 13v5.5a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5V13"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.5l7 2.7v5.2c0 4.3-2.9 7.6-7 9.1-4.1-1.5-7-4.8-7-9.1V6.2z"/><path d="M9 12l2.2 2.2L15.5 10"/></symbol>
   </defs>
 </svg>
@@ -722,6 +795,11 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           <button class="chip" type="button" data-quick="nodeposit" aria-pressed="false" data-t="qLowDeposit">1 month deposit</button>
           <button class="chip" type="button" data-quick="furnished" aria-pressed="false" data-t="qFurnished">Furnished</button>
         </div>
+
+        <section id="recent-box" hidden style="padding:6px 0 0">
+          <p class="label" style="padding:0 18px;margin-bottom:8px" data-t="recent">Recently viewed</p>
+          <div class="recent-strip" id="recent-strip"></div>
+        </section>
 
         <div class="resultline">
           <span class="roll" id="result-count">&nbsp;</span>
@@ -862,13 +940,29 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           </div>
 
           <div class="panel">
+            <h3 data-t="similar">Similar places</h3>
+            <div id="d-similar" class="similar"></div>
+          </div>
+
+          <div class="panel">
+            <button class="reportbtn" type="button" id="d-report">
+              <svg class="icon" aria-hidden="true"><use href="#i-flag"/></svg>
+              <span data-t="reportRented">Report as already rented</span>
+            </button>
+            <p class="powernote" data-t="reportHint" style="margin-top:8px"></p>
+          </div>
+
+          <div class="panel">
             <h3 data-t="theLandlord">The landlord</h3>
             <div class="who">
               <div class="avatar" id="d-initial"></div>
-              <div>
+              <div style="flex:1;min-width:0">
                 <div class="who-name" id="d-landlord"></div>
                 <div class="who-sub" id="d-landlord-sub"></div>
               </div>
+              <button class="iconbtn" type="button" id="d-share" aria-label="Share">
+                <svg class="icon" aria-hidden="true"><use href="#i-share"/></svg>
+              </button>
             </div>
           </div>
         </div>
@@ -878,9 +972,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         <button class="btn btn-ghost" type="button" id="d-save" aria-label="Save">
           <svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>
         </button>
-        <button class="btn btn-primary" type="button" id="d-contact">
+        <button class="btn btn-primary" type="button" id="d-call">
           <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>
-          <span data-t="contact">Contact landlord</span>
+          <span data-t="call">Call</span>
+        </button>
+        <button class="btn btn-ghost" type="button" id="d-telegram" aria-label="Telegram">
+          <svg class="icon" aria-hidden="true"><use href="#i-send"/></svg>
         </button>
       </div>
     </section>
@@ -1039,8 +1136,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       power:1000, water:0, internet:true,
       parking:{ car:0, moto:true },
       has:{ aircon:true, furnished:true, privateBath:true, lift:false, washer:false, pets:false, balcony:false, security:true, kitchen:true },
-      verified:true, lastConfirmed:1,
-      landlord:{ name:"Chan Sophal", since:2021, listings:3 },
+      reports:0, verified:true, lastConfirmed:1,
+      landlord:{ name:"Chan Sophal", since:2021, listings:3 , phone:"01 509 650", telegram:"@sophal" },
       photos:["toulkork-studio-a","toulkork-studio-b","toulkork-studio-c"] },
 
     { id:"bkk3-1", title:{en:"One bedroom with balcony, BKK3", km:"អាផាតមិន ១បន្ទប់ មានយ៉រ បឹងកេងកង៣"},
@@ -1050,8 +1147,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       power:900, water:2500, internet:true,
       parking:{ car:1, moto:true },
       has:{ aircon:true, furnished:true, privateBath:true, lift:true, washer:true, pets:false, balcony:true, security:true, kitchen:true },
-      verified:true, lastConfirmed:3,
-      landlord:{ name:"Meas Dara", since:2019, listings:8 },
+      reports:0, verified:true, lastConfirmed:3,
+      landlord:{ name:"Meas Dara", since:2019, listings:8 , phone:"01 622 921", telegram:"@dara" },
       photos:["bkk3-balcony-a","bkk3-balcony-b","bkk3-balcony-c"] },
 
     { id:"ss-1", title:{en:"Two bedroom flat house, Sen Sok", km:"ផ្ទះល្វែង ២បន្ទប់ សែនសុខ"},
@@ -1061,8 +1158,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       power:800, water:0, internet:false,
       parking:{ car:1, moto:true },
       has:{ aircon:false, furnished:false, privateBath:true, lift:false, washer:false, pets:true, balcony:false, security:false, kitchen:true },
-      verified:false, lastConfirmed:2,
-      landlord:{ name:"Ly Sreyneang", since:2023, listings:1 },
+      reports:0, verified:false, lastConfirmed:2,
+      landlord:{ name:"Ly Sreyneang", since:2023, listings:1 , phone:"02 525 799", telegram:"@sreyneang" },
       photos:["sensok-flat-a","sensok-flat-b"] },
 
     { id:"rm-1", title:{en:"Room above a coffee shop, Russian Market", km:"បន្ទប់ជួល ខាងលើហាងកាហ្វេ ផ្សារទួលទំពូង"},
@@ -1072,8 +1169,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       power:1200, water:3000, internet:true,
       parking:{ car:0, moto:true },
       has:{ aircon:true, furnished:true, privateBath:false, lift:false, washer:false, pets:false, balcony:false, security:false, kitchen:false },
-      verified:true, lastConfirmed:6,
-      landlord:{ name:"Kim Bunthoeun", since:2022, listings:2 },
+      reports:0, verified:true, lastConfirmed:6,
+      landlord:{ name:"Kim Bunthoeun", since:2022, listings:2 , phone:"01 988 445", telegram:"@bunthoeun" },
       photos:["russianmarket-room-a","russianmarket-room-b"] },
 
     { id:"cc-1", title:{en:"Riverside house, Chroy Changvar", km:"ផ្ទះមាត់ទន្លេ ជ្រោយចង្វារ"},
@@ -1083,8 +1180,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       power:730, water:2000, internet:false,
       parking:{ car:2, moto:true },
       has:{ aircon:false, furnished:false, privateBath:true, lift:false, washer:true, pets:true, balcony:true, security:false, kitchen:true },
-      verified:true, lastConfirmed:4,
-      landlord:{ name:"Pen Chanthou", since:2018, listings:5 },
+      reports:0, verified:true, lastConfirmed:4,
+      landlord:{ name:"Pen Chanthou", since:2018, listings:5 , phone:"02 663 803", telegram:"@chanthou" },
       photos:["chroychangvar-house-a","chroychangvar-house-b","chroychangvar-house-c"] },
 
     { id:"ca-1", title:{en:"Cheap room, Chbar Ampov", km:"បន្ទប់ជួលថោក ច្បារអំពៅ"},
@@ -1094,8 +1191,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       power:1500, water:4000, internet:false,
       parking:{ car:0, moto:true },
       has:{ aircon:false, furnished:false, privateBath:false, lift:false, washer:false, pets:false, balcony:false, security:false, kitchen:false },
-      verified:false, lastConfirmed:19,
-      landlord:{ name:"Sok Vanna", since:2024, listings:1 },
+      reports:0, verified:false, lastConfirmed:19,
+      landlord:{ name:"Sok Vanna", since:2024, listings:1 , phone:"01 638 938", telegram:"@vanna" },
       photos:["chbarampov-room-a"] },
 
     { id:"tk-2", title:{en:"Quiet 2 bed near Institute of Technology", km:"អាផាតមិន ២បន្ទប់ ជិតវិទ្យាស្ថានបច្ចេកវិទ្យា"},
@@ -1105,9 +1202,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       power:730, water:0, internet:true,
       parking:{ car:1, moto:true },
       has:{ aircon:true, furnished:true, privateBath:true, lift:true, washer:true, pets:false, balcony:true, security:true, kitchen:true },
-      verified:true, lastConfirmed:0,
+      reports:0, verified:true, lastConfirmed:0,
       owner:"me", billing:{ state:"live", daysLeft:23 },
-      landlord:{ name:"Nou Sokhem", since:2020, listings:4 },
+      landlord:{ name:"Nou Sokhem", since:2020, listings:4 , phone:"02 839 330", telegram:"@sokhem" },
       photos:["toulkork-2bed-a","toulkork-2bed-b","toulkork-2bed-c"] },
 
     { id:"bkk1-1", title:{en:"Serviced one bed, BKK1", km:"អាផាតមិនសេវាកម្ម ១បន្ទប់ បឹងកេងកង១"},
@@ -1117,8 +1214,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       power:0, water:0, internet:true,
       parking:{ car:1, moto:true },
       has:{ aircon:true, furnished:true, privateBath:true, lift:true, washer:true, pets:false, balcony:false, security:true, kitchen:true },
-      verified:true, lastConfirmed:8,
-      landlord:{ name:"Tep Marina", since:2017, listings:12 },
+      reports:0, verified:true, lastConfirmed:8,
+      landlord:{ name:"Tep Marina", since:2017, listings:12 , phone:"02 916 102", telegram:"@marina" },
       photos:["bkk1-serviced-a","bkk1-serviced-b"] },
 
     { id:"tp-1", title:{en:"Shophouse ground floor, Tuol Sangke", km:"ផ្ទះល្វែងជាន់ផ្ទាល់ដី ទួលសង្កែ"},
@@ -1128,9 +1225,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       power:850, water:2500, internet:false,
       parking:{ car:1, moto:true },
       has:{ aircon:false, furnished:false, privateBath:true, lift:false, washer:false, pets:true, balcony:false, security:false, kitchen:true },
-      verified:false, lastConfirmed:11,
+      reports:0, verified:false, lastConfirmed:11,
       owner:"me", billing:{ state:"paused", daysLeft:0 },
-      landlord:{ name:"Hun Sreypov", since:2023, listings:2 },
+      landlord:{ name:"Hun Sreypov", since:2023, listings:2 , phone:"01 103 065", telegram:"@sreypov" },
       photos:["tuolsangke-shophouse-a","tuolsangke-shophouse-b"] },
 
     { id:"ss-2", title:{en:"Student room with motorbike parking, Sen Sok", km:"បន្ទប់និស្សិត មានចំណតម៉ូតូ សែនសុខ"},
@@ -1140,9 +1237,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       power:900, water:0, internet:true,
       parking:{ car:0, moto:true },
       has:{ aircon:true, furnished:true, privateBath:true, lift:false, washer:false, pets:false, balcony:false, security:true, kitchen:false },
-      verified:true, lastConfirmed:2,
+      reports:0, verified:true, lastConfirmed:2,
       owner:"me", billing:{ state:"trial", daysLeft:9 },
-      landlord:{ name:"Chea Vichea", since:2022, listings:6 },
+      landlord:{ name:"Chea Vichea", since:2022, listings:6 , phone:"01 479 442", telegram:"@vichea" },
       photos:["sensok-student-a","sensok-student-b"] },
 
     { id:"bkk2-1", title:{en:"Villa with garden, BKK2", km:"វីឡា មានសួន បឹងកេងកង២"},
@@ -1152,8 +1249,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       power:730, water:2000, internet:true,
       parking:{ car:2, moto:true },
       has:{ aircon:true, furnished:true, privateBath:true, lift:false, washer:true, pets:true, balcony:true, security:true, kitchen:true },
-      verified:true, lastConfirmed:5,
-      landlord:{ name:"Ouk Sovannara", since:2016, listings:9 },
+      reports:0, verified:true, lastConfirmed:5,
+      landlord:{ name:"Ouk Sovannara", since:2016, listings:9 , phone:"01 740 961", telegram:"@sovannara" },
       photos:["bkk2-villa-a","bkk2-villa-b","bkk2-villa-c"] }
   ];
 
@@ -1217,7 +1314,13 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       rentedToast:"បានដកចេញ។ ឈប់គិតថ្លៃ។", paidToast:"បានបង់រួច។ ការផ្សាយបានបន្ត។",
       whyPay:"ហេតុអ្វីត្រូវបង់?",
       whyPayBody:"ថ្លៃតិចតួច ធ្វើឲ្យម្ចាស់ផ្ទះដកការផ្សាយពេលជួលរួច។ នេះជាមូលហេតុដែលបញ្ជីនៅទីនេះថ្មីជាងហ្វេសប៊ុក។",
-      feeLine:"${f} ក្នុងមួយខែ ក្នុងមួយការផ្សាយ។ {d} ថ្ងៃដំបូងឥតគិតថ្លៃ។"
+      feeLine:"${f} ក្នុងមួយខែ ក្នុងមួយការផ្សាយ។ {d} ថ្ងៃដំបូងឥតគិតថ្លៃ។",
+
+      call:"ហៅទូរស័ព្ទ", telegram:"តេលេក្រាម", share:"ចែករំលែក",
+      reportRented:"រាយការណ៍ថាជួលរួច", reported:"អរគុណ។ បានរាយការណ៍។",
+      reportedPaused:"បានរាយការណ៍ច្រើន។ ការផ្សាយត្រូវផ្អាក។",
+      reportHint:"បើអ្នកទូរស័ព្ទទៅ ហើយគេថាជួលរួច សូមប្រាប់យើង។",
+      similar:"ស្រដៀងគ្នា", recent:"បានមើលថ្មីៗ", shareToast:"បានចម្លងតំណ"
     },
     en: {
       tagline:"rentals people actually answer", filters:"Filters", searchPh:"Toul Kork, BKK, Sen Sok",
@@ -1273,7 +1376,13 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       rentedToast:"Taken down. Billing stopped.", paidToast:"Paid. The listing is live again.",
       whyPay:"Why it costs money",
       whyPayBody:"A small monthly fee gives a landlord a reason to take the listing down once the room is gone. That is the whole reason the listings here are fresher than a Facebook group.",
-      feeLine:"${f} per month per listing. The first {d} days are free."
+      feeLine:"${f} per month per listing. The first {d} days are free.",
+
+      call:"Call", telegram:"Telegram", share:"Share",
+      reportRented:"Report as already rented", reported:"Thank you. Reported.",
+      reportedPaused:"Enough reports. The listing has been paused.",
+      reportHint:"If you call and the room has gone, tell us. Two reports pause a listing until the landlord confirms it again.",
+      similar:"Similar places", recent:"Recently viewed", shareToast:"Link copied"
     }
   };
 
@@ -1309,6 +1418,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     must:{ aircon:false, furnished:false, lift:false, privateBath:false, washer:false, pets:false, balcony:false, security:false, kitchen:false, internet:false }
   };
   var saved = {};
+  var recent = [];        // ids, most recent first
   var current = null;
 
   function activeFilterCount() {
@@ -1455,7 +1565,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           '<span class="fact">' + bedLabel(l) + '</span>' +
           '<span class="fact">' + l.size + ' ' + t("sqm") + '</span>' +
           '<span class="fact">' + termLabel(l) + '</span>' +
-          '<span class="fact' + (p.over ? ' warnfact' : '') + '">⚡ ' + p.text + '</span>' +
+          '<span class="fact' + (p.over ? ' warnfact' : '') + '">' +
+            '<svg class="icon tiny" aria-hidden="true"><use href="#i-bolt"/></svg>' + p.text + '</span>' +
           '<span class="fact">' + parkingLabel(l) + '</span>' +
           '<span class="fact deposit">' + t("depositWord") + ' ' + l.deposit + ' ' + monthsWord(l.deposit) + '</span>' +
         '</div>' +
@@ -1672,6 +1783,13 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       s.hidden = s.id !== id;
       s.classList.remove("is-pushing", "is-popping", "is-behind");
     });
+    /* Move screen reader focus to the new screen, so the reading position
+       follows the navigation instead of staying on the tab that was hit. */
+    var next = document.getElementById(id);
+    if (next) {
+      next.setAttribute("tabindex", "-1");
+      next.focus({ preventScroll: true });
+    }
   }
 
   function fly(fromImg, toRect, done) {
@@ -1712,6 +1830,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   function openDetail(l, fromImg, silent) {
     current = l;
     paintDetail(l);
+    paintSimilar(l);
+    if (!silent) pushRecent(l.id);
 
     if (silent) return;
 
@@ -1825,6 +1945,75 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     document.getElementById("d-landlord-sub").textContent =
       t("landlordSince", { y: l.landlord.since, n: l.landlord.listings });
     document.getElementById("d-save").classList.toggle("is-on", !!saved[l.id]);
+    document.getElementById("d-report").disabled = false;
+  }
+
+  /* Similar places: same area first, then nearest price. Keeps someone who
+     rejected one room inside the app instead of back on Facebook. */
+  function similarTo(l) {
+    return LISTINGS
+      .filter(function (o) { return o.id !== l.id && isLive(o); })
+      .map(function (o) {
+        var score = (o.area.en === l.area.en ? 0 : 100) + Math.abs(o.price - l.price) / 10;
+        return { l:o, score:score };
+      })
+      .sort(function (a, b) { return a.score - b.score; })
+      .slice(0, 3)
+      .map(function (x) { return x.l; });
+  }
+
+  function paintSimilar(l) {
+    var host = document.getElementById("d-similar");
+    host.textContent = "";
+    similarTo(l).forEach(function (o) {
+      var row = document.createElement("button");
+      row.type = "button";
+      row.className = "simrow";
+      row.setAttribute("data-sim", o.id);
+      row.innerHTML =
+        '<img src="' + photoUrl(o.photos[0], 200, 200) + '" alt="">' +
+        '<span><span class="s-title">' + o.title[lang] + '</span><br>' +
+        '<span class="s-meta">$' + o.price + " " + t("perMonth") + " · " + o.area[lang] + '</span></span>';
+      row.addEventListener("click", function () {
+        current = o;
+        pushRecent(o.id);
+        paintDetail(o);
+        paintSimilar(o);
+        document.getElementById("detail-scroll").scrollTop = 0;
+      });
+      host.appendChild(row);
+    });
+  }
+
+  /* Recently viewed. Cheap memory, and it is how people actually shop:
+     they look at six rooms and want the third one back. */
+  function pushRecent(id) {
+    recent = [id].concat(recent.filter(function (x) { return x !== id; })).slice(0, 8);
+    paintRecent();
+  }
+
+  function paintRecent() {
+    var box = document.getElementById("recent-box");
+    var strip = document.getElementById("recent-strip");
+    if (!box || !strip) return;
+    var items = recent
+      .map(function (id) { return LISTINGS.filter(function (l) { return l.id === id; })[0]; })
+      .filter(function (l) { return l && isLive(l); });
+    box.hidden = items.length === 0;
+    strip.textContent = "";
+    items.forEach(function (l) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "recent-card";
+      b.setAttribute("data-recent", l.id);
+      b.setAttribute("aria-label", l.title[lang]);
+      b.innerHTML =
+        '<img src="' + photoUrl(l.photos[0], 300, 220) + '" alt="">' +
+        '<div class="r-price">$' + l.price + '</div>' +
+        '<div class="r-area">' + l.area[lang] + '</div>';
+      b.addEventListener("click", function () { openDetail(l, b.querySelector("img")); });
+      strip.appendChild(b);
+    });
   }
 
   function closeDetail() {
@@ -1878,7 +2067,49 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     if (current) toggleSave(current.id, null);
     this.classList.toggle("is-on", current && saved[current.id]);
   });
-  document.getElementById("d-contact").addEventListener("click", function () { toast(t("contactToast")); });
+  document.getElementById("d-call").addEventListener("click", function () {
+    if (!current) return;
+    /* A real tel: link, because a phone call is how a Khmer rental actually
+       starts. Nothing here tries to keep the conversation in the app. */
+    window.location.href = "tel:" + current.landlord.phone.replace(/\s/g, "");
+  });
+
+  document.getElementById("d-telegram").addEventListener("click", function () {
+    if (!current) return;
+    window.open("https://t.me/" + current.landlord.telegram.replace("@", ""), "_blank", "noopener");
+  });
+
+  document.getElementById("d-share").addEventListener("click", function () {
+    if (!current) return;
+    var text = current.title[lang] + " · $" + current.price + " " + t("perMonth");
+    var url = location.href.split("#")[0] + "#" + current.id;
+    if (navigator.share) {
+      navigator.share({ title: text, url: url }).catch(function () {});
+      return;
+    }
+    if (navigator.clipboard) navigator.clipboard.writeText(text + " " + url).catch(function () {});
+    toast(t("shareToast"));
+  });
+
+  /* Renters are the sensor for dead listings. Two reports pause a listing
+     until the landlord confirms it again, which catches the case the monthly
+     fee misses: a landlord who pays but leaves a rented room up. */
+  var REPORTS_TO_PAUSE = 2;
+  document.getElementById("d-report").addEventListener("click", function () {
+    if (!current) return;
+    current.reports = (current.reports || 0) + 1;
+    if (current.reports >= REPORTS_TO_PAUSE) {
+      current.billing = current.billing || {};
+      current.billing.state = "paused";
+      current.billing.daysLeft = 0;
+      toast(t("reportedPaused"));
+      render();
+      closeDetail();
+      return;
+    }
+    this.disabled = true;
+    toast(t("reported"));
+  });
   document.getElementById("post-start").addEventListener("click", function () { toast(t("postToast")); });
 
   /* =============================================================== sheet */

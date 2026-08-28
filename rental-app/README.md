@@ -49,10 +49,25 @@ So the numbers stay visible, and revenue never depends on the deal happening ins
 Search, four quick filters, a filter sheet with price, bedrooms and type, save and unsave, a saved
 tab, listing detail, and a full Khmer and English translation of every string.
 
+## Borrowed patterns, and why each one
+
+| Pattern | Seen in | Why it belongs here |
+| --- | --- | --- |
+| Report as already rented | Marketplace, Khmer24 | Renters are the sensor the monthly fee misses: a landlord can pay and still leave a taken room up. Two reports pause the listing until the landlord confirms it again. |
+| Call and Telegram, not in-app chat | how Khmer rentals actually start | A phone call is the real first contact, and Telegram is the messenger people already have. `tel:` and `t.me` links, no attempt to trap the conversation. |
+| Similar places on the detail screen | Airbnb, Zillow | Someone who rejects a room is still shopping. Same area first, then nearest price. |
+| Recently viewed | Airbnb | People look at six rooms and want the third one back. |
+| Share a listing | every marketplace | Listings spread through Telegram groups. Native share where available, clipboard otherwise. |
+
 ## What is not built
 
-Auth, chat, payments, map view, photo upload, the landlord side of posting. The listings are a fixed
-array at the bottom of `ptas.html`.
+Auth, real payments, in-app chat, photo upload, the landlord side of posting. The listings are a
+fixed array at the bottom of `ptas.html`.
+
+**The biggest missing piece is a map.** For rentals, location is most of the decision, and a list
+cannot answer "how far is that from my university". It needs real coordinates per listing and a tile
+provider, so it is a real piece of work rather than a UI flourish, and it is the next thing worth
+building.
 
 ## Motion
 
