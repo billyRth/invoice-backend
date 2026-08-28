@@ -83,7 +83,9 @@
   --ease-in:  cubic-bezier(.4, 0, 1, 1);
   --spring:   linear(0,.42 7.2%,.74 14.6%,.955 22.4%,1.032,1.07 32%,1.075,1.066 41%,1.026 54%,1.006 66%,1);
 
-  --tab-h: 66px;
+  --tab-h: 68px;
+  --tab-icon-row: 34px;   /* the pill and the icon share this row */
+  --tab-pad-top: 9px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -418,15 +420,22 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .tabs {
   position: absolute; left: 0; right: 0; bottom: 0; z-index: 40;
   height: calc(var(--tab-h) + env(safe-area-inset-bottom));
+  padding-top: var(--tab-pad-top);
   padding-bottom: env(safe-area-inset-bottom);
   display: grid; grid-template-columns: repeat(4, 1fr);
   background: color-mix(in srgb, var(--surface) 92%, transparent);
   backdrop-filter: blur(14px);
   border-top: 1px solid var(--line);
 }
+/* Two explicit rows. The first is exactly the pill's height, so the icon and
+   the pill are the same box by construction rather than by a guessed offset. */
 .tab {
-  display: grid; place-items: center; gap: 3px;
-  font-size: 10.5px; font-weight: 500; color: var(--ink-3);
+  display: grid;
+  grid-template-rows: var(--tab-icon-row) auto;
+  align-items: center; justify-items: center;
+  align-content: start;
+  gap: 2px;
+  font-size: 10.5px; font-weight: 500; line-height: 1.2; color: var(--ink-3);
   transition: color 160ms var(--ease);
 }
 .tab .icon { width: 22px; height: 22px; transition: transform 240ms var(--spring); }
@@ -602,14 +611,14 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 /* ------------------------------------------------- tab pill indicator */
 .tabs { position: absolute; }
 .tab-pill {
-  position: absolute; top: 8px; left: 0;
-  width: 25%; height: 42px;
+  position: absolute; top: var(--tab-pad-top); left: 0;
+  width: 25%; height: var(--tab-icon-row);
   pointer-events: none;
   transition: transform 420ms var(--spring);
 }
 .tab-pill::before {
   content: ""; position: absolute; inset: 0 auto 0 50%;
-  width: 58px; margin-left: -29px;
+  width: 56px; margin-left: -28px;
   border-radius: var(--r-full);
   background: var(--brand-wash);
 }
