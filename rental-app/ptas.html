@@ -355,6 +355,9 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 /* ================================================================= cards */
 .feed { display: grid; gap: 16px; padding: 8px 18px 0; }
+/* An explicit display beats the browser's [hidden] rule, so hiding the feed
+   has to be stated here or the attribute does nothing. */
+.feed[hidden] { display: none; }
 
 .card {
   background: var(--surface);
@@ -729,6 +732,47 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 @keyframes stepIn { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .step { animation: none; } }
 
+/* ------------------------------------------------------------------ map */
+.viewtoggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; margin-block: -12px; padding-inline: 4px;
+  color: var(--brand); font-size: 13px; font-weight: 600;
+  transition: transform 120ms var(--ease);
+}
+.viewtoggle:active { transform: scale(.96); }
+
+.mapwrap { padding-bottom: 8px; }
+.mapwrap[hidden] { display: none; }
+#map {
+  height: 46vh; min-height: 260px;
+  margin-inline: 18px;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--surface-2);
+  box-shadow: var(--sh-1);
+}
+.maperror {
+  margin: 10px 18px 0; padding: 12px 14px;
+  border-radius: var(--r-sm);
+  background: var(--warn-wash); color: var(--warn);
+  font-size: 13px;
+}
+.maperror[hidden] { display: none; }
+
+/* The marker is the price, because that is what someone is scanning for. */
+.pricepin {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 46px; min-height: 30px; padding: 0 9px;
+  border-radius: var(--r-full);
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: var(--sh-2);
+  font: 600 12.5px/1 "Plus Jakarta Sans", sans-serif;
+  white-space: nowrap;
+}
+.pricepin.is-stale { opacity: .6; }
+.pricepin.is-active { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+
 .gate {
   position: absolute; inset: 0; z-index: 90;
   background: var(--bg);
@@ -910,6 +954,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V4M6 4h11l-2 3.5L17 11H6"/></symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 4L3 11l7 3 3 7z"/><path d="M10 14l4-4"/></symbol>
     <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V4M8.5 7.5L12 4l3.5 3.5"/><path d="M5 13v5.5a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5V13"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4L3 6.5v13L9 17l6 3 6-2.5v-13L15 7z"/><path d="M9 4v13M15 7v13"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.5l7 2.7v5.2c0 4.3-2.9 7.6-7 9.1-4.1-1.5-7-4.8-7-9.1V6.2z"/><path d="M9 12l2.2 2.2L15.5 10"/></symbol>
   </defs>
 </svg>
@@ -957,7 +1002,17 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
         <div class="resultline">
           <span class="roll" id="result-count">&nbsp;</span>
+          <button class="viewtoggle" type="button" id="view-toggle">
+            <svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>
+            <span id="view-toggle-label" data-t="viewMap">Map</span>
+          </button>
           <span id="stale-note" class="sr"></span>
+        </div>
+
+        <div class="mapwrap" id="mapwrap" hidden>
+          <div id="map"></div>
+          <p class="maperror" id="map-error" hidden></p>
+          <p class="powernote" style="padding:8px 18px 0" data-t="mapHint"></p>
         </div>
 
         <div class="feed" id="feed"></div>
@@ -1562,7 +1617,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   var FREE_DAYS  = 14;      // free while a new listing finds its first renter
 
   var LISTINGS = [
-    { id:"tk-1", title:{en:"Bright studio near Toul Kork market", km:"បន្ទប់ស្ទូឌីយោ ជិតផ្សារទួលគោក"},
+    { id:"tk-1", lat:11.5760, lng:104.8905, title:{en:"Bright studio near Toul Kork market", km:"បន្ទប់ស្ទូឌីយោ ជិតផ្សារទួលគោក"},
       area:{en:"Toul Kork, Phnom Penh", km:"ទួលគោក ភ្នំពេញ"},
       price:180, beds:0, type:"studio", size:28, floor:2,
       deposit:1, term:"monthly", minStay:3, availableNow:true,
@@ -1573,7 +1628,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       landlord:{ name:"Chan Sophal", since:2021, listings:3 , phone:"01 509 650", telegram:"@sophal" },
       photos:["toulkork-studio-a","toulkork-studio-b","toulkork-studio-c"] },
 
-    { id:"bkk3-1", title:{en:"One bedroom with balcony, BKK3", km:"អាផាតមិន ១បន្ទប់ មានយ៉រ បឹងកេងកង៣"},
+    { id:"bkk3-1", lat:11.5450, lng:104.9185, title:{en:"One bedroom with balcony, BKK3", km:"អាផាតមិន ១បន្ទប់ មានយ៉រ បឹងកេងកង៣"},
       area:{en:"Boeung Keng Kang 3", km:"បឹងកេងកង៣"},
       price:320, beds:1, type:"apartment", size:45, floor:4,
       deposit:2, term:"12", minStay:12, availableNow:true,
@@ -1584,7 +1639,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       landlord:{ name:"Meas Dara", since:2019, listings:8 , phone:"01 622 921", telegram:"@dara" },
       photos:["bkk3-balcony-a","bkk3-balcony-b","bkk3-balcony-c"] },
 
-    { id:"ss-1", title:{en:"Two bedroom flat house, Sen Sok", km:"ផ្ទះល្វែង ២បន្ទប់ សែនសុខ"},
+    { id:"ss-1", lat:11.5950, lng:104.8720, title:{en:"Two bedroom flat house, Sen Sok", km:"ផ្ទះល្វែង ២បន្ទប់ សែនសុខ"},
       area:{en:"Sen Sok, Phnom Penh", km:"សែនសុខ ភ្នំពេញ"},
       price:250, beds:2, type:"flathouse", size:60, floor:0,
       deposit:1, term:"6", minStay:6, availableNow:true,
@@ -1595,7 +1650,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       landlord:{ name:"Ly Sreyneang", since:2023, listings:1 , phone:"02 525 799", telegram:"@sreyneang" },
       photos:["sensok-flat-a","sensok-flat-b"] },
 
-    { id:"rm-1", title:{en:"Room above a coffee shop, Russian Market", km:"បន្ទប់ជួល ខាងលើហាងកាហ្វេ ផ្សារទួលទំពូង"},
+    { id:"rm-1", lat:11.5430, lng:104.9210, title:{en:"Room above a coffee shop, Russian Market", km:"បន្ទប់ជួល ខាងលើហាងកាហ្វេ ផ្សារទួលទំពូង"},
       area:{en:"Toul Tom Poung", km:"ទួលទំពូង"},
       price:140, beds:0, type:"room", size:22, floor:3,
       deposit:1, term:"monthly", minStay:1, availableNow:true,
@@ -1606,7 +1661,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       landlord:{ name:"Kim Bunthoeun", since:2022, listings:2 , phone:"01 988 445", telegram:"@bunthoeun" },
       photos:["russianmarket-room-a","russianmarket-room-b"] },
 
-    { id:"cc-1", title:{en:"Riverside house, Chroy Changvar", km:"ផ្ទះមាត់ទន្លេ ជ្រោយចង្វារ"},
+    { id:"cc-1", lat:11.5880, lng:104.9350, title:{en:"Riverside house, Chroy Changvar", km:"ផ្ទះមាត់ទន្លេ ជ្រោយចង្វារ"},
       area:{en:"Chroy Changvar", km:"ជ្រោយចង្វារ"},
       price:450, beds:3, type:"house", size:110, floor:0,
       deposit:2, term:"12", minStay:12, availableNow:false,
@@ -1617,7 +1672,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       landlord:{ name:"Pen Chanthou", since:2018, listings:5 , phone:"02 663 803", telegram:"@chanthou" },
       photos:["chroychangvar-house-a","chroychangvar-house-b","chroychangvar-house-c"] },
 
-    { id:"ca-1", title:{en:"Cheap room, Chbar Ampov", km:"បន្ទប់ជួលថោក ច្បារអំពៅ"},
+    { id:"ca-1", lat:11.5300, lng:104.9500, title:{en:"Cheap room, Chbar Ampov", km:"បន្ទប់ជួលថោក ច្បារអំពៅ"},
       area:{en:"Chbar Ampov", km:"ច្បារអំពៅ"},
       price:95, beds:0, type:"room", size:18, floor:1,
       deposit:1, term:"monthly", minStay:1, availableNow:true,
@@ -1628,7 +1683,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       landlord:{ name:"Sok Vanna", since:2024, listings:1 , phone:"01 638 938", telegram:"@vanna" },
       photos:["chbarampov-room-a"] },
 
-    { id:"tk-2", title:{en:"Quiet 2 bed near Institute of Technology", km:"អាផាតមិន ២បន្ទប់ ជិតវិទ្យាស្ថានបច្ចេកវិទ្យា"},
+    { id:"tk-2", lat:11.5795, lng:104.8860, title:{en:"Quiet 2 bed near Institute of Technology", km:"អាផាតមិន ២បន្ទប់ ជិតវិទ្យាស្ថានបច្ចេកវិទ្យា"},
       area:{en:"Toul Kork, Phnom Penh", km:"ទួលគោក ភ្នំពេញ"},
       price:280, beds:2, type:"apartment", size:55, floor:5,
       deposit:1, term:"6", minStay:6, availableNow:true,
@@ -1640,7 +1695,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       landlord:{ name:"Nou Sokhem", since:2020, listings:4 , phone:"02 839 330", telegram:"@sokhem" },
       photos:["toulkork-2bed-a","toulkork-2bed-b","toulkork-2bed-c"] },
 
-    { id:"bkk1-1", title:{en:"Serviced one bed, BKK1", km:"អាផាតមិនសេវាកម្ម ១បន្ទប់ បឹងកេងកង១"},
+    { id:"bkk1-1", lat:11.5490, lng:104.9230, title:{en:"Serviced one bed, BKK1", km:"អាផាតមិនសេវាកម្ម ១បន្ទប់ បឹងកេងកង១"},
       area:{en:"Boeung Keng Kang 1", km:"បឹងកេងកង១"},
       price:520, beds:1, type:"apartment", size:50, floor:8,
       deposit:2, term:"12", minStay:12, availableNow:true,
@@ -1651,7 +1706,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       landlord:{ name:"Tep Marina", since:2017, listings:12 , phone:"02 916 102", telegram:"@marina" },
       photos:["bkk1-serviced-a","bkk1-serviced-b"] },
 
-    { id:"tp-1", title:{en:"Shophouse ground floor, Tuol Sangke", km:"ផ្ទះល្វែងជាន់ផ្ទាល់ដី ទួលសង្កែ"},
+    { id:"tp-1", lat:11.6050, lng:104.9020, title:{en:"Shophouse ground floor, Tuol Sangke", km:"ផ្ទះល្វែងជាន់ផ្ទាល់ដី ទួលសង្កែ"},
       area:{en:"Tuol Sangke, Russey Keo", km:"ទួលសង្កែ ឫស្សីកែវ"},
       price:210, beds:1, type:"flathouse", size:40, floor:0,
       deposit:1, term:"monthly", minStay:3, availableNow:true,
@@ -1663,7 +1718,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       landlord:{ name:"Hun Sreypov", since:2023, listings:2 , phone:"01 103 065", telegram:"@sreypov" },
       photos:["tuolsangke-shophouse-a","tuolsangke-shophouse-b"] },
 
-    { id:"ss-2", title:{en:"Student room with motorbike parking, Sen Sok", km:"បន្ទប់និស្សិត មានចំណតម៉ូតូ សែនសុខ"},
+    { id:"ss-2", lat:11.5990, lng:104.8680, title:{en:"Student room with motorbike parking, Sen Sok", km:"បន្ទប់និស្សិត មានចំណតម៉ូតូ សែនសុខ"},
       area:{en:"Sen Sok, Phnom Penh", km:"សែនសុខ ភ្នំពេញ"},
       price:120, beds:0, type:"room", size:20, floor:2,
       deposit:1, term:"monthly", minStay:1, availableNow:true,
@@ -1675,7 +1730,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       landlord:{ name:"Chea Vichea", since:2022, listings:6 , phone:"01 479 442", telegram:"@vichea" },
       photos:["sensok-student-a","sensok-student-b"] },
 
-    { id:"bkk2-1", title:{en:"Villa with garden, BKK2", km:"វីឡា មានសួន បឹងកេងកង២"},
+    { id:"bkk2-1", lat:11.5470, lng:104.9160, title:{en:"Villa with garden, BKK2", km:"វីឡា មានសួន បឹងកេងកង២"},
       area:{en:"Boeung Keng Kang 2", km:"បឹងកេងកង២"},
       price:900, beds:4, type:"house", size:180, floor:0,
       deposit:2, term:"12", minStay:12, availableNow:false,
@@ -1791,7 +1846,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       verifyLater:"ផ្ទៀងផ្ទាត់អត្តសញ្ញាណពេលក្រោយ", verifyNow:"ផ្ទៀងផ្ទាត់ឥឡូវ",
       verifyWhy:"ការផ្សាយដែលបានផ្ទៀងផ្ទាត់ ទទួលបានការទាក់ទងច្រើនជាង។",
       feeReminder:"ឥតគិតថ្លៃ {d} ថ្ងៃ បន្ទាប់មក ${f} ក្នុងមួយខែ។",
-      theme:"រូបរាង", thAuto:"ស្វ័យប្រវត្តិ", thLight:"ភ្លឺ", thDark:"ងងឹត", thKhmer:"ខ្មែរ"
+      theme:"រូបរាង", thAuto:"ស្វ័យប្រវត្តិ", thLight:"ភ្លឺ", thDark:"ងងឹត", thKhmer:"ខ្មែរ",
+      viewMap:"ផែនទី", viewList:"បញ្ជី", mapFail:"ផែនទីមិនអាចផ្ទុកបាន។ បញ្ជីនៅដំណើរការធម្មតា។",
+      mapHint:"ចុចលើតម្លៃ ដើម្បីមើលបន្ថែម"
     },
     en: {
       tagline:"rentals people actually answer", filters:"Filters", searchPh:"Toul Kork, BKK, Sen Sok",
@@ -1891,7 +1948,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       verifyLater:"Verify my ID later", verifyNow:"Verify now",
       verifyWhy:"Verified listings get noticeably more calls.",
       feeReminder:"Free for {d} days, then ${f} a month.",
-      theme:"Theme", thAuto:"Auto", thLight:"Light", thDark:"Dark", thKhmer:"Khmer"
+      theme:"Theme", thAuto:"Auto", thLight:"Light", thDark:"Dark", thKhmer:"Khmer",
+      viewMap:"Map", viewList:"List", mapFail:"The map could not load. The list still works normally.",
+      mapHint:"Tap a price to see the place"
     }
   };
 
@@ -2180,6 +2239,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     renderSaved();
     renderMine();
     paintTenancy();
+    if (mapView) paintMarkers();
   }
 
   /* ---------------------------------------------------------- landlord side
@@ -2728,6 +2788,105 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     }, { root: document.getElementById("explore-scroll"), threshold: 1 }).observe(sentinel);
   }
 
+
+  /* ------------------------------------------------------------------ map
+     Leaflet and OpenStreetMap, loaded only when the map is first opened so
+     the app costs nothing extra to people who never use it. If the library
+     or the tiles fail, the list stays exactly as it was and the map says so
+     rather than leaving a grey rectangle. */
+  var LEAFLET_JS  = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
+  var LEAFLET_CSS = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";
+
+  var mapView = false;
+  var map = null;
+  var markers = [];
+  var leafletLoading = null;
+
+  function loadLeaflet() {
+    if (window.L) return Promise.resolve(window.L);
+    if (leafletLoading) return leafletLoading;
+
+    leafletLoading = new Promise(function (resolve, reject) {
+      var css = document.createElement("link");
+      css.rel = "stylesheet";
+      css.href = LEAFLET_CSS;
+      document.head.appendChild(css);
+
+      var js = document.createElement("script");
+      js.src = LEAFLET_JS;
+      js.onload = function () { window.L ? resolve(window.L) : reject(new Error("no L")); };
+      js.onerror = function () { reject(new Error("script failed")); };
+      document.head.appendChild(js);
+
+      window.setTimeout(function () { if (!window.L) reject(new Error("timeout")); }, 8000);
+    });
+    return leafletLoading;
+  }
+
+  function paintMarkers() {
+    if (!map || !window.L) return;
+    markers.forEach(function (m) { map.removeLayer(m); });
+    markers = [];
+
+    var list = ranked(LISTINGS.filter(matches)).filter(function (l) { return l.lat && l.lng; });
+    if (!list.length) return;
+
+    list.forEach(function (l) {
+      var icon = window.L.divIcon({
+        className: "",
+        html: '<span class="pricepin' + (l.lastConfirmed > 14 ? " is-stale" : "") + '">$' + l.price + "</span>",
+        iconSize: null
+      });
+      var m = window.L.marker([l.lat, l.lng], { icon: icon, title: l.title[lang] }).addTo(map);
+      m.on("click", function () { openDetail(l, null); });
+      markers.push(m);
+    });
+
+    var bounds = window.L.latLngBounds(list.map(function (l) { return [l.lat, l.lng]; }));
+    map.fitBounds(bounds, { padding: [36, 36], maxZoom: 15 });
+  }
+
+  function showMapError() {
+    var box = document.getElementById("map-error");
+    box.textContent = t("mapFail");
+    box.hidden = false;
+    document.getElementById("map").style.display = "none";
+
+    /* Give the list back rather than leaving an empty panel. The message
+       stays so the failure is not silent. */
+    mapView = false;
+    document.getElementById("feed").hidden = false;
+    document.getElementById("view-toggle-label").textContent = t("viewMap");
+  }
+
+  function openMap() {
+    document.getElementById("mapwrap").hidden = false;
+    loadLeaflet().then(function (L) {
+      document.getElementById("map-error").hidden = true;
+      document.getElementById("map").style.display = "";
+      if (!map) {
+        map = L.map("map", { zoomControl: false, attributionControl: true })
+               .setView([11.5564, 104.9282], 12);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: "© OpenStreetMap"
+        }).addTo(map);
+      }
+      window.setTimeout(function () { map.invalidateSize(); paintMarkers(); }, 60);
+    }).catch(showMapError);
+  }
+
+  function setView(toMap) {
+    mapView = toMap;
+    document.getElementById("feed").hidden = toMap;
+    document.getElementById("empty").hidden = toMap ? true : (feed.children.length !== 0);
+    var label = document.getElementById("view-toggle-label");
+    label.textContent = toMap ? t("viewList") : t("viewMap");
+    if (toMap) openMap();
+    else document.getElementById("mapwrap").hidden = true;
+  }
+
+  document.getElementById("view-toggle").addEventListener("click", function () { setView(!mapView); });
 
   /* ------------------------------------------------------ compose a listing
      Four steps rather than one long form. Each step is short enough to finish

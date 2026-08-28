@@ -133,10 +133,21 @@ trial.
 Auth, real payments, in-app chat, photo upload, the landlord side of posting. The listings are a
 fixed array at the bottom of `ptas.html`.
 
-**The biggest missing piece is a map.** For rentals, location is most of the decision, and a list
-cannot answer "how far is that from my university". It needs real coordinates per listing and a tile
-provider, so it is a real piece of work rather than a UI flourish, and it is the next thing worth
-building.
+## The map
+
+Location is most of a rental decision, so Explore has a map view. Markers are prices, because that is
+what someone is scanning for, and they follow the filters rather than showing everything.
+
+Two deliberate choices:
+
+- **Leaflet and the tiles load only when the map is first opened.** Someone who never taps Map pays
+  nothing for it.
+- **A failed map gives the list straight back.** If the library or the tiles cannot load, the panel
+  does not sit there grey: the list returns and a line explains what happened. This is tested, both
+  the working path and the failing one.
+
+Coordinates are approximate district centres. Real listings would carry a pin dropped by the
+landlord when posting, which is the obvious next step for the posting flow.
 
 ## Motion
 
