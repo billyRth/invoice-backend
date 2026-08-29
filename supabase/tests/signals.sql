@@ -130,3 +130,50 @@ select 'S17 but browsing is still open: ' ||
     'execute')::text;
 select 'S18 and the outbox is not: ' ||
   has_function_privilege('authenticated','enqueue(uuid,text,jsonb,text)','execute')::text;
+
+\echo == a tenancy finds the tenant by phone, and both parties can see it
+insert into listings (id, owner_id, title, kind, term, district, lat, lng, price_usd,
+                      contact_name, contact_phone, status, paid_until)
+values ('cccccccc-0000-0000-0000-00000000000a','11111111-1111-1111-1111-111111111111',
+  'Room to rent out','room','monthly','toulkork',11.57,104.90,200,'Sok','012 1','live', now()+interval '20 days');
+
+set role authenticated; set request.jwt.claim.sub = '11111111-1111-1111-1111-111111111111';
+-- typed the way a landlord would, with a leading zero and spaces
+select 'S19 tenant matched: ' ||
+  ((record_tenancy('cccccccc-0000-0000-0000-00000000000a', 'Dara', '012 000 0002',
+                   current_date, 12, 200, 1, 200)).tenant_id
+   = '22222222-2222-2222-2222-222222222222')::text;
+reset role; reset request.jwt.claim.sub;
+
+select 'S20 the room left the market: ' || status
+  from listings where id='cccccccc-0000-0000-0000-00000000000a';
+
+set role authenticated; set request.jwt.claim.sub = '22222222-2222-2222-2222-222222222222';
+select 'S21 the tenant can see it: ' || count(*) from tenancies
+  where listing_id='cccccccc-0000-0000-0000-00000000000a';
+set request.jwt.claim.sub = '33333333-3333-3333-3333-333333333333';
+select 'S22 a stranger cannot: ' || count(*) from tenancies
+  where listing_id='cccccccc-0000-0000-0000-00000000000a';
+reset role; reset request.jwt.claim.sub;
+
+\echo == an unknown number is recorded rather than refused
+insert into listings (id, owner_id, title, kind, term, district, lat, lng, price_usd,
+                      contact_name, contact_phone, status, paid_until)
+values ('cccccccc-0000-0000-0000-00000000000b','11111111-1111-1111-1111-111111111111',
+  'Another room','room','monthly','sensok',11.59,104.87,150,'Sok','012 1','live', now()+interval '20 days');
+set role authenticated; set request.jwt.claim.sub = '11111111-1111-1111-1111-111111111111';
+select 'S23 no account yet, still recorded: ' ||
+  ((record_tenancy('cccccccc-0000-0000-0000-00000000000b', 'Sokha', '098 765 432',
+                   current_date, 6, 150)).tenant_id is null)::text;
+reset role; reset request.jwt.claim.sub;
+select 'S24 direct insert revoked: ' ||
+  (not has_table_privilege('authenticated','tenancies','insert'))::text;
+
+\echo == and can still see the room itself, which left the market when they moved in
+set role authenticated; set request.jwt.claim.sub = '22222222-2222-2222-2222-222222222222';
+select 'S25 tenant sees their room: ' || count(*) from listings
+  where id='cccccccc-0000-0000-0000-00000000000a';
+set request.jwt.claim.sub = '33333333-3333-3333-3333-333333333333';
+select 'S26 a stranger still cannot: ' || count(*) from listings
+  where id='cccccccc-0000-0000-0000-00000000000a';
+reset role; reset request.jwt.claim.sub;

@@ -75,6 +75,9 @@ supabase/tests/run.sh        # against any local Postgres
 | `0010_notify_schedule` | cron for sending and for the expiry warning (Supabase-only) |
 | `0011_lock_new_functions` | an event trigger, because 0004 and 0008 both failed to stick |
 | `0012_lock_the_locker` | the event trigger could not lock itself |
+| `0013_payment_messages` | approval and rejection were never told to anyone |
+| `0014_record_tenancy` | link the tenancy to the tenant, by phone |
+| `0015_tenant_sees_the_room` | a tenant could read their tenancy but not the room |
 
 The last two are worth reading before adding anything. Both were places where a
 check existed, looked right, and did nothing.
@@ -189,3 +192,22 @@ delivered when they do.
    select vault.create_secret('<service role key>', 'service_key', 'used by kick_notify');
    ```
 5. Set `PTAS_BOT` in `ptas.html` to the bot's username.
+
+
+## A tenancy has two parties, and both can see it
+
+`record_tenancy()` is the only way to create one. It looks the tenant up by
+phone — normalising `012 345 678` and `+85512345678` to the same thing — and
+sets `tenant_id` when they already have an account. A tenant with no account is
+still recorded, by name and number, with a null `tenant_id`; that is the common
+case at first, because the room is usually rented before the renter has ever
+opened the app.
+
+The lookup lives in the function rather than the client because `profiles` is
+readable only by its owner, deliberately, so nobody can walk the user table
+harvesting numbers.
+
+`listings_tenant_read` then lets both parties read the room itself. Without it
+the tenant hit an odd wall: recording the tenancy takes the room off the
+market, so the moment their record existed they lost sight of the listing it
+pointed at, and their own screen could not say which room it was for.

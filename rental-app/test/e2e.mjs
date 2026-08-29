@@ -21,7 +21,9 @@ const SHIM = "http://127.0.0.1:54321";
 const MIGRATIONS = ["0001_init", "0002_payments", "0004_lock_down_functions",
                     "0005_districts", "0006_district_centres", "0007_null_uid_guards",
                     "0008_default_privileges", "0009_signals_and_telegram",
-                    "0011_lock_new_functions", "0012_lock_the_locker"];
+                    "0011_lock_new_functions", "0012_lock_the_locker",
+                    "0013_payment_messages", "0014_record_tenancy",
+                    "0015_tenant_sees_the_room"];
 
 function psql(args, opts = {}) {
   const r = spawnSync("psql", ["-q", "-v", "ON_ERROR_STOP=1", ...args], {
@@ -412,6 +414,184 @@ console.log("\n== the approvals queue is only for admins ==");
   ok("but everyone is offered Telegram", await page.isVisible("#tg-connect"));
 
   await ctx.close();
+}
+
+console.log("\n== recording a tenancy takes the room off the market ==");
+{
+  const { ctx, page } = await open();
+  await page.waitForSelector(".card", { timeout: 8000 });
+  await page.evaluate(() => document.getElementById("gate").hidden = false);
+  await page.fill("#gate-phone", newPhone());
+  await page.click("#gate-continue");
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  await page.click('.rolecard[data-role="landlord"]');
+  await page.waitForTimeout(600);
+
+  // Post a room, then rent it out.
+  await page.click("#post-start");
+  await page.waitForTimeout(400);
+  await page.setInputFiles("#new-files", {
+    name: "r.jpg", mimeType: "image/jpeg", buffer: Buffer.from("ffd8ffdb0000", "hex")
+  });
+  await page.waitForTimeout(200);
+  await page.click("#new-next"); await page.waitForTimeout(250);
+  const T = "បន្ទប់ជួលហើយ " + Date.now();
+  await page.fill("#new-title", T);
+  await page.selectOption("#new-district", "daunpenh");
+  await page.fill("#new-area", "ក្បែរវត្ត");
+  await page.click("#new-next"); await page.waitForTimeout(250);
+  await page.fill("#new-rent", "190");
+  await page.click("#new-next"); await page.waitForTimeout(250);
+  await page.click("#new-next");
+  await page.waitForTimeout(1800);
+
+  // It is live, so a renter can see it.
+  const { ctx: c1, page: p1 } = await open();
+  await p1.waitForSelector(".card", { timeout: 8000 });
+  const before = await p1.$$eval(".card-title", els => els.map(e => e.textContent));
+  ok("the new room is on the market", before.includes(T));
+  await c1.close();
+
+  // Record the tenancy from the landlord's own listing.
+  await page.click(`#my-listings .myrow`);
+  await page.waitForTimeout(300);
+  const openedRecord = await page.evaluate((title) => {
+    const rows = [...document.querySelectorAll("#my-listings .myrow")];
+    const row = rows.find(r => r.textContent.includes(title));
+    if (!row) return false;
+    const btn = [...row.querySelectorAll("button")]
+      .find(b => b.hasAttribute("data-rented"));
+    if (!btn) return false;
+    btn.click();
+    return true;
+  }, T);
+  ok("the landlord can mark it rented", openedRecord);
+  await page.waitForTimeout(1500);
+
+  // And now no renter can find it, because the database flipped it.
+  const { ctx: c2, page: p2 } = await open();
+  await p2.waitForSelector(".card", { timeout: 8000 });
+  const after = await p2.$$eval(".card-title", els => els.map(e => e.textContent));
+  ok("a rented room leaves the market", !after.includes(T),
+     after.filter(x => x === T).length + " still showing");
+  await c2.close();
+
+  await ctx.close();
+}
+
+console.log("\n== the tenant sees the record too ==");
+{
+  // The renter signs in first, so an account exists for their number to match.
+  const tenantPhone = newPhone();
+  const { ctx: rc, page: rp } = await open();
+  await rp.waitForSelector(".card", { timeout: 8000 });
+  await rp.evaluate(() => document.getElementById("gate").hidden = false);
+  await rp.fill("#gate-phone", tenantPhone);
+  await rp.click("#gate-continue");
+  await rp.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  await rp.click('.rolecard[data-role="renter"]');
+  await rp.waitForTimeout(600);
+  await rc.close();
+
+  // A landlord posts a room and records the tenancy against that number.
+  const { ctx, page } = await open();
+  await page.waitForSelector(".card", { timeout: 8000 });
+  await page.evaluate(() => document.getElementById("gate").hidden = false);
+  await page.fill("#gate-phone", newPhone());
+  await page.click("#gate-continue");
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  await page.click('.rolecard[data-role="landlord"]');
+  await page.waitForTimeout(600);
+
+  await page.click("#post-start");
+  await page.waitForTimeout(400);
+  await page.setInputFiles("#new-files", {
+    name: "t.jpg", mimeType: "image/jpeg", buffer: Buffer.from("ffd8ffdb0000", "hex")
+  });
+  await page.waitForTimeout(200);
+  await page.click("#new-next"); await page.waitForTimeout(250);
+  const T = "បន្ទប់មានអ្នកជួល " + Date.now();
+  await page.fill("#new-title", T);
+  await page.selectOption("#new-district", "chamkarmon");
+  await page.fill("#new-area", "ក្បែរផ្សារ");
+  await page.click("#new-next"); await page.waitForTimeout(250);
+  await page.fill("#new-rent", "230");
+  await page.click("#new-next"); await page.waitForTimeout(250);
+  await page.click("#new-next");
+  await page.waitForTimeout(1800);
+
+  // Open it from the feed and record the tenancy.
+  await page.click('.tab[data-tab="s-explore"]');
+  await page.waitForTimeout(600);
+  const opened = await page.evaluate((title) => {
+    const card = [...document.querySelectorAll(".card")]
+      .find(c => c.textContent.includes(title));
+    if (!card) return false;
+    card.click();
+    return true;
+  }, T);
+  ok("the landlord can open their own listing", opened);
+  await page.waitForTimeout(800);
+
+  await page.click("#d-agree");
+  await page.waitForTimeout(500);
+  await page.fill("#rec-name", "Sokha");
+  await page.fill("#rec-phone", tenantPhone);
+  await page.click("#rec-save");
+  await page.waitForTimeout(1600);
+  await ctx.close();
+
+  // The renter opens the app again and finds it waiting.
+  const { ctx: rc2, page: rp2 } = await open();
+  await rp2.waitForSelector(".card", { timeout: 8000 });
+  await rp2.evaluate(() => document.getElementById("gate").hidden = false);
+  await rp2.fill("#gate-phone", tenantPhone);
+  await rp2.click("#gate-continue");
+  await rp2.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  await rp2.click('.rolecard[data-role="renter"]');
+  await rp2.waitForTimeout(1800);
+
+  await rp2.click('.tab[data-tab-slot="third"]');
+  await rp2.waitForTimeout(600);
+  const panelShown = await rp2.$eval("#tenancy-panel", e => !e.hidden).catch(() => false);
+  const body = await rp2.textContent("#tenancy-body").catch(() => "");
+  ok("the renter's own screen shows the tenancy", panelShown, "panel hidden");
+  ok("named after the room they moved into", body.includes(T), body.slice(0, 90));
+  await rc2.close();
+}
+
+console.log("\n== a shortlist survives closing the app ==");
+{
+  const { ctx, page } = await open();
+  await page.waitForSelector(".card", { timeout: 8000 });
+  const phone = newPhone();
+  await page.evaluate(() => document.getElementById("gate").hidden = false);
+  await page.fill("#gate-phone", phone);
+  await page.click("#gate-continue");
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  await page.click('.rolecard[data-role="renter"]');
+  await page.waitForTimeout(700);
+
+  const saved = await page.$eval(".card .savebtn, .card [aria-label*='ave'], .card button",
+    el => { el.click(); return true; }).catch(() => false);
+  ok("a listing can be saved", saved);
+  await page.waitForTimeout(900);
+  const savedTitle = await page.$eval("#saved-feed .card-title", e => e.textContent).catch(() => null);
+  await ctx.close();
+
+  // Same person, fresh app.
+  const { ctx: c2, page: p2 } = await open();
+  await p2.waitForSelector(".card", { timeout: 8000 });
+  await p2.evaluate(() => document.getElementById("gate").hidden = false);
+  await p2.fill("#gate-phone", phone);
+  await p2.click("#gate-continue");
+  await p2.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  await p2.click('.rolecard[data-role="renter"]');
+  await p2.waitForTimeout(1500);
+  const back = await p2.$eval("#saved-feed .card-title", e => e.textContent).catch(() => null);
+  ok("and it is still there when they come back", back !== null && back === savedTitle,
+     JSON.stringify({ savedTitle, back }));
+  await c2.close();
 }
 
 await browser.close();

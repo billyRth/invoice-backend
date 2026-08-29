@@ -180,6 +180,14 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, r.rows);
     }
 
+    if (url.pathname === "/rest/v1/tenancies" && req.method === "GET") {
+      const r = await asRole(uid, (db) => db.query(
+        `select t.*, row_to_json(l.*) as listings
+           from tenancies t join listings l on l.id = t.listing_id
+          where t.ended_at is null order by t.created_at desc limit 1`));
+      return json(res, 200, r.rows);
+    }
+
     if (url.pathname === "/rest/v1/districts") {
       const r = await asRole(uid, (db) => db.query("select * from districts order by position"));
       return json(res, 200, r.rows);
@@ -213,6 +221,15 @@ const server = http.createServer(async (req, res) => {
         `select ${selectList(url.searchParams.get("select"))} from listings l
           where ($1 = '' or l.owner_id::text = $1) order by l.created_at desc`, [owner]));
       return json(res, 200, r.rows);
+    }
+
+    if (url.pathname === "/rest/v1/listings" && req.method === "PATCH") {
+      const id = (url.searchParams.get("id") || "").replace("eq.", "");
+      const cols = Object.keys(payload);
+      await asRole(uid, (db) => db.query(
+        `update listings set ${cols.map((c, i) => `${c} = $${i + 2}`).join(", ")} where id = $1`,
+        [id, ...cols.map(c => payload[c])]));
+      return json(res, 204, null);
     }
 
     if (url.pathname === "/rest/v1/listings" && req.method === "POST") {

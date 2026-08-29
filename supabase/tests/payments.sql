@@ -76,6 +76,11 @@ select 'P9d confirmed-mins-ago: ' || round(extract(epoch from (now() - last_conf
   from listings where id='bbbbbbbb-0000-0000-0000-000000000001';
 select 'P9e reports-left: ' || count(*) from reports where listing_id='bbbbbbbb-0000-0000-0000-000000000001';
 
+\echo == and the landlord is told what happened to their money
+select 'P12 approved-message: ' || count(*) from notifications
+  where kind='payment_approved' and profile_id='11111111-1111-1111-1111-111111111111';
+select 'P13 not sent twice: ' || count(*) from notifications where kind='payment_approved';
+
 \echo == when the month runs out the listing pauses itself
 update listings set paid_until = now() - interval '1 hour' where id='bbbbbbbb-0000-0000-0000-000000000001';
 select 'P11 expired: ' || expire_unpaid();

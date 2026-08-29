@@ -80,8 +80,10 @@ select 'T6 price-after-attack: ' || price_usd from listings where id='aaaaaaaa-0
 -- 7. recording a tenancy takes the room off the market
 set role authenticated;
 set request.jwt.claim.sub = '11111111-1111-1111-1111-111111111111';
-insert into tenancies (listing_id, landlord_id, tenant_id, starts_on, term_months, rent_usd)
-values ('aaaaaaaa-0000-0000-0000-000000000001','11111111-1111-1111-1111-111111111111','22222222-2222-2222-2222-222222222222', current_date, 12, 150);
+-- Through record_tenancy(), which is the only way in since 0014: a direct
+-- insert would silently lose the tenant link, which is the bug it fixes.
+select record_tenancy('aaaaaaaa-0000-0000-0000-000000000001', 'Renter A', '+855120000002',
+                      current_date, 12, 150) is not null as recorded;
 reset role; reset request.jwt.claim.sub;
 select 'T7 after-tenancy: ' || status from listings where id='aaaaaaaa-0000-0000-0000-000000000001';
 
@@ -98,11 +100,13 @@ select 'T9 expired: ' || expire_unpaid();
 select 'T9b status: ' || status from listings where id='aaaaaaaa-0000-0000-0000-000000000002';
 
 -- 10. one active tenancy per listing
+set role authenticated; set request.jwt.claim.sub = '11111111-1111-1111-1111-111111111111';
 do $$ begin
-  insert into tenancies (listing_id, landlord_id, starts_on, term_months, rent_usd)
-  values ('aaaaaaaa-0000-0000-0000-000000000001','11111111-1111-1111-1111-111111111111', current_date, 12, 150);
+  perform record_tenancy('aaaaaaaa-0000-0000-0000-000000000001', 'Renter B', '',
+                         current_date, 12, 150);
   raise notice 'T10 FAIL: double-booked a listing';
 exception when unique_violation then raise notice 'T10 blocked: double booking'; end $$;
+reset role; reset request.jwt.claim.sub;
 
 -- 11. a landlord cannot report themselves clean/dirty
 set role authenticated; set request.jwt.claim.sub = '11111111-1111-1111-1111-111111111111';

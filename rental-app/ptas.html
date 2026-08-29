@@ -808,6 +808,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 .maperror[hidden] { display: none; }
 
 /* The marker is the price, because that is what someone is scanning for. */
+.d-approx { margin: 2px 0 0; font-size: 12px; color: var(--ink-3); font-style: italic; }
+/* A pin nobody placed, drawn so it cannot be mistaken for one that was. */
+.pricepin.is-approx { border-style: dashed; }
+.approx-halo { color: var(--brand); }
 .pricepin {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 46px; min-height: 30px; padding: 0 9px;
@@ -1379,6 +1383,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           <div class="d-price"><b id="d-price"></b><span data-t="perMonth">/ month</span></div>
           <h1 class="d-title" id="d-title"></h1>
           <p class="d-where" id="d-where"></p>
+          <p class="d-approx" id="d-approx" hidden data-t="approxPin">Approximate location</p>
 
           <div class="stamp" style="position:static;margin-bottom:14px" id="d-badges"></div>
 
@@ -1667,6 +1672,11 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       <div class="field">
         <label for="rec-name" data-t="tenantName">Tenant name</label>
         <input type="text" id="rec-name" autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="rec-phone" data-t="tenantPhone">Tenant phone</label>
+        <input type="tel" id="rec-phone" inputmode="tel" autocomplete="tel" placeholder="012 345 678">
+        <p class="hint" data-t="tenantPhoneHint">If they use Ptas, this puts the record in their app too.</p>
       </div>
       <div class="field">
         <label for="rec-start" data-t="startDate">Start date</label>
@@ -2000,6 +2010,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       },
       reports: 0,
       verified: row.verified,
+      /* False means the pin is the middle of the district, because nobody
+         placed one. The map has to say so rather than draw it like an
+         address. */
+      locationExact: row.location_exact !== false,
       lastConfirmed: daysSince(row.last_confirmed_at),
       owner: (session.userId && row.owner_id === session.userId) ? "me" : row.owner_id,
       billing: {
@@ -2131,6 +2145,36 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       }
       return apiFetch("/rest/v1/saved?renter_id=eq." + session.userId +
                       "&listing_id=eq." + id, { method: "DELETE" });
+    },
+
+    /* Recording a tenancy is what takes a room off the market - the database
+       trigger flips the listing to 'rented' on insert. Until this call existed
+       the app did it only in memory, so the one action the whole freshness
+       loop depends on quietly did nothing against a real database. */
+    /* Taking a room off the market without recording who moved in. The richer
+       path is recordTenancy(), which the landlord reaches from the listing
+       itself; this is for somebody who rented it offline and just wants it
+       gone. Refusing them that would only teach them to stop paying instead,
+       which leaves the ghost listing up until the month runs out. */
+    setRented: function (id) {
+      return apiFetch("/rest/v1/listings?id=eq." + id, {
+        method: "PATCH",
+        headers: { prefer: "return=minimal" },
+        body: { status: "rented", available_now: false }
+      });
+    },
+
+    recordTenancy: function (row) {
+      /* Through the function rather than a plain insert: it is the only thing
+         allowed to look a renter up by phone, because profiles is readable
+         only by its owner and must stay that way. */
+      return rpc("record_tenancy", row);
+    },
+
+    myTenancy: function () {
+      return apiFetch("/rest/v1/tenancies?select=" + encodeURIComponent(
+        "*,listings(*)") + "&ended_at=is.null&order=created_at.desc&limit=1")
+        .then(function (rows) { return rows[0] || null; });
     },
 
     savedIds: function () {
@@ -2386,6 +2430,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       devAuthNote:"កំណែសាកល្បង៖ យើងមិនទាន់ផ្ទៀងផ្ទាត់លេខទូរស័ព្ទនៅឡើយទេ។",
       districtLabel:"ខណ្ឌ", pinHint:"ចំណុចនៅលើផែនទីចាប់ផ្តើមនៅកណ្តាលខណ្ឌ។",
       stillFree:"នៅទំនេរ", confirmedToast:"អរគុណ។ បានធ្វើបច្ចុប្បន្នភាព",
+      tenantPhone:"លេខទូរស័ព្ទអ្នកជួល", tenantPhoneHint:"បើគាត់ប្រើ Ptas កំណត់ត្រានេះនឹងបង្ហាញក្នុងកម្មវិធីរបស់គាត់ដែរ។",
       payTitle:"បង់ថ្លៃប្រកាស", payRef:"ដាក់លេខនេះក្នុងកំណត់ចំណាំផ្ទេរប្រាក់", paySend:"ខ្ញុំបានបង់ហើយ",
       payProof:"រូបភាពបញ្ជាក់ការបង់ប្រាក់", payHint:"យើងពិនិត្យដោយដៃ ជាធម្មតាក្នុងរយៈពេលពីរបីម៉ោង។ ប្រកាសរបស់អ្នកនឹងបង្ហាញភ្លាមនៅពេលបញ្ជាក់រួច។",
       payFor:"$1 ក្នុងមួយខែ សម្រាប់ ", payWait:"បានទទួលហើយ។ កំពុងរង់ចាំការពិនិត្យ។",
@@ -2513,6 +2558,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       devAuthNote:"Early version: we do not check the number yet.",
       districtLabel:"District", pinHint:"Your pin starts at the middle of the district.",
       stillFree:"Still free", confirmedToast:"Thanks. Updated.",
+      tenantPhone:"Tenant phone", tenantPhoneHint:"If they use Ptas, this puts the record in their app too.",
       payTitle:"Pay for this listing", payRef:"Put this in the transfer note", paySend:"I have paid",
       payProof:"Photo of the receipt", payHint:"We check it by hand, usually within a few hours. Your listing goes live as soon as it clears.",
       payFor:"$1 a month for ", payWait:"Received. Waiting to be checked.",
@@ -2954,10 +3000,19 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         rented.setAttribute("data-rented", l.id);
         rented.textContent = t("markRented");
         rented.addEventListener("click", function () {
-          l.billing.state = "rented";
-          toast(t("rentedToast"));
-          renderMine();
-          render();               // it leaves search immediately
+          var b = this;
+          var done = function () {
+            l.billing.state = "rented";
+            toast(t("rentedToast"));
+            renderMine();
+            render();               // it leaves search immediately
+          };
+          if (!live) { done(); return; }
+          b.disabled = true;
+          api.setRented(l.id).then(done).catch(function (e) {
+            b.disabled = false;
+            toast(e.message);
+          });
         });
         actions.appendChild(rented);
 
@@ -3105,6 +3160,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   function paintDetail(l) {
     setCallTarget(l);
+    var approxNote = document.getElementById("d-approx");
+    if (approxNote) approxNote.hidden = l.locationExact !== false;
     var strip = document.getElementById("d-strip");
     strip.textContent = "";
     l.photos.forEach(function (seed, i) {
@@ -3430,11 +3487,51 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     rememberSession();
     if (!live) return;
     refreshMine();
+    refreshSaved();
+    refreshTenancy();
     refreshWatching();
     paintTelegram();
     api.amAdmin()
       .then(function (yes) { session.isAdmin = yes === true; paintAdmin(); })
       .catch(function () { session.isAdmin = false; });
+  }
+
+  /* The heart is stored per renter, so it has to be read back. api.savedIds()
+     existed from the start and was never called, which meant a signed-in
+     renter's shortlist looked like it saved and was gone on the next open -
+     worse than not offering it. */
+  /* The Currently Renting screen was drawn from a variable that only the
+     landlord's own tap ever set, so it was empty for the renter it was built
+     for and gone for the landlord after a reload. Both parties read it back
+     from the database now; tenancies_parties_read is what makes it exactly
+     those two. */
+  function refreshTenancy() {
+    if (!live || !session.signedIn) return Promise.resolve();
+    return api.myTenancy().then(function (row) {
+      if (!row) { tenancy = null; paintTenancy(); return; }
+      tenancy = {
+        listing: row.listings ? fromRow(row.listings) : null,
+        name: row.tenant_name || "",
+        start: row.starts_on,
+        months: row.term_months,
+        dueDay: row.due_day
+      };
+      paintTenancy();
+    }).catch(function (e) {
+      if (window.console) console.warn("Ptas: could not load the tenancy -", e.message);
+    });
+  }
+
+  function refreshSaved() {
+    if (!live || !session.signedIn) return Promise.resolve();
+    return api.savedIds().then(function (ids) {
+      saved = {};
+      ids.forEach(function (id) { saved[id] = true; });
+      renderSaved();
+      render();
+    }).catch(function (e) {
+      if (window.console) console.warn("Ptas: could not load saved listings -", e.message);
+    });
   }
 
   /* A landlord's own listings include the ones no renter can see - drafts,
@@ -3524,14 +3621,32 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     if (!list.length) return;
 
     list.forEach(function (l) {
+      /* A pin nobody placed is the middle of a khan, which can be two
+         kilometres from the room. Drawing it identically to one somebody
+         actually dropped would be the map telling a lie it was never told:
+         the dashed ring says "somewhere around here", and a circle behind it
+         shows roughly how much "around here" is. */
+      var approx = l.locationExact === false;
       var icon = window.L.divIcon({
         className: "",
-        html: '<span class="pricepin' + (l.lastConfirmed > 14 ? " is-stale" : "") + '">$' + l.price + "</span>",
+        html: '<span class="pricepin' + (l.lastConfirmed > STALE_DAYS ? " is-stale" : "") +
+              (approx ? " is-approx" : "") + '">$' + l.price + "</span>",
         iconSize: null
       });
-      var m = window.L.marker([l.lat, l.lng], { icon: icon, title: l.title[lang] }).addTo(map);
+      var m = window.L.marker([l.lat, l.lng], {
+        icon: icon,
+        title: l.title[lang] + (approx ? " — " + t("approxPin") : "")
+      }).addTo(map);
       m.on("click", function () { openDetail(l, null); });
       markers.push(m);
+
+      if (approx) {
+        var halo = window.L.circle([l.lat, l.lng], {
+          radius: 1200, weight: 1, opacity: .5, fillOpacity: .07,
+          className: "approx-halo", interactive: false
+        }).addTo(map);
+        markers.push(halo);
+      }
     });
 
     var bounds = window.L.latLngBounds(list.map(function (l) { return [l.lat, l.lng]; }));
@@ -4403,24 +4518,51 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   document.getElementById("rec-save").addEventListener("click", function () {
     if (!recTarget) return;
+    var btn = this;
+    var l = recTarget;
     var start = document.getElementById("rec-start").value || dayNames(new Date());
-    tenancy = {
-      listing: recTarget,
-      name: document.getElementById("rec-name").value.trim() || "Tenant",
-      start: start,
-      months: recTerm,
-      dueDay: Number(recDue.value)
+    var name = document.getElementById("rec-name").value.trim();
+
+    var done = function () {
+      tenancy = {
+        listing: l,
+        name: name || "Tenant",
+        start: start,
+        months: recTerm,
+        dueDay: Number(recDue.value)
+      };
+
+      /* Recording a tenancy is the same act as taking the room off the market,
+         so the landlord never has to remember to unlist it. The database does
+         the flip on insert; this mirrors it so the screen does not have to
+         wait for a refetch. */
+      l.billing = l.billing || {};
+      l.billing.state = "rented";
+
+      closeRecord();
+      toast(t("recordedToast"));
+      render();
+      renderMine();
+      closeDetail();
     };
 
-    /* Recording a tenancy is the same act as taking the room off the market,
-       so the landlord never has to remember to unlist it. */
-    recTarget.billing = recTarget.billing || {};
-    recTarget.billing.state = "rented";
+    if (!live) { done(); return; }
+    if (!needAccount()) { toast(t("signInFirst")); return; }
 
-    closeRecord();
-    toast(t("recordedToast"));
-    render();
-    closeDetail();
+    btn.disabled = true;
+    api.recordTenancy({
+      p_listing: l.id,
+      p_tenant_name: name,
+      p_tenant_phone: document.getElementById("rec-phone").value.trim(),
+      p_starts_on: start,
+      p_term_months: recTerm,
+      p_rent_usd: l.price,
+      p_due_day: Number(recDue.value),
+      p_deposit_usd: l.price * (l.deposit || 0)
+    })
+      .then(done)
+      .catch(function (e) { toast(e.message); })
+      .then(function () { btn.disabled = false; });
   });
 
   /* Call is an anchor, not a button that assigns window.location. A phone
@@ -4742,6 +4884,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       boot(out[1], null);
       if (session.signedIn) {
         refreshMine();
+        refreshSaved();
+        refreshTenancy();
         refreshWatching();
         paintTelegram();
         api.amAdmin()
