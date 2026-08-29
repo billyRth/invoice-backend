@@ -20,7 +20,8 @@ const SHIM = "http://127.0.0.1:54321";
 // under test.
 const MIGRATIONS = ["0001_init", "0002_payments", "0004_lock_down_functions",
                     "0005_districts", "0006_district_centres", "0007_null_uid_guards",
-                    "0008_default_privileges", "0009_signals_and_telegram"];
+                    "0008_default_privileges", "0009_signals_and_telegram",
+                    "0011_lock_new_functions"];
 
 function psql(args, opts = {}) {
   const r = spawnSync("psql", ["-q", "-v", "ON_ERROR_STOP=1", ...args], {

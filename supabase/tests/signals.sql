@@ -117,3 +117,16 @@ set role authenticated;
 set request.jwt.claim.sub = '33333333-3333-3333-3333-333333333333';
 select 'S14 stranger sees searches: ' || count(*) from saved_searches;
 reset role; reset request.jwt.claim.sub;
+
+\echo == a function added later cannot be reached without saying so
+create function public.something_added_later() returns int language sql as $$ select 1 $$;
+select 'S15 anon can call it: ' ||
+  has_function_privilege('anon','something_added_later()','execute')::text;
+select 'S16 signed-in can call it: ' ||
+  has_function_privilege('authenticated','something_added_later()','execute')::text;
+select 'S17 but browsing is still open: ' ||
+  has_function_privilege('anon',
+    'search_listings(text, listing_kind[], rent_term, numeric, numeric, int, boolean, boolean, text, text[], int, int)',
+    'execute')::text;
+select 'S18 and the outbox is not: ' ||
+  has_function_privilege('authenticated','enqueue(uuid,text,jsonb,text)','execute')::text;

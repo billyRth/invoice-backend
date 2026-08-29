@@ -9,7 +9,12 @@
 -- Supabase-only: pg_net and supabase_vault do not exist on a plain Postgres.
 -- supabase/tests/run.sh skips this file for the same reason it skips 0003.
 
-create extension if not exists pg_net;
+-- Into `extensions`, not `public`. An extension in public puts its functions
+-- and tables into the schema PostgREST exposes over HTTP, so pg_net's own
+-- request and response tables become part of the API surface. Supabase's
+-- linter flags it (0014_extension_in_public) and it is right to.
+create schema if not exists extensions;
+create extension if not exists pg_net with schema extensions;
 
 -- The service key is inserted separately and deliberately never appears in
 -- this repository:
@@ -21,7 +26,7 @@ create extension if not exists pg_net;
 -- a fresh checkout of the schema is not broken by its absence.
 
 create or replace function kick_notify() returns text
-language plpgsql security definer set search_path = public, vault as $$
+language plpgsql security definer set search_path = public, extensions, vault as $$
 declare
   key text;
   base text;

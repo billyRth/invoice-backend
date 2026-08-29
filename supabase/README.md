@@ -73,15 +73,36 @@ supabase/tests/run.sh        # against any local Postgres
 | `0008_default_privileges` | Supabase grants new functions to anon; 0004's promise made real |
 | `0009_signals_and_telegram` | the second report reason, the outbox, saved searches |
 | `0010_notify_schedule` | cron for sending and for the expiry warning (Supabase-only) |
+| `0011_lock_new_functions` | an event trigger, because 0004 and 0008 both failed to stick |
 
 The last two are worth reading before adding anything. Both were places where a
 check existed, looked right, and did nothing.
 
 ## Run the linter after every migration
 
-`get_advisors` found both of the real holes in this schema. Neither was
-reachable in production — the outer lock held while the inner one was open —
-and neither was visible in the function's own text.
+`get_advisors` found every grant problem in this schema, three times running,
+and none of them was visible in the function's own text.
+
+The third time is the interesting one. 0004 revoked `EXECUTE` from `PUBLIC`,
+which is correct on plain Postgres. 0008 also revoked the default privilege
+that grants new functions to `anon` — but `pg_default_acl` has *two* entries
+for `public` functions:
+
+```
+postgres       | public | f | {postgres=X, service_role=X}
+supabase_admin | public | f | {postgres=X, anon=X, authenticated=X, ...}
+```
+
+0008 only fixed the first, so 0009's three new functions came out reachable by
+`anon` anyway. The second cannot be fixed from a migration at all — migrations
+run as `postgres`, and altering `supabase_admin`'s defaults is *permission
+denied*.
+
+So 0011 uses an event trigger instead: every function created in `public` has
+`EXECUTE` revoked from `anon` and `authenticated` the moment it exists, and the
+only way to make one callable is to grant it explicitly. Two migrations tried
+to fix the functions that existed and promised the next ones would be safe.
+This one makes it structural rather than remembered.
 
 ## Operating it, before there are screens for any of this
 
