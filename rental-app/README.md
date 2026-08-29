@@ -56,8 +56,25 @@ project (about $0.03 a code, and only landlords ever need one), set `devAuth`
 to `false`, and delete the function. The OTP path and the code step in the gate
 are already written.
 
+## Sessions expire, and recover
+
+Supabase access tokens last an hour. The app keeps the refresh token beside the
+access token, refreshes a stale session before the first request, and on a 401
+refreshes once and retries the call that found it. If the refresh fails it signs
+out quietly and carries on as a visitor, because browsing needs no account and a
+dead credential must not take the feed down with it.
+
+Worth knowing because the failure it replaces was invisible for exactly one
+hour: every call carries the token whether or not it needs one, so an expired
+session broke plain browsing too, and the stored session restored the dead token
+on the next open rather than recovering.
+
 ## What is not built yet
 
 A map pin is the centre of its district until somebody drags it, and the app
-marks those as approximate rather than pretending otherwise. Approving a
-payment is a SQL statement, not a screen — see `supabase/README.md`.
+marks those as approximate rather than pretending otherwise.
+
+`PTAS_BOT` is empty until a bot exists, and the Telegram panel says "coming
+soon" rather than linking to a bot that is not there. Set it and the Connect
+button appears. Messages queue in the meantime and are delivered once the token
+is configured, so nothing is lost by waiting.

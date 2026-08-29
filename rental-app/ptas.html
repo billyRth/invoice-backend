@@ -1932,7 +1932,58 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     return h;
   }
 
-  function apiFetch(path, opts) {
+  /* Every route that hands back a session goes through here, so there is one
+     place that knows what a session is made of. */
+  function keepSession(out) {
+    if (!out) return out;
+    if (out.access_token)  session.token = out.access_token;
+    if (out.refresh_token) session.refresh = out.refresh_token;
+    session.expiresAt = out.expires_at
+      ? out.expires_at * 1000
+      : Date.now() + ((out.expires_in || 3600) * 1000);
+    if (out.user && out.user.id) session.userId = out.user.id;
+    if (session.signedIn) rememberSession();
+    return out;
+  }
+
+  var refreshing = null;
+
+  /* One refresh at a time. Six requests going out together must not each
+     start their own, or five of them race and four get an already-used
+     refresh token back. */
+  function refreshSession() {
+    if (!session.refresh) return Promise.reject(new Error("no refresh token"));
+    if (refreshing) return refreshing;
+
+    refreshing = fetch(PTAS.url + "/auth/v1/token?grant_type=refresh_token", {
+      method: "POST",
+      headers: { apikey: PTAS.key, "content-type": "application/json" },
+      body: JSON.stringify({ refresh_token: session.refresh })
+    }).then(function (res) {
+      if (!res.ok) throw new Error("could not refresh the session");
+      return res.json();
+    }).then(function (out) {
+      keepSession(out);
+      return out;
+    }).then(function (out) { refreshing = null; return out; },
+            function (e)   { refreshing = null; throw e; });
+
+    return refreshing;
+  }
+
+  /* Falling back to signed-out is deliberate. A dead session must not take
+     the whole app with it: browsing needs no account, so the worst outcome
+     of an expired credential should be that the person is signed out, not
+     that the feed stops loading. */
+  function signOutQuietly() {
+    session.signedIn = false;
+    session.token = null; session.refresh = null;
+    session.userId = null; session.expiresAt = 0;
+    session.isAdmin = false;
+    store("ptas-session", "");
+  }
+
+  function apiFetch(path, opts, retried) {
     opts = opts || {};
     return fetch(PTAS.url + path, {
       method: opts.method || "GET",
@@ -1942,10 +1993,31 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       return res.text().then(function (text) {
         var data = null;
         try { data = text ? JSON.parse(text) : null; } catch (e) { data = text; }
+
         if (!res.ok) {
+          var expired = (res.status === 401) ||
+                        (data && /jwt|token/i.test(data.message || data.msg || "") &&
+                                 /expired|invalid/i.test(data.message || data.msg || ""));
+
+          /* Once, and only for the call that discovered it. A second failure
+             after a fresh token is a real failure, not an expiry. */
+          if (expired && !retried && session.refresh) {
+            return refreshSession()
+              .then(function () { return apiFetch(path, opts, true); })
+              .catch(function () {
+                signOutQuietly();
+                return apiFetch(path, opts, true);   // as a visitor, which still works
+              });
+          }
+          if (expired && !retried) {
+            signOutQuietly();
+            return apiFetch(path, opts, true);
+          }
+
           /* PostgREST puts the raised message in .message; a plpgsql
              `raise exception 'not your listing'` arrives there verbatim. */
-          var err = new Error((data && (data.message || data.error)) || ("HTTP " + res.status));
+          var err = new Error((data && (data.message || data.error || data.msg)) ||
+                              ("HTTP " + res.status));
           err.status = res.status;
           throw err;
         }
@@ -2248,22 +2320,14 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
        one it called. */
     devSignIn: function (phone) {
       return apiFetch("/functions/v1/dev-signin", { method: "POST", body: { phone: phone } })
-        .then(function (out) {
-          session.token  = out.access_token;
-          session.userId = out.user && out.user.id;
-          return out;
-        });
+        .then(keepSession);
     },
 
     verifyCode: function (phone, code) {
       return apiFetch("/auth/v1/verify", {
         method: "POST",
         body: { phone: e164(phone), token: code, type: "sms" }
-      }).then(function (out) {
-        session.token  = out.access_token;
-        session.userId = out.user && out.user.id;
-        return out;
-      });
+      }).then(keepSession);
     },
 
     profile: function () {
@@ -2331,7 +2395,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
      should not re-verify a code every time they open the app. */
   function rememberSession() {
     store("ptas-session", JSON.stringify({
-      token: session.token, userId: session.userId,
+      token: session.token, refresh: session.refresh, expiresAt: session.expiresAt,
+      userId: session.userId,
       phone: session.phone, name: session.name, mode: session.mode
     }));
   }
@@ -2342,10 +2407,21 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     try {
       var v = JSON.parse(raw);
       if (!v || !v.token || !v.userId) return false;
-      session.token = v.token; session.userId = v.userId;
+      session.token = v.token; session.refresh = v.refresh || null;
+      session.expiresAt = v.expiresAt || 0;
+      session.userId = v.userId;
       session.phone = v.phone || ""; session.name = v.name || "";
       session.mode = v.mode || "renter";
       session.signedIn = true;
+
+      /* A session stored yesterday is already dead. Refreshing before the
+         first request is cheaper than letting six of them fail and recover
+         one at a time - and if there is no refresh token, from a version of
+         this app that did not keep one, it signs out rather than pretending. */
+      if (session.expiresAt && session.expiresAt - Date.now() < 60000) {
+        if (session.refresh) refreshSession().catch(signOutQuietly);
+        else signOutQuietly();
+      }
       return true;
     } catch (e) { return false; }
   }
@@ -2419,9 +2495,11 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       justLooking:"មើលសិន",
       reportNoAnswer:"ខ្ញុំបានហៅ តែគ្មានអ្នកទទួល", noAnswerThanks:"អរគុណ។ បើមានអ្នកផ្សេងហៅមិនលាន់ដែរ យើងនឹងផ្អាកការផ្សាយ",
       watchTitle:"ការស្វែងរកដែលអ្នកតាមដាន", watchNote:"យើងនឹងផ្ញើសារតាម Telegram នៅពេលមានបន្ទប់ត្រូវគ្នា។",
+      watchNoteSoon:"យើងកំពុងតាមដានឲ្យអ្នក។ ការជូនដំណឹងនឹងមកដល់ឆាប់ៗ។",
       watchThis:"ប្រាប់ខ្ញុំពេលមានបន្ទប់ថ្មី", watching:"កំពុងតាមដាន", stopWatching:"ឈប់តាមដាន",
       watchAdded:"បានរក្សាទុក។ យើងនឹងប្រាប់អ្នក", watchNoTg:"សូមភ្ជាប់ Telegram ដើម្បីទទួលសារ",
       tgTitle:"Telegram", tgOff:"មិនទាន់ភ្ជាប់។ យើងមិនអាចទាក់ទងអ្នកបានទេ។",
+      tgSoon:"នឹងមានក្នុងពេលឆាប់ៗ។",
       tgOn:"បានភ្ជាប់រួចហើយ។", tgConnect:"ភ្ជាប់ Telegram",
       adminTitle:"ការបង់ប្រាក់ត្រូវពិនិត្យ", adminEmpty:"គ្មានអ្វីរង់ចាំទេ។",
       approve:"យល់ព្រម", reject:"បដិសេធ", viewProof:"មើលរូបភាព",
@@ -2547,9 +2625,11 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       justLooking:"Just looking",
       reportNoAnswer:"I called, nobody answered", noAnswerThanks:"Thanks. If others cannot reach them either, we pause the listing.",
       watchTitle:"Searches you are watching", watchNote:"We message you on Telegram when a room matches.",
+      watchNoteSoon:"We are watching for you. Alerts are coming soon.",
       watchThis:"Tell me when one appears", watching:"Watching", stopWatching:"Stop watching",
       watchAdded:"Saved. We will tell you.", watchNoTg:"Connect Telegram so we can reach you",
       tgTitle:"Telegram", tgOff:"Not connected. We will not be able to reach you.",
+      tgSoon:"Coming soon.",
       tgOn:"Connected.", tgConnect:"Connect Telegram",
       adminTitle:"Payments to check", adminEmpty:"Nothing waiting.",
       approve:"Approve", reject:"Reject", viewProof:"See receipt",
@@ -3451,8 +3531,15 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
      authenticated: the token goes in the Authorization header, and the
      database reads auth.uid() out of it. Signed out, the calls still work
      for anything a visitor is allowed to see. */
+  /* token is an access token and it EXPIRES - one hour, by Supabase's
+     default. Without the refresh token beside it, an hour after signing in
+     every call carries a dead credential and is rejected, including plain
+     browsing, because the header is sent whether or not the call needs it.
+     And a stored session would restore the dead token on the next open, so it
+     would stay broken rather than recover. */
   var session = { signedIn:false, phone:"", name:"", mode:"renter",
-                  userId:null, token:null, isAdmin:false, telegramChatId:null };
+                  userId:null, token:null, refresh:null, expiresAt:0,
+                  isAdmin:false, telegramChatId:null };
 
   var THIRD_TAB = { renter:{ id:"s-renting", key:"tabRenting" },
                     landlord:{ id:"s-post",  key:"tabListings" } };
@@ -4022,7 +4109,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
      there is nothing extra to fill in. */
 
   var watching = [];
-  var PTAS_BOT = "PtasBot";     // set this to the bot's real username
+
+  /* The bot's username, once one exists. Empty until then, and the Connect
+     button says so rather than linking to t.me/<a bot that is not there>,
+     which is a dead page and reads as a broken app rather than an unfinished
+     one. Set it when BotFather gives you a name. */
+  var PTAS_BOT = "";
 
   /* Named from the filters themselves, because "under $200 in Toul Kork" is
      what somebody will recognise a week later; "Search 3" is not. */
@@ -4063,6 +4155,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     if (!panel || !host) return;
 
     panel.hidden = watching.length === 0;
+    var note = document.getElementById("watch-note");
+    if (note) note.textContent = PTAS_BOT ? t("watchNote") : t("watchNoteSoon");
     host.textContent = "";
 
     watching.forEach(function (row) {
@@ -4113,7 +4207,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         paintWatching();
         /* Saving the search is useless if we cannot reach them, so say which
            half is missing rather than a cheerful confirmation. */
-        toast(t(session.telegramChatId ? "watchAdded" : "watchNoTg"));
+        toast(t(!PTAS_BOT ? "watchAdded"
+                : session.telegramChatId ? "watchAdded" : "watchNoTg"));
       })
       .catch(function (e) { toast(e.message); })
       .then(function () { btn.disabled = false; });
@@ -4133,6 +4228,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       state_.textContent = t("tgOff");
       link.removeAttribute("href");
       link.setAttribute("aria-disabled", "true");
+      return;
+    }
+
+    if (!PTAS_BOT) {
+      state_.textContent = t("tgSoon");
+      link.hidden = true;
       return;
     }
 
@@ -4466,7 +4567,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   document.getElementById("sign-out").addEventListener("click", function () {
     session = { signedIn:false, phone:"", name:"", mode:"renter",
-                userId:null, token:null, isAdmin:false, telegramChatId:null };
+                userId:null, token:null, refresh:null, expiresAt:0,
+                isAdmin:false, telegramChatId:null };
     store("ptas-session", "");
     gateStep("phone");
     gatePhone.value = "";

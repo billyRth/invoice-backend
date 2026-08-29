@@ -38,6 +38,12 @@ function psql(args, opts = {}) {
 }
 
 const root = new URL("../../", import.meta.url).pathname;
+// A shim left running from an interrupted run still holds connections, and
+// DROP DATABASE fails while they exist - quietly, because the drop tolerates
+// failure, so the create then fails with a confusing "already exists".
+psql(["-d", "postgres", "-c",
+      "select pg_terminate_backend(pid) from pg_stat_activity where datname = 'ptas_app'"],
+     { allowFail: true });
 psql(["-d", "postgres", "-c", "drop database if exists ptas_app"], { allowFail: true });
 psql(["-d", "postgres", "-c", "create database ptas_app"]);
 psql(["-d", "ptas_app", "-f", root + "supabase/tests/00-local-shim.sql"]);
@@ -80,8 +86,16 @@ const site = http.createServer((req, res) => {
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" });
 
-async function open({ offline = false } = {}) {
+async function open({ offline = false, seedSession = null } = {}) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  // Each context has its own localStorage, so a session has to be planted
+  // before the page script runs rather than written into a previous context
+  // and hoped for.
+  if (seedSession) {
+    await ctx.addInitScript(v => {
+      localStorage.setItem("ptas-session", JSON.stringify(v));
+    }, seedSession);
+  }
   const page = await ctx.newPage();
   await page.route(SUPA + "/**", async (route) => {
     if (offline) return route.abort("failed");
@@ -101,9 +115,10 @@ async function open({ offline = false } = {}) {
   // Photo placeholders are blocked in this container; they are not under test.
   await page.route("https://picsum.photos/**", r => r.abort());
   await page.goto("http://127.0.0.1:8099/", { waitUntil: "domcontentloaded" });
-  // Browsing needs no account, so every test starts the way a first-time
-  // renter does: past the gate, signed out.
-  await page.click("#gate-browse");
+  // Browsing needs no account, so a test starts the way a first-time renter
+  // does: past the gate, signed out. A seeded session is already past it, and
+  // there is nothing to click.
+  if (await page.isVisible("#gate-browse")) await page.click("#gate-browse");
   return { ctx, page };
 }
 
@@ -591,6 +606,72 @@ console.log("\n== a shortlist survives closing the app ==");
   const back = await p2.$eval("#saved-feed .card-title", e => e.textContent).catch(() => null);
   ok("and it is still there when they come back", back !== null && back === savedTitle,
      JSON.stringify({ savedTitle, back }));
+  await c2.close();
+}
+
+console.log("\n== an expired session recovers instead of breaking ==");
+{
+  const { ctx, page } = await open();
+  await page.waitForSelector(".card", { timeout: 8000 });
+  const phone = newPhone();
+  await page.evaluate(() => document.getElementById("gate").hidden = false);
+  await page.fill("#gate-phone", phone);
+  await page.click("#gate-continue");
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  await page.click('.rolecard[data-role="landlord"]');
+  await page.waitForTimeout(800);
+
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("ptas-session")));
+  ok("the refresh token is kept, not just the access token",
+     !!stored.refresh, JSON.stringify(Object.keys(stored)));
+  await ctx.close();
+
+  // Age the access token the way an hour would, keeping the refresh token.
+  const aged = { ...stored, token: "expired-" + stored.token, expiresAt: Date.now() - 1000 };
+  const { ctx: c2, page: p2 } = await open({ seedSession: aged });
+  await p2.waitForSelector(".card", { timeout: 8000 });
+  ok("the feed still loads with a dead token", (await p2.$$(".card")).length > 0);
+
+  await p2.waitForTimeout(1500);
+  const after = await p2.evaluate(() => {
+    const raw = localStorage.getItem("ptas-session");
+    return raw ? JSON.parse(raw) : null;
+  });
+  ok("and the session was refreshed rather than dropped",
+     after && after.token && !String(after.token).startsWith("expired-"),
+     JSON.stringify(after && after.token));
+
+  // Still signed in: a write must work without going back through the gate.
+  await p2.click('.tab[data-tab-slot="third"]');
+  await p2.waitForTimeout(500);
+  const gateUp = await p2.$eval("#gate", e => !e.hidden);
+  ok("the landlord is still signed in", !gateUp);
+  await c2.close();
+}
+
+console.log("\n== a session with no refresh token signs out cleanly ==");
+{
+  const { ctx, page } = await open();
+  await page.waitForSelector(".card", { timeout: 8000 });
+  await page.evaluate(() => document.getElementById("gate").hidden = false);
+  await page.fill("#gate-phone", newPhone());
+  await page.click("#gate-continue");
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  await page.click('.rolecard[data-role="renter"]');
+  await page.waitForTimeout(800);
+
+  // What a session stored by the previous version of this app looks like:
+  // an access token, no refresh token, and an hour gone by.
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("ptas-session")));
+  await ctx.close();
+
+  const legacy = { ...stored, token: "expired-" + stored.token, expiresAt: Date.now() - 1000 };
+  delete legacy.refresh;
+  const { ctx: c2, page: p2 } = await open({ seedSession: legacy });
+  await p2.waitForSelector(".card", { timeout: 8000 });
+  ok("browsing still works", (await p2.$$(".card")).length > 0);
+  const note = await p2.$eval("#data-note", e => e.hidden);
+  ok("and it is not reported as an outage", note);
   await c2.close();
 }
 

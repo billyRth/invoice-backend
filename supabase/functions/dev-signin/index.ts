@@ -113,5 +113,15 @@ Deno.serve(async (req) => {
     body: JSON.stringify({ phone }),
   });
 
-  return json({ access_token: session.access_token, user: session.user });
+  // The refresh token matters as much as the access one: without it the app
+  // has an hour of life and then every call, browsing included, carries a dead
+  // credential. Passing the whole shape through also means the client has one
+  // way of reading a session, whichever endpoint produced it.
+  return json({
+    access_token:  session.access_token,
+    refresh_token: session.refresh_token,
+    expires_in:    session.expires_in,
+    expires_at:    session.expires_at,
+    user:          session.user,
+  });
 });

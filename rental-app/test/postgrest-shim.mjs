@@ -38,6 +38,16 @@ function whoami(req) {
   return /^[0-9a-f-]{36}$/.test(auth) ? auth : null;
 }
 
+/* Real access tokens expire. The fixture has no clock, so expiry is spelled
+ * into the token itself: a bearer of "expired-<uid>" is treated as a token
+ * that has run out, exactly as GoTrue would - 401, PostgREST's error shape.
+ * Without this the suite could never see the recovery path, which is the one
+ * that decides whether the app survives its second hour. */
+function isExpired(req) {
+  const auth = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
+  return auth.startsWith("expired-");
+}
+
 async function asRole(uid, fn) {
   const db = await pool.connect();
   try {
@@ -87,6 +97,19 @@ const server = http.createServer(async (req, res) => {
   catch { payload = {}; }
 
   try {
+    if (isExpired(req)) {
+      return json(res, 401, { message: "JWT expired", code: "PGRST301" });
+    }
+
+    if (url.pathname === "/auth/v1/token" && url.searchParams.get("grant_type") === "refresh_token") {
+      const uid = String(payload.refresh_token || "").replace(/^r-/, "");
+      if (!/^[0-9a-f-]{36}$/.test(uid)) return json(res, 400, { message: "bad refresh token" });
+      return json(res, 200, {
+        access_token: uid, refresh_token: "r-" + uid, expires_in: 3600,
+        user: { id: uid },
+      });
+    }
+
     /* Auth. The real thing sends an SMS; there is nothing to send here, so the
      * code is always 000000 and the token is the user id. What this fixture
      * has to get right is not the credential but the identity: every query
@@ -105,7 +128,8 @@ const server = http.createServer(async (req, res) => {
          on conflict (phone) do update set phone = excluded.phone
          returning id`, [phone]);
       const id = r.rows[0].id;
-      return json(res, 200, { access_token: id, user: { id, phone } });
+      return json(res, 200, { access_token: id, refresh_token: "r-" + id,
+                              expires_in: 3600, user: { id, phone } });
     }
 
     if (url.pathname === "/auth/v1/verify") {
@@ -115,7 +139,8 @@ const server = http.createServer(async (req, res) => {
          on conflict (phone) do update set phone = excluded.phone
          returning id`, [payload.phone]);
       const id = r.rows[0].id;
-      return json(res, 200, { access_token: id, user: { id, phone: payload.phone } });
+      return json(res, 200, { access_token: id, refresh_token: "r-" + id,
+                              expires_in: 3600, user: { id, phone: payload.phone } });
     }
 
     if (url.pathname.startsWith("/storage/v1/object/")) {
