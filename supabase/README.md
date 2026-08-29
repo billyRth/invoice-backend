@@ -74,6 +74,7 @@ supabase/tests/run.sh        # against any local Postgres
 | `0009_signals_and_telegram` | the second report reason, the outbox, saved searches |
 | `0010_notify_schedule` | cron for sending and for the expiry warning (Supabase-only) |
 | `0011_lock_new_functions` | an event trigger, because 0004 and 0008 both failed to stick |
+| `0012_lock_the_locker` | the event trigger could not lock itself |
 
 The last two are worth reading before adding anything. Both were places where a
 check existed, looked right, and did nothing.
@@ -102,7 +103,11 @@ So 0011 uses an event trigger instead: every function created in `public` has
 `EXECUTE` revoked from `anon` and `authenticated` the moment it exists, and the
 only way to make one callable is to grant it explicitly. Two migrations tried
 to fix the functions that existed and promised the next ones would be safe.
-This one makes it structural rather than remembered.
+This one makes it structural rather than remembered — with exactly one gap it
+could not cover, closed in 0012: `lock_new_function()` itself was created in
+the statement *before* the trigger that would have locked it, so it kept the
+default grant. A bootstrap gap is invisible in the migration that creates it,
+because the rule looks complete precisely while it is being defined.
 
 ## Operating it, before there are screens for any of this
 

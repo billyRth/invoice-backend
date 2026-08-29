@@ -10,7 +10,7 @@ import http from "node:http";
 import fs from "node:fs";
 import { spawn, spawnSync } from "node:child_process";
 
-const SUPA = "https://nreazrayjskpgyeeznda.supabase.co";
+const SUPA = "https://eycfpacmwderetosrsss.supabase.co";
 const SHIM = "http://127.0.0.1:54321";
 
 // A fresh database for every run. Without this the suite quietly stops testing
@@ -21,7 +21,7 @@ const SHIM = "http://127.0.0.1:54321";
 const MIGRATIONS = ["0001_init", "0002_payments", "0004_lock_down_functions",
                     "0005_districts", "0006_district_centres", "0007_null_uid_guards",
                     "0008_default_privileges", "0009_signals_and_telegram",
-                    "0011_lock_new_functions"];
+                    "0011_lock_new_functions", "0012_lock_the_locker"];
 
 function psql(args, opts = {}) {
   const r = spawnSync("psql", ["-q", "-v", "ON_ERROR_STOP=1", ...args], {
@@ -123,7 +123,7 @@ console.log("\n== connected to the database ==");
   // Compared against what the server actually returns, not a fixed number:
   // the database accumulates listings as these tests post them.
   const served = await page.evaluate(async () => {
-    const r = await fetch("https://nreazrayjskpgyeeznda.supabase.co/rest/v1/rpc/search_listings",
+    const r = await fetch("https://eycfpacmwderetosrsss.supabase.co/rest/v1/rpc/search_listings",
       { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ p_limit: 60 }) });
     return (await r.json()).length;
   });
@@ -236,7 +236,7 @@ console.log("\n== a landlord posts, and it reaches the feed ==");
   await page2.waitForSelector(".card", { timeout: 8000 });
   const feed = await page2.$$eval(".card-title", els => els.map(e => e.textContent));
   const server = await page2.evaluate(async () => {
-    const r = await fetch("https://nreazrayjskpgyeeznda.supabase.co/rest/v1/rpc/search_listings",
+    const r = await fetch("https://eycfpacmwderetosrsss.supabase.co/rest/v1/rpc/search_listings",
       { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ p_limit: 60 }) });
     return (await r.json()).map(x => x.title);
   });
