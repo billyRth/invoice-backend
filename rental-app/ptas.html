@@ -1074,6 +1074,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         <div class="empty" id="empty" hidden>
           <p class="big" data-t="emptyTitle">Nothing matches that</p>
           <p data-t="emptyBody">Try widening the price, or turn off verified only. Most landlords verify within a week of posting.</p>
+          <button class="btn btn-primary" type="button" id="watch-this" data-t="watchThis">Tell me when one appears</button>
           <button class="btn btn-primary" type="button" id="clear-all" style="max-width:200px;margin:0 auto" data-t="clearAll">Clear filters</button>
         </div>
       </div>
@@ -1085,6 +1086,11 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         <div class="brandline"><div class="wordmark"><b data-t="savedTitle">Saved</b></div></div>
       </header>
       <div class="scroll">
+        <div class="panel" id="watch-panel" hidden>
+          <h3 data-t="watchTitle">Searches you are watching</h3>
+          <div id="watch-list" class="mylist"></div>
+          <p class="powernote" id="watch-note" data-t="watchNote">We message you on Telegram when a room matches.</p>
+        </div>
         <div class="feed" id="saved-feed"></div>
         <div class="empty" id="saved-empty">
           <p class="big" data-t="savedEmptyTitle">No saved places yet</p>
@@ -1311,6 +1317,18 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         </div>
 
         <div class="panel">
+          <h3 data-t="tgTitle">Telegram</h3>
+          <p class="powernote" id="tg-state" data-t="tgOff">Not connected. We will not be able to reach you.</p>
+          <a class="btn btn-primary" id="tg-connect" href="#" style="width:100%" data-t="tgConnect">Connect Telegram</a>
+        </div>
+
+        <div class="panel" id="admin-panel" hidden>
+          <h3 data-t="adminTitle">Payments to check</h3>
+          <div id="admin-queue" class="mylist"></div>
+          <p class="powernote" id="admin-empty" data-t="adminEmpty">Nothing waiting.</p>
+        </div>
+
+        <div class="panel">
           <h3 data-t="mePrefs">Preferences</h3>
 
           <div class="prefrow stack">
@@ -1405,9 +1423,13 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           </div>
 
           <div class="panel">
-            <button class="reportbtn" type="button" id="d-report">
+            <button class="reportbtn" type="button" id="d-report" data-reason="already_rented">
               <svg class="icon" aria-hidden="true"><use href="#i-flag"/></svg>
               <span data-t="reportRented">Report as already rented</span>
+            </button>
+            <button class="reportbtn" type="button" id="d-noanswer" data-reason="no_answer">
+              <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>
+              <span data-t="reportNoAnswer">I called, nobody answered</span>
             </button>
             <p class="powernote" data-t="reportHint" style="margin-top:8px"></p>
           </div>
@@ -2087,6 +2109,11 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     },
     confirm:      function (id)          { return rpc("confirm_listing", { p_listing: id }); },
 
+    telegramToken: function () {
+      return apiFetch("/rest/v1/profiles?select=telegram_token,telegram_chat_id&id=eq." + session.userId)
+        .then(function (rows) { return rows[0] || null; });
+    },
+
     report: function (id, reason) {
       return apiFetch("/rest/v1/reports", {
         method: "POST",
@@ -2110,6 +2137,51 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       return apiFetch("/rest/v1/saved?select=listing_id&renter_id=eq." + session.userId)
         .then(function (rows) { return rows.map(function (r) { return r.listing_id; }); });
     },
+
+    /* Saved searches. A renter looks for weeks; this is the only thing in the
+       app that brings them back without being asked to. */
+    savedSearches: function () {
+      return apiFetch("/rest/v1/saved_searches?select=*&renter_id=eq." +
+                      session.userId + "&order=created_at.desc");
+    },
+
+    watchSearch: function (row) {
+      return apiFetch("/rest/v1/saved_searches", {
+        method: "POST",
+        headers: { prefer: "return=representation" },
+        body: Object.assign({ renter_id: session.userId }, row)
+      }).then(function (rows) { return rows[0]; });
+    },
+
+    unwatchSearch: function (id) {
+      return apiFetch("/rest/v1/saved_searches?id=eq." + id, { method: "DELETE" });
+    },
+
+    /* The admin queue: orders somebody has sent a receipt for. The proof lives
+       in a private bucket, so it is fetched as a blob with the session token
+       rather than linked to directly. */
+    pendingOrders: function () {
+      return apiFetch("/rest/v1/payment_orders?select=" + encodeURIComponent(
+        "*,listings(title,contact_phone),payment_proofs(storage_path,claimed_tx_reference,superseded)"
+      ) + "&state=eq.submitted&order=created_at.asc");
+    },
+
+    proofUrl: function (path) {
+      return fetch(PTAS.url + "/storage/v1/object/payment-proofs/" + path, {
+        headers: { apikey: PTAS.key, authorization: "Bearer " + (session.token || PTAS.key) }
+      }).then(function (res) {
+        if (!res.ok) throw new Error("could not load the receipt (" + res.status + ")");
+        return res.blob();
+      }).then(function (b) { return URL.createObjectURL(b); });
+    },
+
+    approveOrder: function (id, ref) {
+      return rpc("approve_payment_order", { p_order: id, p_reference: ref || null });
+    },
+    rejectOrder: function (id, why) {
+      return rpc("reject_payment_order", { p_order: id, p_reason: why });
+    },
+    amAdmin: function () { return rpc("is_admin"); },
 
     receivingAccount: function () {
       return apiFetch("/rest/v1/receiving_accounts?select=*&is_active=is.true")
@@ -2301,6 +2373,16 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
       offlineNote:"បង្ហាញទិន្នន័យសាកល្បង។ មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។",
       justLooking:"មើលសិន",
+      reportNoAnswer:"ខ្ញុំបានហៅ តែគ្មានអ្នកទទួល", noAnswerThanks:"អរគុណ។ បើមានអ្នកផ្សេងហៅមិនលាន់ដែរ យើងនឹងផ្អាកការផ្សាយ",
+      watchTitle:"ការស្វែងរកដែលអ្នកតាមដាន", watchNote:"យើងនឹងផ្ញើសារតាម Telegram នៅពេលមានបន្ទប់ត្រូវគ្នា។",
+      watchThis:"ប្រាប់ខ្ញុំពេលមានបន្ទប់ថ្មី", watching:"កំពុងតាមដាន", stopWatching:"ឈប់តាមដាន",
+      watchAdded:"បានរក្សាទុក។ យើងនឹងប្រាប់អ្នក", watchNoTg:"សូមភ្ជាប់ Telegram ដើម្បីទទួលសារ",
+      tgTitle:"Telegram", tgOff:"មិនទាន់ភ្ជាប់។ យើងមិនអាចទាក់ទងអ្នកបានទេ។",
+      tgOn:"បានភ្ជាប់រួចហើយ។", tgConnect:"ភ្ជាប់ Telegram",
+      adminTitle:"ការបង់ប្រាក់ត្រូវពិនិត្យ", adminEmpty:"គ្មានអ្វីរង់ចាំទេ។",
+      approve:"យល់ព្រម", reject:"បដិសេធ", viewProof:"មើលរូបភាព",
+      approved:"បានយល់ព្រម។ ការផ្សាយកំពុងបង្ហាញ", rejected:"បានបដិសេធ",
+      anyPrice:"គ្មានកំណត់",
       devAuthNote:"កំណែសាកល្បង៖ យើងមិនទាន់ផ្ទៀងផ្ទាត់លេខទូរស័ព្ទនៅឡើយទេ។",
       districtLabel:"ខណ្ឌ", pinHint:"ចំណុចនៅលើផែនទីចាប់ផ្តើមនៅកណ្តាលខណ្ឌ។",
       stillFree:"នៅទំនេរ", confirmedToast:"អរគុណ។ បានធ្វើបច្ចុប្បន្នភាព",
@@ -2418,6 +2500,16 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
       offlineNote:"Showing sample listings. Could not reach the server.",
       justLooking:"Just looking",
+      reportNoAnswer:"I called, nobody answered", noAnswerThanks:"Thanks. If others cannot reach them either, we pause the listing.",
+      watchTitle:"Searches you are watching", watchNote:"We message you on Telegram when a room matches.",
+      watchThis:"Tell me when one appears", watching:"Watching", stopWatching:"Stop watching",
+      watchAdded:"Saved. We will tell you.", watchNoTg:"Connect Telegram so we can reach you",
+      tgTitle:"Telegram", tgOff:"Not connected. We will not be able to reach you.",
+      tgOn:"Connected.", tgConnect:"Connect Telegram",
+      adminTitle:"Payments to check", adminEmpty:"Nothing waiting.",
+      approve:"Approve", reject:"Reject", viewProof:"See receipt",
+      approved:"Approved. The listing is live.", rejected:"Rejected",
+      anyPrice:"any price",
       devAuthNote:"Early version: we do not check the number yet.",
       districtLabel:"District", pinHint:"Your pin starts at the middle of the district.",
       stillFree:"Still free", confirmedToast:"Thanks. Updated.",
@@ -3303,7 +3395,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
      database reads auth.uid() out of it. Signed out, the calls still work
      for anything a visitor is allowed to see. */
   var session = { signedIn:false, phone:"", name:"", mode:"renter",
-                  userId:null, token:null, isAdmin:false };
+                  userId:null, token:null, isAdmin:false, telegramChatId:null };
 
   var THIRD_TAB = { renter:{ id:"s-renting", key:"tabRenting" },
                     landlord:{ id:"s-post",  key:"tabListings" } };
@@ -3336,7 +3428,13 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     document.getElementById("me-phone").textContent = phone;
     document.getElementById("gate").hidden = true;
     rememberSession();
-    if (live) refreshMine();
+    if (!live) return;
+    refreshMine();
+    refreshWatching();
+    paintTelegram();
+    api.amAdmin()
+      .then(function (yes) { session.isAdmin = yes === true; paintAdmin(); })
+      .catch(function () { session.isAdmin = false; });
   }
 
   /* A landlord's own listings include the ones no renter can see - drafts,
@@ -3799,6 +3897,225 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     if (k === "internet") draft.internet = on; else draft.has[k] = on;
   });
 
+  /* ---- watching a search ----------------------------------------------
+     A renter looks for weeks and checks back less and less. This is the only
+     thing in the app that reaches out rather than waiting to be opened, and
+     the message goes to Telegram because that is where Cambodians are, and
+     because a push notification would need a native app nobody has installed.
+
+     The search saved is whatever is on screen: the filters ARE the query, so
+     there is nothing extra to fill in. */
+
+  var watching = [];
+  var PTAS_BOT = "PtasBot";     // set this to the bot's real username
+
+  /* Named from the filters themselves, because "under $200 in Toul Kork" is
+     what somebody will recognise a week later; "Search 3" is not. */
+  function describeSearch(row) {
+    var bits = [];
+    bits.push(row.max_price ? "$" + Math.round(row.max_price) : t("anyPrice"));
+    if (row.districts && row.districts.length) {
+      bits.push(row.districts.map(function (c) {
+        var d = districts[c];
+        return d ? (lang === "km" ? d.name_km : d.name_en) : c;
+      }).join(", "));
+    }
+    if (row.kinds && row.kinds.length) bits.push(t(TYPE_KEY[row.kinds[0]] || "tRoom"));
+    if (row.min_beds) bits.push(bedLabel({ beds: row.min_beds }));
+    return bits.join(" · ");
+  }
+
+  /* The current filter state, as a row. state.maxPrice at its ceiling means
+     "no maximum" rather than "$1000", so it is sent as null. */
+  function searchFromFilters() {
+    var priceEl = document.getElementById("f-price");
+    var atCeiling = priceEl && Number(state.maxPrice) >= Number(priceEl.max);
+    return {
+      label: "",
+      max_price: atCeiling ? null : state.maxPrice,
+      min_beds: state.beds === "any" ? null : Number(state.beds),
+      kinds: state.type === "any" ? null : [state.type],
+      districts: null,
+      term: state.term === "any" ? null : state.term,
+      needs_car: !!state.parkCar,
+      needs_moto: !!state.parkMoto
+    };
+  }
+
+  function paintWatching() {
+    var panel = document.getElementById("watch-panel");
+    var host = document.getElementById("watch-list");
+    if (!panel || !host) return;
+
+    panel.hidden = watching.length === 0;
+    host.textContent = "";
+
+    watching.forEach(function (row) {
+      var line = document.createElement("div");
+      line.className = "myrow";
+      line.setAttribute("data-watch", row.id);
+      line.innerHTML = '<div><div class="name">' + describeSearch(row) + '</div>' +
+                       '<div class="meta">' + t("watching") + '</div></div>';
+
+      var stop = document.createElement("button");
+      stop.type = "button";
+      stop.className = "mini";
+      stop.textContent = t("stopWatching");
+      stop.addEventListener("click", function () {
+        stop.disabled = true;
+        api.unwatchSearch(row.id).then(function () {
+          watching = watching.filter(function (w) { return w.id !== row.id; });
+          paintWatching();
+        }).catch(function (e) { stop.disabled = false; toast(e.message); });
+      });
+
+      var actions = document.createElement("div");
+      actions.className = "actions2";
+      actions.appendChild(stop);
+      line.appendChild(actions);
+      host.appendChild(line);
+    });
+  }
+
+  function refreshWatching() {
+    if (!live || !session.signedIn) { watching = []; paintWatching(); return Promise.resolve(); }
+    return api.savedSearches().then(function (rows) {
+      watching = rows || [];
+      paintWatching();
+    }).catch(function (e) {
+      if (window.console) console.warn("Ptas: could not load saved searches -", e.message);
+    });
+  }
+
+  document.getElementById("watch-this").addEventListener("click", function () {
+    if (!live) { toast(t("watchAdded")); return; }
+    if (!needAccount()) { toast(t("signInFirst")); return; }
+    var btn = this;
+    btn.disabled = true;
+    api.watchSearch(searchFromFilters())
+      .then(function (row) {
+        watching.unshift(row);
+        paintWatching();
+        /* Saving the search is useless if we cannot reach them, so say which
+           half is missing rather than a cheerful confirmation. */
+        toast(t(session.telegramChatId ? "watchAdded" : "watchNoTg"));
+      })
+      .catch(function (e) { toast(e.message); })
+      .then(function () { btn.disabled = false; });
+  });
+
+  /* ---- telegram ---------------------------------------------------------
+     Telegram will not let a bot message somebody who has not messaged it
+     first, so this has to start from the person: the link carries a token the
+     bot hands back, and the webhook joins the two up. */
+
+  function paintTelegram() {
+    var state_ = document.getElementById("tg-state");
+    var link = document.getElementById("tg-connect");
+    if (!state_ || !link) return;
+
+    if (!live || !session.signedIn) {
+      state_.textContent = t("tgOff");
+      link.removeAttribute("href");
+      link.setAttribute("aria-disabled", "true");
+      return;
+    }
+
+    api.telegramToken().then(function (row) {
+      if (!row) return;
+      session.telegramChatId = row.telegram_chat_id;
+      if (row.telegram_chat_id) {
+        state_.textContent = t("tgOn");
+        link.hidden = true;
+        return;
+      }
+      state_.textContent = t("tgOff");
+      link.hidden = false;
+      link.href = "https://t.me/" + PTAS_BOT + "?start=" + row.telegram_token;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.removeAttribute("aria-disabled");
+    }).catch(function (e) {
+      if (window.console) console.warn("Ptas: telegram state unknown -", e.message);
+    });
+  }
+
+  /* ---- approving payments ----------------------------------------------
+     A screen rather than SQL, because at two hundred listings the SQL is a
+     job and at twenty it is already tedious. The queue is only visible to
+     someone the admins table names; is_admin() decides, not the client. */
+
+  function paintAdmin() {
+    var panel = document.getElementById("admin-panel");
+    var host = document.getElementById("admin-queue");
+    var empty = document.getElementById("admin-empty");
+    if (!panel) return;
+
+    if (!live || !session.isAdmin) { panel.hidden = true; return; }
+    panel.hidden = false;
+
+    api.pendingOrders().then(function (orders) {
+      host.textContent = "";
+      empty.hidden = orders.length > 0;
+
+      orders.forEach(function (o) {
+        var proof = (o.payment_proofs || []).filter(function (p) { return !p.superseded; })[0];
+        var row = document.createElement("div");
+        row.className = "myrow";
+        row.innerHTML =
+          '<div><div class="name">' + (o.listings ? o.listings.title : "—") + '</div>' +
+          '<div class="meta">' + o.order_code + ' · $' + o.amount_usd +
+          (proof && proof.claimed_tx_reference ? ' · ' + proof.claimed_tx_reference : '') +
+          '</div></div>';
+
+        var actions = document.createElement("div");
+        actions.className = "actions2";
+
+        if (proof) {
+          var see = document.createElement("button");
+          see.type = "button";
+          see.className = "mini";
+          see.textContent = t("viewProof");
+          see.addEventListener("click", function () {
+            api.proofUrl(proof.storage_path).then(function (url) {
+              window.open(url, "_blank", "noopener");
+            }).catch(function (e) { toast(e.message); });
+          });
+          actions.appendChild(see);
+        }
+
+        var yes = document.createElement("button");
+        yes.type = "button";
+        yes.className = "mini pay";
+        yes.textContent = t("approve");
+        yes.addEventListener("click", function () {
+          yes.disabled = true;
+          api.approveOrder(o.id, proof && proof.claimed_tx_reference)
+            .then(function () { toast(t("approved")); paintAdmin(); refreshMine(); })
+            .catch(function (e) { yes.disabled = false; toast(e.message); });
+        });
+
+        var no = document.createElement("button");
+        no.type = "button";
+        no.className = "mini";
+        no.textContent = t("reject");
+        no.addEventListener("click", function () {
+          no.disabled = true;
+          api.rejectOrder(o.id, "could not find this transfer")
+            .then(function () { toast(t("rejected")); paintAdmin(); })
+            .catch(function (e) { no.disabled = false; toast(e.message); });
+        });
+
+        actions.appendChild(yes);
+        actions.appendChild(no);
+        row.appendChild(actions);
+        host.appendChild(row);
+      });
+    }).catch(function (e) {
+      if (window.console) console.warn("Ptas: approvals queue -", e.message);
+    });
+  }
+
   /* ---- paying ---------------------------------------------------------
      No bank API. The landlord scans the owner's KHQR in whichever banking app
      they already have, types the order code into the transfer note, and sends
@@ -4034,7 +4351,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   document.getElementById("sign-out").addEventListener("click", function () {
     session = { signedIn:false, phone:"", name:"", mode:"renter",
-                userId:null, token:null, isAdmin:false };
+                userId:null, token:null, isAdmin:false, telegramChatId:null };
     store("ptas-session", "");
     gateStep("phone");
     gatePhone.value = "";
@@ -4138,24 +4455,37 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   /* Renters are the sensor for dead listings. Two reports pause a listing
      until the landlord confirms it again, which catches the case the monthly
      fee misses: a landlord who pays but leaves a rented room up. */
+  /* Two reports of "already rented" pause a listing, but three unanswered
+     calls, and only ones from the last week. Somebody who SPOKE to the
+     landlord and was told the room is gone is near-proof; one unanswered call
+     at lunchtime is close to nothing. Counting them the same would either
+     pause honest landlords or leave dead numbers up.
+
+     The thresholds live in the database - pause_on_reports() counts the rows -
+     so these two numbers are only here to word the toast. */
   var REPORTS_TO_PAUSE = 2;
-  document.getElementById("d-report").addEventListener("click", function () {
+  var NO_ANSWERS_TO_PAUSE = 3;
+
+  function reportHandler(ev) {
+    var btn = ev.currentTarget;
+    var reason = btn.dataset.reason;
     if (!current) return;
     /* Reports need a name against them. One anonymous tap should never be able
        to take a paying landlord's listing down, and the database enforces one
        report per person per listing. */
     if (!needAccount()) { toast(t("signInFirst")); return; }
 
-    var btn = this;
     btn.disabled = true;
     var l = current;
 
     var done = function () {
-      /* The second report is what pauses it, and that decision is the
-         database's, not the app's: pause_on_reports() counts the rows. The
-         app finds out by asking again rather than by guessing. */
-      l.reports = (l.reports || 0) + 1;
-      if (l.reports >= REPORTS_TO_PAUSE) {
+      /* Offline there is nothing counting, so the app has to. Connected, the
+         database decides and the app finds out by asking again. */
+      var key = reason === "no_answer" ? "noAnswers" : "reports";
+      var limit = reason === "no_answer" ? NO_ANSWERS_TO_PAUSE : REPORTS_TO_PAUSE;
+      l[key] = (l[key] || 0) + 1;
+
+      if (l[key] >= limit) {
         l.billing = l.billing || {};
         l.billing.state = "paused";
         l.billing.daysLeft = 0;
@@ -4164,18 +4494,21 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         closeDetail();
         return;
       }
-      toast(t("reported"));
+      toast(t(reason === "no_answer" ? "noAnswerThanks" : "reported"));
     };
 
     if (!live) { done(); return; }
-    api.report(l.id).then(done).catch(function (e) {
+    api.report(l.id, reason).then(done).catch(function (e) {
       btn.disabled = false;
       /* A duplicate is not a failure worth alarming anyone about: it means
          this person already told us. */
       if (/duplicate|unique/i.test(e.message)) { toast(t("reported")); return; }
       toast(e.message);
     });
-  });
+  }
+
+  document.getElementById("d-report").addEventListener("click", reportHandler);
+  document.getElementById("d-noanswer").addEventListener("click", reportHandler);
   document.getElementById("post-start").addEventListener("click", openCompose);
 
   /* =============================================================== sheet */
@@ -4407,7 +4740,14 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   Promise.all([api.districts(), api.search(), floor])
     .then(function (out) {
       boot(out[1], null);
-      if (session.signedIn) refreshMine();
+      if (session.signedIn) {
+        refreshMine();
+        refreshWatching();
+        paintTelegram();
+        api.amAdmin()
+          .then(function (yes) { session.isAdmin = yes === true; paintAdmin(); })
+          .catch(function () { session.isAdmin = false; });
+      }
     })
     .catch(function (err) {
       if (booted) throw err;         // a render bug must not be reported as an outage

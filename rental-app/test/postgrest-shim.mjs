@@ -130,11 +130,54 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, r.rows);
     }
 
+    if (url.pathname === "/rest/v1/reports" && req.method === "POST") {
+      await asRole(uid, (db) => db.query(
+        "insert into reports (listing_id, reporter_id, reason) values ($1,$2,$3)",
+        [payload.listing_id, payload.reporter_id, payload.reason]));
+      return json(res, 201, []);
+    }
+
     if (url.pathname === "/rest/v1/listing_photos" && req.method === "POST") {
       await asRole(uid, (db) => db.query(
         "insert into listing_photos (listing_id, path, position) values ($1,$2,$3)",
         [payload.listing_id, payload.path, payload.position]));
       return json(res, 201, []);
+    }
+
+    if (url.pathname === "/rest/v1/saved_searches" && req.method === "GET") {
+      const renter = (url.searchParams.get("renter_id") || "").replace("eq.", "");
+      const r = await asRole(uid, (db) => db.query(
+        "select * from saved_searches where renter_id = $1 order by created_at desc", [renter]));
+      return json(res, 200, r.rows);
+    }
+
+    if (url.pathname === "/rest/v1/saved_searches" && req.method === "POST") {
+      const cols = Object.keys(payload);
+      const r = await asRole(uid, (db) => db.query(
+        `insert into saved_searches (${cols.join(",")})
+         values (${cols.map((_, i) => "$" + (i + 1)).join(",")}) returning *`,
+        cols.map(c => payload[c])));
+      return json(res, 201, r.rows);
+    }
+
+    if (url.pathname === "/rest/v1/saved_searches" && req.method === "DELETE") {
+      const id = (url.searchParams.get("id") || "").replace("eq.", "");
+      await asRole(uid, (db) => db.query("delete from saved_searches where id = $1", [id]));
+      return json(res, 204, null);
+    }
+
+    if (url.pathname === "/rest/v1/payment_orders" && req.method === "GET") {
+      const r = await asRole(uid, (db) => db.query(
+        `select o.*,
+                json_build_object('title', l.title, 'contact_phone', l.contact_phone) as listings,
+                coalesce((select json_agg(json_build_object(
+                            'storage_path', p.storage_path,
+                            'claimed_tx_reference', p.claimed_tx_reference,
+                            'superseded', p.superseded))
+                          from payment_proofs p where p.order_id = o.id), '[]'::json) as payment_proofs
+           from payment_orders o join listings l on l.id = o.listing_id
+          where o.state = 'submitted' order by o.created_at`));
+      return json(res, 200, r.rows);
     }
 
     if (url.pathname === "/rest/v1/districts") {
@@ -155,7 +198,13 @@ const server = http.createServer(async (req, res) => {
       const args = keys.map((k, i) => `${k} => $${i + 1}`).join(", ");
       const r = await asRole(uid, (db) =>
         db.query(`select * from ${fn}(${args})`, keys.map(k => payload[k])));
-      return json(res, 200, r.rows[0] || null);
+      const row = r.rows[0] ?? null;
+      /* PostgREST unwraps a scalar-returning function: is_admin() comes back
+       * as `false`, not `{ is_admin: false }`. Returning the row object made
+       * every caller look like an admin to `!!`, which is the kind of fixture
+       * bug that hides a real one. */
+      const single = row && Object.keys(row).length === 1 && r.fields.length === 1;
+      return json(res, 200, single ? row[r.fields[0].name] : row);
     }
 
     if (url.pathname === "/rest/v1/listings" && req.method === "GET") {

@@ -8,10 +8,41 @@
 import { chromium } from "playwright";
 import http from "node:http";
 import fs from "node:fs";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 
 const SUPA = "https://nreazrayjskpgyeeznda.supabase.co";
 const SHIM = "http://127.0.0.1:54321";
+
+// A fresh database for every run. Without this the suite quietly stops testing
+// what it says: three runs each filing one no-answer report on the same
+// listing is three distinct reporters, so the app pauses it - correctly - and
+// the later assertions fail for a reason that has nothing to do with the code
+// under test.
+const MIGRATIONS = ["0001_init", "0002_payments", "0004_lock_down_functions",
+                    "0005_districts", "0006_district_centres", "0007_null_uid_guards",
+                    "0008_default_privileges", "0009_signals_and_telegram"];
+
+function psql(args, opts = {}) {
+  const r = spawnSync("psql", ["-q", "-v", "ON_ERROR_STOP=1", ...args], {
+    env: { ...process.env, PGHOST: process.env.PGHOST || "/tmp",
+           PGPORT: process.env.PGPORT || "5433", PGUSER: process.env.PGUSER || "pg" },
+    encoding: "utf8", ...opts,
+  });
+  if (r.status !== 0 && !opts.allowFail) {
+    throw new Error("psql failed: " + (r.stderr || r.stdout));
+  }
+  return r;
+}
+
+const root = new URL("../../", import.meta.url).pathname;
+psql(["-d", "postgres", "-c", "drop database if exists ptas_app"], { allowFail: true });
+psql(["-d", "postgres", "-c", "create database ptas_app"]);
+psql(["-d", "ptas_app", "-f", root + "supabase/tests/00-local-shim.sql"]);
+for (const m of MIGRATIONS) psql(["-d", "ptas_app", "-f", `${root}supabase/migrations/${m}.sql`]);
+psql(["-d", "ptas_app", "-f", root + "supabase/seed.sql"]);
+psql(["-d", "ptas_app", "-c",
+      "insert into receiving_accounts (version, display_name, bank, qr_path, is_active, activated_at) " +
+      "values (1,'PTAS / TEST','ABA','v1.png',true,now())"]);
 
 // The shim is started here rather than by hand, so one command runs the suite
 // and nothing is left listening afterwards.
@@ -297,6 +328,87 @@ console.log("\n== the dollar ==");
   const feed3 = await page3.$$eval(".card-title", els => els.map(e => e.textContent));
   ok("an unpaid listing stays out of the feed", !feed3.includes(T3));
   await ctx3.close();
+
+  await ctx.close();
+}
+
+console.log("\n== the two report reasons weigh differently ==");
+{
+  const { ctx, page } = await open();
+  await page.waitForSelector(".card", { timeout: 8000 });
+  await page.evaluate(() => document.getElementById("gate").hidden = false);
+  await page.fill("#gate-phone", newPhone());
+  await page.click("#gate-continue");
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  await page.click('.rolecard[data-role="renter"]');
+  await page.waitForTimeout(500);
+
+  await page.click(".card");
+  await page.waitForTimeout(700);
+  const title = await page.textContent("#d-title").catch(() => null);
+  ok("both reasons are offered", await page.isVisible("#d-report") && await page.isVisible("#d-noanswer"));
+
+  await page.click("#d-noanswer");
+  await page.waitForTimeout(900);
+  const stillUp = await page.$eval("#s-detail", e => !e.hidden);
+  ok("one unanswered call does not pause anything", stillUp);
+
+  await ctx.close();
+}
+
+console.log("\n== watching a search ==");
+{
+  const { ctx, page } = await open();
+  await page.waitForSelector(".card", { timeout: 8000 });
+  await page.evaluate(() => document.getElementById("gate").hidden = false);
+  await page.fill("#gate-phone", newPhone());
+  await page.click("#gate-continue");
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  await page.click('.rolecard[data-role="renter"]');
+  await page.waitForTimeout(600);
+
+  // Filter down to nothing, which is exactly when somebody wants telling.
+  await page.click("#open-filters");
+  await page.waitForTimeout(400);
+  await page.$eval("#f-price", el => {
+    el.value = "80";
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await page.click("#f-apply");
+  await page.waitForTimeout(700);
+
+  const emptyShown = await page.isVisible("#watch-this");
+  ok("the offer appears when nothing matched", emptyShown);
+
+  await page.click("#watch-this");
+  await page.waitForTimeout(1000);
+
+  // It should be listed under Saved, described by its own filters.
+  await page.click('.tab[data-tab="s-saved"]');
+  await page.waitForTimeout(500);
+  const watch = await page.textContent("#watch-list");
+  ok("the saved search is listed", watch.trim().length > 0, watch.slice(0, 80));
+  ok("and is named after what it looks for", /\$8?0|\$\d/.test(watch), watch.slice(0, 80));
+
+  await ctx.close();
+}
+
+console.log("\n== the approvals queue is only for admins ==");
+{
+  const { ctx, page } = await open();
+  await page.waitForSelector(".card", { timeout: 8000 });
+  await page.evaluate(() => document.getElementById("gate").hidden = false);
+  await page.fill("#gate-phone", newPhone());
+  await page.click("#gate-continue");
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  await page.click('.rolecard[data-role="renter"]');
+  await page.waitForTimeout(900);
+
+  await page.click('.tab[data-tab="s-me"]').catch(() => {});
+  await page.waitForTimeout(500);
+  const adminHidden = await page.$eval("#admin-panel", e => e.hidden);
+  ok("an ordinary person never sees it", adminHidden);
+  ok("but everyone is offered Telegram", await page.isVisible("#tg-connect"));
 
   await ctx.close();
 }

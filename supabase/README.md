@@ -71,6 +71,8 @@ supabase/tests/run.sh        # against any local Postgres
 | `0006_district_centres` | where a new listing's pin starts, and that it is approximate |
 | `0007_null_uid_guards` | `owner_id <> auth.uid()` does not fire when uid is null |
 | `0008_default_privileges` | Supabase grants new functions to anon; 0004's promise made real |
+| `0009_signals_and_telegram` | the second report reason, the outbox, saved searches |
+| `0010_notify_schedule` | cron for sending and for the expiry warning (Supabase-only) |
 
 The last two are worth reading before adding anything. Both were places where a
 check existed, looked right, and did nothing.
@@ -119,3 +121,45 @@ select reject_payment_order('<order id>', 'could not find this transfer');
 ```
 
 Approving is idempotent: tapping it twice does not sell two months.
+
+
+## Reports are weighed, not counted
+
+Two reasons, two thresholds, because they are not the same evidence:
+
+* **already rented** — somebody spoke to the landlord and was told. Near-proof.
+  **Two** distinct people pause the listing.
+* **no answer** — one unanswered call at lunchtime means almost nothing.
+  **Three** distinct people, and only ones from the **last seven days**, pause it.
+
+Counting them the same would either pause honest landlords on two missed calls
+or leave dead numbers up for weeks. Both thresholds are in `pause_on_reports()`;
+the app's copies exist only to word the confirmation message.
+
+## Messages go through an outbox
+
+Triggers write to `notifications` in the same transaction as the thing the
+message is about; the `notify` edge function sends them later. That separation
+is deliberate — pausing a listing must not depend on an API in another country
+being reachable, and a failed send has to be retryable without re-running the
+trigger. Every message carries a `dedupe_key`, so the same one is never sent
+twice however many times its trigger fires.
+
+## Switching Telegram on
+
+Nothing sends until these exist. Until then messages simply queue, and are
+delivered when they do.
+
+1. Make a bot with [@BotFather](https://t.me/BotFather), take the token.
+2. In the dashboard, Edge Functions → Secrets, add `TELEGRAM_BOT_TOKEN`,
+   `TELEGRAM_WEBHOOK_SECRET` (any long random string), and `PTAS_APP_URL`
+   (your Netlify link, so messages carry one).
+3. Point Telegram at the webhook:
+   ```
+   curl "https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://<project>.supabase.co/functions/v1/telegram-webhook&secret_token=<SECRET>"
+   ```
+4. Let cron reach the sender:
+   ```sql
+   select vault.create_secret('<service role key>', 'service_key', 'used by kick_notify');
+   ```
+5. Set `PTAS_BOT` in `ptas.html` to the bot's username.
