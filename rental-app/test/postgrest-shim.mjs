@@ -95,6 +95,19 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, {});
     }
 
+    /* The dev-signin edge function, standing in for the real one. Same
+     * contract: a phone number in, a session out, nothing verified. */
+    if (url.pathname === "/functions/v1/dev-signin") {
+      const digits = String(payload.phone || "").replace(/[^0-9]/g, "");
+      const phone = "+855" + (digits.startsWith("855") ? digits.slice(3) : digits.replace(/^0+/, ""));
+      const r = await pool.query(
+        `insert into auth.users (id, phone) values (gen_random_uuid(), $1)
+         on conflict (phone) do update set phone = excluded.phone
+         returning id`, [phone]);
+      const id = r.rows[0].id;
+      return json(res, 200, { access_token: id, user: { id, phone } });
+    }
+
     if (url.pathname === "/auth/v1/verify") {
       if (payload.token !== "000000") return json(res, 400, { message: "Token has expired or is invalid" });
       const r = await pool.query(

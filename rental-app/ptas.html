@@ -830,6 +830,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 }
 .gate[hidden] { display: none; }
 .gate-inner { width: 100%; }
+.gate-note {
+  margin: 18px 0 0; padding: 9px 11px; border-radius: 10px;
+  background: #FFF4D6; color: #4A3706; font-size: 12px; line-height: 1.4;
+}
 .gate-h { font-size: 22px; margin: 0 0 6px; }
 .gate-p { font-size: 14px; color: var(--ink-2); margin: 0 0 22px; }
 
@@ -1473,6 +1477,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         </div>
         <button class="btn btn-primary" type="button" id="gate-continue" style="width:100%" data-t="continue">Continue</button>
         <button class="btn btn-quiet" type="button" id="gate-browse" style="width:100%;margin-top:10px" data-t="justLooking">Just looking</button>
+        <p class="gate-note" id="gate-devnote" hidden data-t="devAuthNote">Early version: we do not check the number yet.</p>
       </div>
 
       <div id="gate-step-code" hidden>
@@ -1864,7 +1869,17 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     /* Publishable, and meant to be. It grants the `anon` role and nothing
        more; what that role may read is decided by row level security in the
        database, not by keeping this string secret. */
-    key: "sb_publishable_KOTZxD8USbN-XNOyoU7nbQ_ODPAxTZJ"
+    key: "sb_publishable_KOTZxD8USbN-XNOyoU7nbQ_ODPAxTZJ",
+
+    /* No SMS provider yet, so signing in checks nothing: a phone number is
+       taken at its word. Everything downstream is real - a real session, real
+       auth.uid(), real row level security - so the only thing missing is proof
+       that the number belongs to whoever typed it.
+
+       Set this to false the day Twilio is connected. requestCode/verifyCode
+       below already speak real OTP and the gate already has the code step; it
+       is one flag, not a rewrite. */
+    devAuth: true
   };
 
   var live = false;            // true once real rows have arrived
@@ -2113,6 +2128,17 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       return apiFetch("/auth/v1/otp", { method: "POST", body: { phone: e164(phone) } });
     },
 
+    /* The stand-in. Same shape as verifyCode, so the gate does not care which
+       one it called. */
+    devSignIn: function (phone) {
+      return apiFetch("/functions/v1/dev-signin", { method: "POST", body: { phone: phone } })
+        .then(function (out) {
+          session.token  = out.access_token;
+          session.userId = out.user && out.user.id;
+          return out;
+        });
+    },
+
     verifyCode: function (phone, code) {
       return apiFetch("/auth/v1/verify", {
         method: "POST",
@@ -2275,6 +2301,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
       offlineNote:"បង្ហាញទិន្នន័យសាកល្បង។ មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។",
       justLooking:"មើលសិន",
+      devAuthNote:"កំណែសាកល្បង៖ យើងមិនទាន់ផ្ទៀងផ្ទាត់លេខទូរស័ព្ទនៅឡើយទេ។",
       districtLabel:"ខណ្ឌ", pinHint:"ចំណុចនៅលើផែនទីចាប់ផ្តើមនៅកណ្តាលខណ្ឌ។",
       stillFree:"នៅទំនេរ", confirmedToast:"អរគុណ។ បានធ្វើបច្ចុប្បន្នភាព",
       payTitle:"បង់ថ្លៃប្រកាស", payRef:"ដាក់លេខនេះក្នុងកំណត់ចំណាំផ្ទេរប្រាក់", paySend:"ខ្ញុំបានបង់ហើយ",
@@ -2391,6 +2418,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
       offlineNote:"Showing sample listings. Could not reach the server.",
       justLooking:"Just looking",
+      devAuthNote:"Early version: we do not check the number yet.",
       districtLabel:"District", pinHint:"Your pin starts at the middle of the district.",
       stillFree:"Still free", confirmedToast:"Thanks. Updated.",
       payTitle:"Pay for this listing", payRef:"Put this in the transfer note", paySend:"I have paid",
@@ -3924,6 +3952,19 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     btn.disabled = true;
     var was = btn.textContent;
     btn.textContent = t("sending");
+
+    if (PTAS.devAuth) {
+      api.devSignIn(session.phone)
+        .then(function () { return api.profile(); })
+        .then(function (prof) {
+          session.name = (prof && prof.display_name) || "";
+          gateStep("role");
+        })
+        .catch(function (e) { err.textContent = e.message; })
+        .then(function () { btn.disabled = false; btn.textContent = was; });
+      return;
+    }
+
     api.requestCode(session.phone)
       .then(function () {
         gateStep("code");
@@ -4332,6 +4373,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
      opens the app sees their own listings rather than the gate. The token may
      have expired, in which case the first write fails and sends them back
      through it - which is the right moment to find out, not now. */
+  if (PTAS.devAuth) document.getElementById("gate-devnote").hidden = false;
+
   if (restoreSession()) {
     document.getElementById("gate").hidden = true;
     document.getElementById("me-phone").textContent = session.phone;

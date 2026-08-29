@@ -158,12 +158,11 @@ console.log("\n== a landlord posts, and it reaches the feed ==");
   await page.evaluate(() => document.getElementById("gate").hidden = false);
   await page.fill("#gate-phone", newPhone());
   await page.click("#gate-continue");
-  await page.waitForSelector("#gate-step-code:not([hidden])", { timeout: 5000 });
-  ok("a code is asked for before an account exists", true);
-
-  await page.fill("#gate-code", "000000");
-  await page.click("#gate-verify");
-  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 5000 });
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  ok("signing in reaches the role step", true);
+  const devNote = await page.$eval("#gate-devnote", e => ({ hidden: e.hidden, text: e.textContent }));
+  ok("and the gate admits the number is not checked yet",
+     !devNote.hidden && devNote.text.trim().length > 0, JSON.stringify(devNote));
   await page.click('.rolecard[data-role="landlord"]');
   await page.waitForTimeout(600);
 
@@ -223,10 +222,7 @@ console.log("\n== the dollar ==");
   await page.evaluate(() => document.getElementById("gate").hidden = false);
   await page.fill("#gate-phone", newPhone());
   await page.click("#gate-continue");
-  await page.waitForSelector("#gate-step-code:not([hidden])", { timeout: 5000 });
-  await page.fill("#gate-code", "000000");
-  await page.click("#gate-verify");
-  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 5000 });
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
   await page.click('.rolecard[data-role="landlord"]');
   await page.waitForTimeout(600);
 

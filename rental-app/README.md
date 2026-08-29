@@ -43,8 +43,21 @@ npm run audit:app     # contrast, touch targets, 360px overflow, every theme
 npm run test:app      # the app against the real schema; see test/README.md
 ```
 
+## Sign-in checks nothing yet
+
+`PTAS.devAuth` is `true`, so a phone number is taken at its word: the app calls
+the `dev-signin` edge function, which maps the number onto an ordinary account
+and hands back a real session. Anyone can sign in as anyone. The gate says so.
+
+Everything downstream is real — a real token, real `auth.uid()`, real row level
+security — so the only missing piece is proof that the number belongs to
+whoever typed it. Turning that on is one flag: connect Twilio to the Supabase
+project (about $0.03 a code, and only landlords ever need one), set `devAuth`
+to `false`, and delete the function. The OTP path and the code step in the gate
+are already written.
+
 ## What is not built yet
 
-Sending the sign-in code needs an SMS provider on the Supabase project. A map
-pin is the centre of the district until somebody drags it. Approving a payment
-is a SQL statement, not a screen.
+A map pin is the centre of its district until somebody drags it, and the app
+marks those as approximate rather than pretending otherwise. Approving a
+payment is a SQL statement, not a screen — see `supabase/README.md`.
