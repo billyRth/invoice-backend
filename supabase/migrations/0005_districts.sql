@@ -1,4 +1,4 @@
--- Ptas — districts as a vocabulary, not free text
+-- Pteas — districts as a vocabulary, not free text
 --
 -- Two different things were both called "district" in the prototype:
 --

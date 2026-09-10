@@ -1,4 +1,4 @@
--- Ptas — a tenant can read the room they live in
+-- Pteas — a tenant can read the room they live in
 --
 -- listings is readable in exactly two situations: it is on the market, or you
 -- own it. Recording a tenancy takes the room OFF the market, so the moment the

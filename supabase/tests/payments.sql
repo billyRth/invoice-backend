@@ -15,7 +15,7 @@ insert into auth.users (id, phone) values
 insert into profiles (id, phone) select id, phone from auth.users on conflict do nothing;
 insert into admins (profile_id) values ('99999999-9999-9999-9999-999999999999');
 insert into receiving_accounts (version, display_name, qr_path, is_active, activated_at)
-  values (1, 'PTAS / SOK DARA', 'khqr/v1.png', true, now());
+  values (1, 'PTEAS / SOK DARA', 'khqr/v1.png', true, now());
 
 insert into listings (id, owner_id, title, kind, term, district, lat, lng, price_usd, contact_name, contact_phone)
 values

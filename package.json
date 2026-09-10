@@ -14,7 +14,7 @@
     "test:app": "node rental-app/test/e2e.mjs",
     "audit:app": "node rental-app/audit.mjs",
     "test:db": "supabase/tests/run.sh",
-    "build:app": "cp rental-app/ptas.html rental-app/index.html"
+    "build:app": "cp rental-app/pteas.html rental-app/index.html"
   },
   "dependencies": {
     "express": "^4.19.2",

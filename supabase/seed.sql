@@ -1,4 +1,4 @@
--- Ptas — demo data
+-- Pteas — demo data
 --
 -- The eleven listings from the prototype, as real rows: real Phnom Penh
 -- coordinates, prices typical of 2026, and a spread of states that exercises

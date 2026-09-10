@@ -1,4 +1,4 @@
--- Ptas — the second signal, an outbox, and saved searches
+-- Pteas — the second signal, an outbox, and saved searches
 --
 -- Three things that only make sense together.
 --

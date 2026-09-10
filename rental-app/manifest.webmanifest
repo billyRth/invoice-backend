@@ -1,0 +1,16 @@
+{
+  "name": "Pteas · ជួលផ្ទះ",
+  "short_name": "Pteas",
+  "description": "ជួលបន្ទប់ ផ្ទះ និងអាផាតមិន ក្នុងភ្នំពេញ។ ម្ចាស់ផ្ទះបញ្ជាក់ថានៅទំនេរ មុនពេលអ្នកហៅទូរស័ព្ទ។",
+  "lang": "km",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B5F4A",
+  "theme_color": "#0B5F4A",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

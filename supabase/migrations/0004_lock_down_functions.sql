@@ -1,4 +1,4 @@
--- Ptas — close the default EXECUTE grant
+-- Pteas — close the default EXECUTE grant
 --
 -- Postgres grants EXECUTE on every new function to PUBLIC. The grants at the
 -- end of 0001 and 0002 therefore documented an intent they did not enforce:

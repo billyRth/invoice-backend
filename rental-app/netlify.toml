@@ -1,16 +1,33 @@
-# Drag this folder onto https://app.netlify.com/drop, or connect the repo and
-# set the publish directory to rental-app. Either way the app is live on a URL
-# you can open on a phone and send to a landlord.
+# Drag this whole folder onto https://app.netlify.com/drop.
 #
-# There is deliberately no index.html checked in beside ptas.html. There used
+# It is a folder rather than one file now, because a launch needs the things
+# that live beside the page: the share card Telegram shows when a link is
+# forwarded, the icons a phone uses when somebody adds it to their home screen,
+# and the manifest that makes "add to home screen" an install rather than a
+# bookmark.
+#
+# There is deliberately no index.html checked in beside pteas.html. There used
 # to be, as a copy, and it silently fell a dozen commits behind the file it was
 # copied from - so a deploy would have shipped an old build that still looked
-# plausible. The redirect below does the same job and cannot go stale.
+# plausible. The redirect below does the same job and cannot go stale; a host
+# that insists on a literal index.html gets one from `npm run build:app`.
 
 [build]
   publish = "."
 
 [[redirects]]
-  from = "/*"
-  to = "/ptas.html"
+  from = "/"
+  to = "/pteas.html"
   status = 200
+
+# Everything else - the images, the manifest - must be served as itself.
+[[redirects]]
+  from = "/*"
+  to = "/pteas.html"
+  status = 200
+  conditions = { Role = ["never"] }
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"

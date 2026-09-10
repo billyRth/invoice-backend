@@ -1,4 +1,4 @@
--- Ptas — sending what the outbox collected
+-- Pteas — sending what the outbox collected
 --
 -- Two scheduled jobs. One is plain SQL and runs in the database. The other has
 -- to reach an edge function, which means an HTTP call from Postgres, which

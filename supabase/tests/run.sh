@@ -14,13 +14,13 @@ export PGHOST="${PGHOST:-/tmp}" PGPORT="${PGPORT:-5433}" PGUSER="${PGUSER:-pg}"
 
 # Each suite seeds its own users, so each gets its own database.
 for t in rules payments signals; do
-  psql -q -d postgres -c "drop database if exists ptas_test" >/dev/null 2>&1
-  psql -q -d postgres -c "create database ptas_test" >/dev/null
-  psql -q -d ptas_test -v ON_ERROR_STOP=1 -f supabase/tests/00-local-shim.sql >/dev/null
+  psql -q -d postgres -c "drop database if exists pteas_test" >/dev/null 2>&1
+  psql -q -d postgres -c "create database pteas_test" >/dev/null
+  psql -q -d pteas_test -v ON_ERROR_STOP=1 -f supabase/tests/00-local-shim.sql >/dev/null
   for m in 0001_init 0002_payments 0004_lock_down_functions 0005_districts 0006_district_centres 0007_null_uid_guards 0008_default_privileges 0009_signals_and_telegram 0011_lock_new_functions 0012_lock_the_locker 0013_payment_messages 0014_record_tenancy 0015_tenant_sees_the_room; do
-    psql -q -d ptas_test -v ON_ERROR_STOP=1 -f "supabase/migrations/$m.sql" >/dev/null
+    psql -q -d pteas_test -v ON_ERROR_STOP=1 -f "supabase/migrations/$m.sql" >/dev/null
   done
   echo "### $t"
-  psql -q -d ptas_test -f "supabase/tests/$t.sql" 2>&1 | grep -v '^SET$\|^RESET$\|^$'
+  psql -q -d pteas_test -f "supabase/tests/$t.sql" 2>&1 | grep -v '^SET$\|^RESET$\|^$'
 done
-psql -q -d postgres -c "drop database if exists ptas_test" >/dev/null 2>&1
+psql -q -d postgres -c "drop database if exists pteas_test" >/dev/null 2>&1

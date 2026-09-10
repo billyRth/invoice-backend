@@ -1,4 +1,4 @@
-// Ptas — sign in with a phone number and no verification.
+// Pteas — sign in with a phone number and no verification.
 //
 // THIS VERIFIES NOTHING. Anyone can sign in as any number. It exists so the
 // whole flow — post, pay, confirm, report — can be walked and shown to people
@@ -13,8 +13,8 @@
 // session. Everything downstream — RLS, auth.uid(), the ownership guards — is
 // exactly what it will be in production.
 //
-// To retire it: delete this function and set PTAS.devAuth to false in
-// ptas.html. The client's requestCode/verifyCode already speak real OTP.
+// To retire it: delete this function and set PTEAS.devAuth to false in
+// pteas.html. The client's requestCode/verifyCode already speak real OTP.
 
 const URL_BASE = Deno.env.get("SUPABASE_URL")!;
 const SERVICE  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -50,7 +50,7 @@ async function passwordFor(phone: string): Promise<string> {
     "raw", new TextEncoder().encode(SERVICE),
     { name: "HMAC", hash: "SHA-256" }, false, ["sign"],
   );
-  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode("ptas:" + phone));
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode("pteas:" + phone));
   return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
   try { phone = e164((await req.json()).phone); } catch { /* falls through */ }
   if (!phone) return json({ message: "That number does not look like a Cambodian phone number." }, 400);
 
-  const email = "p" + phone.replace("+", "") + "@ptas.local";
+  const email = "p" + phone.replace("+", "") + "@pteas.local";
   const password = await passwordFor(phone);
 
   // Signing in first means the common case — somebody coming back — is one call.

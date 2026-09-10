@@ -1,4 +1,4 @@
-/* Drives the real ptas.html against the real schema.
+/* Drives the real pteas.html against the real schema.
  *
  * The file is not modified: requests to the Supabase host are intercepted and
  * forwarded to the local shim, which runs them against a Postgres carrying the
@@ -42,16 +42,16 @@ const root = new URL("../../", import.meta.url).pathname;
 // DROP DATABASE fails while they exist - quietly, because the drop tolerates
 // failure, so the create then fails with a confusing "already exists".
 psql(["-d", "postgres", "-c",
-      "select pg_terminate_backend(pid) from pg_stat_activity where datname = 'ptas_app'"],
+      "select pg_terminate_backend(pid) from pg_stat_activity where datname = 'pteas_app'"],
      { allowFail: true });
-psql(["-d", "postgres", "-c", "drop database if exists ptas_app"], { allowFail: true });
-psql(["-d", "postgres", "-c", "create database ptas_app"]);
-psql(["-d", "ptas_app", "-f", root + "supabase/tests/00-local-shim.sql"]);
-for (const m of MIGRATIONS) psql(["-d", "ptas_app", "-f", `${root}supabase/migrations/${m}.sql`]);
-psql(["-d", "ptas_app", "-f", root + "supabase/seed.sql"]);
-psql(["-d", "ptas_app", "-c",
+psql(["-d", "postgres", "-c", "drop database if exists pteas_app"], { allowFail: true });
+psql(["-d", "postgres", "-c", "create database pteas_app"]);
+psql(["-d", "pteas_app", "-f", root + "supabase/tests/00-local-shim.sql"]);
+for (const m of MIGRATIONS) psql(["-d", "pteas_app", "-f", `${root}supabase/migrations/${m}.sql`]);
+psql(["-d", "pteas_app", "-f", root + "supabase/seed.sql"]);
+psql(["-d", "pteas_app", "-c",
       "insert into receiving_accounts (version, display_name, bank, qr_path, is_active, activated_at) " +
-      "values (1,'PTAS / TEST','ABA','v1.png',true,now())"]);
+      "values (1,'PTEAS / TEST','ABA','v1.png',true,now())"]);
 
 // The shim is started here rather than by hand, so one command runs the suite
 // and nothing is left listening afterwards.
@@ -78,7 +78,7 @@ const ok = (name, cond, detail) => {
 };
 
 // Serve the app so it has a real origin.
-const page_src = fs.readFileSync(new URL("../ptas.html", import.meta.url));
+const page_src = fs.readFileSync(new URL("../pteas.html", import.meta.url));
 const site = http.createServer((req, res) => {
   res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
   res.end(page_src);
@@ -93,7 +93,7 @@ async function open({ offline = false, seedSession = null } = {}) {
   // and hoped for.
   if (seedSession) {
     await ctx.addInitScript(v => {
-      localStorage.setItem("ptas-session", JSON.stringify(v));
+      localStorage.setItem("pteas-session", JSON.stringify(v));
     }, seedSession);
   }
   const page = await ctx.newPage();
@@ -621,7 +621,7 @@ console.log("\n== an expired session recovers instead of breaking ==");
   await page.click('.rolecard[data-role="landlord"]');
   await page.waitForTimeout(800);
 
-  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("ptas-session")));
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("pteas-session")));
   ok("the refresh token is kept, not just the access token",
      !!stored.refresh, JSON.stringify(Object.keys(stored)));
   await ctx.close();
@@ -634,7 +634,7 @@ console.log("\n== an expired session recovers instead of breaking ==");
 
   await p2.waitForTimeout(1500);
   const after = await p2.evaluate(() => {
-    const raw = localStorage.getItem("ptas-session");
+    const raw = localStorage.getItem("pteas-session");
     return raw ? JSON.parse(raw) : null;
   });
   ok("and the session was refreshed rather than dropped",
@@ -662,7 +662,7 @@ console.log("\n== a session with no refresh token signs out cleanly ==");
 
   // What a session stored by the previous version of this app looks like:
   // an access token, no refresh token, and an hour gone by.
-  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("ptas-session")));
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("pteas-session")));
   await ctx.close();
 
   const legacy = { ...stored, token: "expired-" + stored.token, expiresAt: Date.now() - 1000 };

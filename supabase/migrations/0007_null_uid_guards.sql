@@ -1,4 +1,4 @@
--- Ptas — an ownership check that fires when there is no owner to check against
+-- Pteas — an ownership check that fires when there is no owner to check against
 --
 -- Every one of these functions guarded itself with
 --

@@ -1,4 +1,4 @@
--- Ptas — taking the $1
+-- Pteas — taking the $1
 --
 -- There is no bank API here on purpose. ABA PayWay needs a merchant account
 -- and a signed agreement, which does not exist yet, and the whole business
@@ -33,7 +33,7 @@ $$;
 create table receiving_accounts (
   id           uuid primary key default gen_random_uuid(),
   version      int  not null,
-  display_name text not null,            -- e.g. "PTAS / SOK DARA"
+  display_name text not null,            -- e.g. "PTEAS / SOK DARA"
   bank         text not null default 'ABA',
   account_no   text,
   qr_path      text not null,            -- object key in the `khqr` bucket

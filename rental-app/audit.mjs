@@ -1,5 +1,5 @@
 import { chromium } from 'playwright';
-const F = 'file:///home/user/invoice-backend/rental-app/ptas.html';
+const F = 'file:///home/user/invoice-backend/rental-app/pteas.html';
 const findings = [];
 const note = (area, msg) => findings.push(`${area}: ${msg}`);
 

@@ -1,12 +1,12 @@
 /* A small stand-in for PostgREST, over the real schema in a real Postgres.
  *
  * Why it exists: this container cannot reach *.supabase.co (egress policy), so
- * the only way to check that ptas.html actually talks to the database correctly
+ * the only way to check that pteas.html actually talks to the database correctly
  * is to serve the same wire format locally. Every query below runs against the
  * real migrations with real row-level security -- it sets the role and the JWT
  * claim exactly as Supabase does -- so a policy mistake fails here too.
  *
- * It implements only the calls ptas.html makes. It is a test fixture, not a
+ * It implements only the calls pteas.html makes. It is a test fixture, not a
  * PostgREST clone.
  */
 import http from "node:http";
@@ -18,7 +18,7 @@ import { Pool } from "pg";
  * BEGIN is swallowed, `set local` from one request lands in the other, and the
  * first COMMIT ends both. That surfaced as auth.uid() being NULL inside a
  * function, which looks exactly like an authentication bug and is not one. */
-const pool = new Pool({ host: "/tmp", port: 5433, user: "pg", database: "ptas_app", max: 8 });
+const pool = new Pool({ host: "/tmp", port: 5433, user: "pg", database: "pteas_app", max: 8 });
 
 const json = (res, code, body) => {
   res.writeHead(code, {

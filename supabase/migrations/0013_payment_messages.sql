@@ -1,4 +1,4 @@
--- Ptas — tell the landlord what happened to their money
+-- Pteas — tell the landlord what happened to their money
 --
 -- notifications already allows 'payment_approved' and 'payment_rejected', and
 -- the notify function has been carrying Khmer wording for both since it was

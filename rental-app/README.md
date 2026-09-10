@@ -1,4 +1,4 @@
-# Ptas
+# Pteas
 
 A rental app for Phnom Penh, in one HTML file with no build step.
 
@@ -23,14 +23,14 @@ See `supabase/README.md` for how those are written down.
 
 ## Running it
 
-Open `ptas.html`. With no network it shows eleven sample listings and says so;
+Open `pteas.html`. With no network it shows eleven sample listings and says so;
 everything except real sign-in still works, so it demonstrates on a phone with
 no signal. Connected, it reads and writes the real database.
 
 ## Deploying
 
 Drag `rental-app/` onto https://app.netlify.com/drop. The redirect in
-`netlify.toml` serves `ptas.html` at `/`.
+`netlify.toml` serves `pteas.html` at `/`.
 
 For a host that needs a literal `index.html`, run `npm run build:app` first —
 `index.html` is generated, not checked in, because a checked-in copy went stale
@@ -45,7 +45,7 @@ npm run test:app      # the app against the real schema; see test/README.md
 
 ## Sign-in checks nothing yet
 
-`PTAS.devAuth` is `true`, so a phone number is taken at its word: the app calls
+`PTEAS.devAuth` is `true`, so a phone number is taken at its word: the app calls
 the `dev-signin` edge function, which maps the number onto an ordinary account
 and hands back a real session. Anyone can sign in as anyone. The gate says so.
 
@@ -74,7 +74,7 @@ on the next open rather than recovering.
 A map pin is the centre of its district until somebody drags it, and the app
 marks those as approximate rather than pretending otherwise.
 
-`PTAS_BOT` is empty until a bot exists, and the Telegram panel says "coming
+`PTEAS_BOT` is empty until a bot exists, and the Telegram panel says "coming
 soon" rather than linking to a bot that is not there. Set it and the Connect
 button appears. Messages queue in the meantime and are delivered once the token
 is configured, so nothing is lost by waiting.

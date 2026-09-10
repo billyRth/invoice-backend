@@ -4,15 +4,40 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0B5F4A">
-<title>Ptas · rental prototype</title>
+<title>Pteas · ជួលផ្ទះ និងបន្ទប់ ក្នុងភ្នំពេញ</title>
+<meta name="description" content="ជួលបន្ទប់ ផ្ទះ និងអាផាតមិន ក្នុងភ្នំពេញ។ ម្ចាស់ផ្ទះបញ្ជាក់ថានៅទំនេរ មុនពេលអ្នកហៅទូរស័ព្ទ។">
+
+<!-- What a shared link looks like. In Cambodia this app travels by Telegram
+     and Facebook, so the card people see when somebody forwards the link is
+     not decoration - it is most of the first impression, and a link with no
+     card reads as a scam. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Pteas">
+<meta property="og:title" content="Pteas · ជួលផ្ទះ និងបន្ទប់">
+<meta property="og:description" content="ម្ចាស់ផ្ទះបញ្ជាក់ថានៅទំនេរ មុនពេលអ្នកហៅទូរស័ព្ទ។ បន្ទប់ដែលជួលរួច នឹងបាត់ពីការស្វែងរក។">
+<meta property="og:image" content="share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- Add to Home Screen. The ask from the start was "an app on the phone", and
+     on Android this is what that means: no Play Store listing, no $25 fee, no
+     review queue - the browser installs it from the manifest. -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pteas">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <!--
-  PTAS (ផ្ទះ)  ·  rental app prototype
+  PTEAS (ផ្ទះ)  ·  renting in Phnom Penh
 
   What this is
-    A working front-end prototype of a Cambodian rental app. Every screen,
-    transition and interaction below runs for real. There is no backend: the
-    listings are a fixed array at the bottom of this file.
+    The whole client, in one file with no build step. It reads and writes a
+    Supabase project: listings, payments, tenancies, saved searches. With no
+    network it falls back to eleven sample listings and says so, which is what
+    makes it demonstrable on a phone with no signal.
 
   The thesis, which the UI is built to express
     Most local rentals are traded in Facebook groups. That is not a listings
@@ -28,12 +53,20 @@
       3. Deposit     Shown on the card, not buried in a chat. Deposit terms are
                      the single most common surprise in a Khmer rental.
 
+    None of those three live only here. A listing is visible only while it is
+    paid for, a recorded tenancy takes the room off the market, and a stale
+    listing sinks below fresher ones whatever the sort - all enforced in the
+    database, so a second client cannot get them wrong. See supabase/README.md.
+
   Khmer first
     The language toggle is real. Khmer is the default because the people
     priced out of the agent portals are searching in Khmer.
 
   Not built yet
-    Auth, payments, chat, map view, landlord dashboard, photo upload.
+    Sign-in does not verify the number - see PTEAS.devAuth below, which is the
+    one thing that must change before this is open to strangers. Telegram
+    alerts wait on a bot token. A map pin is the centre of its district until
+    somebody drags it, and is drawn as approximate.
 -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1027,7 +1060,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     <section class="screen" id="s-explore" aria-label="Explore">
       <header class="top">
         <div class="brandline">
-          <div class="wordmark"><b>ផ្ទះ Ptas</b><span data-t="tagline">rentals people actually answer</span></div>
+          <div class="wordmark"><b>ផ្ទះ Pteas</b><span data-t="tagline">rentals people actually answer</span></div>
           <div class="lang" role="group" aria-label="Language">
             <button type="button" data-lang="km" aria-pressed="true">ខ្មែរ</button>
             <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -1492,7 +1525,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   <!-- ============================================================ sheet -->
   <div class="gate" id="gate">
     <div class="gate-inner">
-      <div class="wordmark" style="margin-bottom:28px"><b style="font-size:26px">ផ្ទះ Ptas</b></div>
+      <div class="wordmark" style="margin-bottom:28px"><b style="font-size:26px">ផ្ទះ Pteas</b></div>
 
       <div id="gate-step-phone">
         <h2 class="gate-h" data-t="signInTitle">Sign in</h2>
@@ -1676,7 +1709,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       <div class="field">
         <label for="rec-phone" data-t="tenantPhone">Tenant phone</label>
         <input type="tel" id="rec-phone" inputmode="tel" autocomplete="tel" placeholder="012 345 678">
-        <p class="hint" data-t="tenantPhoneHint">If they use Ptas, this puts the record in their app too.</p>
+        <p class="hint" data-t="tenantPhoneHint">If they use Pteas, this puts the record in their app too.</p>
       </div>
       <div class="field">
         <label for="rec-start" data-t="startDate">Start date</label>
@@ -1735,7 +1768,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     document.querySelectorAll("#theme-switch button").forEach(function (b) {
       b.setAttribute("aria-pressed", String(b.dataset.themeSet === name));
     });
-    store("ptas-theme", name);
+    store("pteas-theme", name);
   }
 
   /* ============================================================== content
@@ -1896,7 +1929,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
      There is no Supabase SDK here. The app has no build step, and eight
      endpoints do not justify shipping a library to fetch them. */
 
-  var PTAS = {
+  var PTEAS = {
     url: "https://eycfpacmwderetosrsss.supabase.co",
     /* Publishable, and meant to be. It grants the `anon` role and nothing
        more; what that role may read is decided by row level security in the
@@ -1924,8 +1957,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   function apiHeaders(extra) {
     var h = {
-      apikey: PTAS.key,
-      authorization: "Bearer " + (session.token || PTAS.key),
+      apikey: PTEAS.key,
+      authorization: "Bearer " + (session.token || PTEAS.key),
       "content-type": "application/json"
     };
     if (extra) Object.keys(extra).forEach(function (k) { h[k] = extra[k]; });
@@ -1955,9 +1988,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     if (!session.refresh) return Promise.reject(new Error("no refresh token"));
     if (refreshing) return refreshing;
 
-    refreshing = fetch(PTAS.url + "/auth/v1/token?grant_type=refresh_token", {
+    refreshing = fetch(PTEAS.url + "/auth/v1/token?grant_type=refresh_token", {
       method: "POST",
-      headers: { apikey: PTAS.key, "content-type": "application/json" },
+      headers: { apikey: PTEAS.key, "content-type": "application/json" },
       body: JSON.stringify({ refresh_token: session.refresh })
     }).then(function (res) {
       if (!res.ok) throw new Error("could not refresh the session");
@@ -1980,12 +2013,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     session.token = null; session.refresh = null;
     session.userId = null; session.expiresAt = 0;
     session.isAdmin = false;
-    store("ptas-session", "");
+    store("pteas-session", "");
   }
 
   function apiFetch(path, opts, retried) {
     opts = opts || {};
-    return fetch(PTAS.url + path, {
+    return fetch(PTEAS.url + path, {
       method: opts.method || "GET",
       headers: apiHeaders(opts.headers),
       body: opts.body ? JSON.stringify(opts.body) : undefined
@@ -2102,7 +2135,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       photos: (row.listing_photos || [])
         .sort(function (a, b) { return a.position - b.position; })
         .map(function (ph) {
-          return PTAS.url + "/storage/v1/object/public/listing-photos/" + ph.path;
+          return PTEAS.url + "/storage/v1/object/public/listing-photos/" + ph.path;
         })
     };
   }
@@ -2283,8 +2316,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     },
 
     proofUrl: function (path) {
-      return fetch(PTAS.url + "/storage/v1/object/payment-proofs/" + path, {
-        headers: { apikey: PTAS.key, authorization: "Bearer " + (session.token || PTAS.key) }
+      return fetch(PTEAS.url + "/storage/v1/object/payment-proofs/" + path, {
+        headers: { apikey: PTEAS.key, authorization: "Bearer " + (session.token || PTEAS.key) }
       }).then(function (res) {
         if (!res.ok) throw new Error("could not load the receipt (" + res.status + ")");
         return res.blob();
@@ -2343,18 +2376,25 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
     /* One listing's photos, uploaded straight to storage under the listing id.
        The storage policy checks that folder against listings.owner_id, so a
-       path is only writable by the person who owns the row it names. */
+       path is only writable by the person who owns the row it names.
+
+       Shrunk first. A phone camera writes 3-5MB a frame, a landlord posts four
+       of them, and a Cambodian mobile connection is what it is: without this,
+       "publish" is a twenty-second stall that reads as the app hanging, and
+       the bucket's 5MB ceiling turns the fourth photo into an error. 1600px
+       on the long side at 82% is indistinguishable on a phone and ~250KB. */
     uploadPhoto: function (listingId, file, position) {
-      var name = listingId + "/" + position + "-" + Date.now() +
-                 "." + (file.type === "image/png" ? "png" : "jpg");
-      return fetch(PTAS.url + "/storage/v1/object/listing-photos/" + name, {
-        method: "POST",
-        headers: {
-          apikey: PTAS.key,
-          authorization: "Bearer " + (session.token || PTAS.key),
-          "content-type": file.type || "image/jpeg"
-        },
-        body: file
+      var name = listingId + "/" + position + "-" + Date.now() + ".jpg";
+      return shrinkImage(file, 1600, 0.82).then(function (blob) {
+        return fetch(PTEAS.url + "/storage/v1/object/listing-photos/" + name, {
+          method: "POST",
+          headers: {
+            apikey: PTEAS.key,
+            authorization: "Bearer " + (session.token || PTEAS.key),
+            "content-type": "image/jpeg"
+          },
+          body: blob
+        });
       }).then(function (res) {
         if (!res.ok) throw new Error("upload failed (" + res.status + ")");
         return apiFetch("/rest/v1/listing_photos", {
@@ -2365,22 +2405,51 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     },
 
     uploadProof: function (orderId, file) {
-      var name = orderId + "/receipt-" + Date.now() +
-                 "." + (file.type === "application/pdf" ? "pdf" : "jpg");
-      return fetch(PTAS.url + "/storage/v1/object/payment-proofs/" + name, {
-        method: "POST",
-        headers: {
-          apikey: PTAS.key,
-          authorization: "Bearer " + (session.token || PTAS.key),
-          "content-type": file.type || "image/jpeg"
-        },
-        body: file
+      var pdf = file.type === "application/pdf";
+      var name = orderId + "/receipt-" + Date.now() + (pdf ? ".pdf" : ".jpg");
+      return (pdf ? Promise.resolve(file) : shrinkImage(file, 1600, 0.85)).then(function (blob) {
+        return fetch(PTEAS.url + "/storage/v1/object/payment-proofs/" + name, {
+          method: "POST",
+          headers: {
+            apikey: PTEAS.key,
+            authorization: "Bearer " + (session.token || PTEAS.key),
+            "content-type": pdf ? "application/pdf" : "image/jpeg"
+          },
+          body: blob
+        });
       }).then(function (res) {
         if (!res.ok) throw new Error("upload failed (" + res.status + ")");
         return name;
       });
     }
   };
+
+  /* Draws the image onto a canvas no larger than `max` on its long side and
+     re-encodes it as JPEG. createImageBitmap honours EXIF orientation where
+     the browser supports it, which is what stops portrait photos arriving
+     sideways - the single most common complaint about phone uploads.
+
+     Falls back to the original file if anything in here fails: a photo that
+     is too big is a worse experience than one that is too slow, but both beat
+     a photo that never arrives. */
+  function shrinkImage(file, max, quality) {
+    if (!file || !/^image\//.test(file.type) || !window.createImageBitmap) {
+      return Promise.resolve(file);
+    }
+    return createImageBitmap(file, { imageOrientation: "from-image" })
+      .then(function (bmp) {
+        var scale = Math.min(1, max / Math.max(bmp.width, bmp.height));
+        var w = Math.round(bmp.width * scale), h = Math.round(bmp.height * scale);
+        var c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        c.getContext("2d").drawImage(bmp, 0, 0, w, h);
+        if (bmp.close) bmp.close();
+        return new Promise(function (resolve) {
+          c.toBlob(function (blob) { resolve(blob || file); }, "image/jpeg", quality);
+        });
+      })
+      .catch(function () { return file; });
+  }
 
   /* Cambodian numbers are written 012 345 678 and stored +85512345678. The
      leading zero is a national trunk prefix and is dropped, which is the one
@@ -2394,7 +2463,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   /* A session survives a reload; a landlord confirming a listing every month
      should not re-verify a code every time they open the app. */
   function rememberSession() {
-    store("ptas-session", JSON.stringify({
+    store("pteas-session", JSON.stringify({
       token: session.token, refresh: session.refresh, expiresAt: session.expiresAt,
       userId: session.userId,
       phone: session.phone, name: session.name, mode: session.mode
@@ -2402,7 +2471,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   }
 
   function restoreSession() {
-    var raw = readStored("ptas-session");
+    var raw = readStored("pteas-session");
     if (!raw) return false;
     try {
       var v = JSON.parse(raw);
@@ -2508,7 +2577,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       devAuthNote:"កំណែសាកល្បង៖ យើងមិនទាន់ផ្ទៀងផ្ទាត់លេខទូរស័ព្ទនៅឡើយទេ។",
       districtLabel:"ខណ្ឌ", pinHint:"ចំណុចនៅលើផែនទីចាប់ផ្តើមនៅកណ្តាលខណ្ឌ។",
       stillFree:"នៅទំនេរ", confirmedToast:"អរគុណ។ បានធ្វើបច្ចុប្បន្នភាព",
-      tenantPhone:"លេខទូរស័ព្ទអ្នកជួល", tenantPhoneHint:"បើគាត់ប្រើ Ptas កំណត់ត្រានេះនឹងបង្ហាញក្នុងកម្មវិធីរបស់គាត់ដែរ។",
+      tenantPhone:"លេខទូរស័ព្ទអ្នកជួល", tenantPhoneHint:"បើគាត់ប្រើ Pteas កំណត់ត្រានេះនឹងបង្ហាញក្នុងកម្មវិធីរបស់គាត់ដែរ។",
       payTitle:"បង់ថ្លៃប្រកាស", payRef:"ដាក់លេខនេះក្នុងកំណត់ចំណាំផ្ទេរប្រាក់", paySend:"ខ្ញុំបានបង់ហើយ",
       payProof:"រូបភាពបញ្ជាក់ការបង់ប្រាក់", payHint:"យើងពិនិត្យដោយដៃ ជាធម្មតាក្នុងរយៈពេលពីរបីម៉ោង។ ប្រកាសរបស់អ្នកនឹងបង្ហាញភ្លាមនៅពេលបញ្ជាក់រួច។",
       payFor:"$1 ក្នុងមួយខែ សម្រាប់ ", payWait:"បានទទួលហើយ។ កំពុងរង់ចាំការពិនិត្យ។",
@@ -2638,7 +2707,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       devAuthNote:"Early version: we do not check the number yet.",
       districtLabel:"District", pinHint:"Your pin starts at the middle of the district.",
       stillFree:"Still free", confirmedToast:"Thanks. Updated.",
-      tenantPhone:"Tenant phone", tenantPhoneHint:"If they use Ptas, this puts the record in their app too.",
+      tenantPhone:"Tenant phone", tenantPhoneHint:"If they use Pteas, this puts the record in their app too.",
       payTitle:"Pay for this listing", payRef:"Put this in the transfer note", paySend:"I have paid",
       payProof:"Photo of the receipt", payHint:"We check it by hand, usually within a few hours. Your listing goes live as soon as it clears.",
       payFor:"$1 a month for ", payWait:"Received. Waiting to be checked.",
@@ -3135,7 +3204,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
        can shortlist a room is how you lose them at the first tap. */
     if (live && session.signedIn) {
       api.save(id, saved[id]).catch(function (e) {
-        if (window.console) console.warn("Ptas: save not stored -", e.message);
+        if (window.console) console.warn("Pteas: save not stored -", e.message);
       });
     }
   }
@@ -3605,7 +3674,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       };
       paintTenancy();
     }).catch(function (e) {
-      if (window.console) console.warn("Ptas: could not load the tenancy -", e.message);
+      if (window.console) console.warn("Pteas: could not load the tenancy -", e.message);
     });
   }
 
@@ -3617,7 +3686,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       renderSaved();
       render();
     }).catch(function (e) {
-      if (window.console) console.warn("Ptas: could not load saved listings -", e.message);
+      if (window.console) console.warn("Pteas: could not load saved listings -", e.message);
     });
   }
 
@@ -3633,7 +3702,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       render();
       renderMine();
     }).catch(function (e) {
-      if (window.console) console.warn("Ptas: could not load your listings -", e.message);
+      if (window.console) console.warn("Pteas: could not load your listings -", e.message);
     });
   }
 
@@ -4114,7 +4183,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
      button says so rather than linking to t.me/<a bot that is not there>,
      which is a dead page and reads as a broken app rather than an unfinished
      one. Set it when BotFather gives you a name. */
-  var PTAS_BOT = "";
+  var PTEAS_BOT = "";
 
   /* Named from the filters themselves, because "under $200 in Toul Kork" is
      what somebody will recognise a week later; "Search 3" is not. */
@@ -4156,7 +4225,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
     panel.hidden = watching.length === 0;
     var note = document.getElementById("watch-note");
-    if (note) note.textContent = PTAS_BOT ? t("watchNote") : t("watchNoteSoon");
+    if (note) note.textContent = PTEAS_BOT ? t("watchNote") : t("watchNoteSoon");
     host.textContent = "";
 
     watching.forEach(function (row) {
@@ -4192,7 +4261,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       watching = rows || [];
       paintWatching();
     }).catch(function (e) {
-      if (window.console) console.warn("Ptas: could not load saved searches -", e.message);
+      if (window.console) console.warn("Pteas: could not load saved searches -", e.message);
     });
   }
 
@@ -4207,7 +4276,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         paintWatching();
         /* Saving the search is useless if we cannot reach them, so say which
            half is missing rather than a cheerful confirmation. */
-        toast(t(!PTAS_BOT ? "watchAdded"
+        toast(t(!PTEAS_BOT ? "watchAdded"
                 : session.telegramChatId ? "watchAdded" : "watchNoTg"));
       })
       .catch(function (e) { toast(e.message); })
@@ -4231,7 +4300,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       return;
     }
 
-    if (!PTAS_BOT) {
+    if (!PTEAS_BOT) {
       state_.textContent = t("tgSoon");
       link.hidden = true;
       return;
@@ -4247,12 +4316,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       }
       state_.textContent = t("tgOff");
       link.hidden = false;
-      link.href = "https://t.me/" + PTAS_BOT + "?start=" + row.telegram_token;
+      link.href = "https://t.me/" + PTEAS_BOT + "?start=" + row.telegram_token;
       link.target = "_blank";
       link.rel = "noopener";
       link.removeAttribute("aria-disabled");
     }).catch(function (e) {
-      if (window.console) console.warn("Ptas: telegram state unknown -", e.message);
+      if (window.console) console.warn("Pteas: telegram state unknown -", e.message);
     });
   }
 
@@ -4328,7 +4397,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         host.appendChild(row);
       });
     }).catch(function (e) {
-      if (window.console) console.warn("Ptas: approvals queue -", e.message);
+      if (window.console) console.warn("Pteas: approvals queue -", e.message);
     });
   }
 
@@ -4378,7 +4447,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           qr.alt = "";
           return;
         }
-        qr.src = PTAS.url + "/storage/v1/object/public/khqr/" + acct.qr_path;
+        qr.src = PTEAS.url + "/storage/v1/object/public/khqr/" + acct.qr_path;
         qr.alt = acct.display_name;
         to.textContent = acct.display_name;
       })
@@ -4486,7 +4555,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     var was = btn.textContent;
     btn.textContent = t("sending");
 
-    if (PTAS.devAuth) {
+    if (PTEAS.devAuth) {
       api.devSignIn(session.phone)
         .then(function () { return api.profile(); })
         .then(function (prof) {
@@ -4569,7 +4638,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     session = { signedIn:false, phone:"", name:"", mode:"renter",
                 userId:null, token:null, refresh:null, expiresAt:0,
                 isAdmin:false, telegramChatId:null };
-    store("ptas-session", "");
+    store("pteas-session", "");
     gateStep("phone");
     gatePhone.value = "";
     document.getElementById("gate-code").value = "";
@@ -4914,7 +4983,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     var b = e.target.closest("[data-lang]");
     if (!b) return;
     lang = b.dataset.lang;
-    store("ptas-lang", lang);
+    store("pteas-lang", lang);
     applyLang();
   });
 
@@ -4942,15 +5011,15 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     }
   }
 
-  applyTheme(readStored("ptas-theme") || "auto");
-  var storedLang = readStored("ptas-lang");
+  applyTheme(readStored("pteas-theme") || "auto");
+  var storedLang = readStored("pteas-lang");
   if (storedLang === "en" || storedLang === "km") lang = storedLang;
 
   /* A stored session is restored before the first paint, so a landlord who
      opens the app sees their own listings rather than the gate. The token may
      have expired, in which case the first write fails and sends them back
      through it - which is the right moment to find out, not now. */
-  if (PTAS.devAuth) document.getElementById("gate-devnote").hidden = false;
+  if (PTEAS.devAuth) document.getElementById("gate-devnote").hidden = false;
 
   if (restoreSession()) {
     document.getElementById("gate").hidden = true;
@@ -4999,7 +5068,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       if (booted) throw err;         // a render bug must not be reported as an outage
       floor.then(function () {
         boot(null, t("offlineNote"));
-        if (window.console) console.warn("Ptas: using built-in data -", err.message);
+        if (window.console) console.warn("Pteas: using built-in data -", err.message);
       });
     });
 })();

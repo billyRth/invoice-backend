@@ -1,4 +1,4 @@
--- Ptas — where a new listing goes on the map
+-- Pteas — where a new listing goes on the map
 --
 -- The posting flow asks for a district and a landmark, not a pin. Asking a
 -- landlord to drag a map marker on a phone, before they have seen a single

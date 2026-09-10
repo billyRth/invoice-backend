@@ -1,4 +1,4 @@
--- Ptas — buckets and the nightly sweep
+-- Pteas — buckets and the nightly sweep
 --
 -- Supabase-only: this one touches the `storage` and `cron` schemas, which a
 -- plain Postgres does not have. supabase/tests/run.sh skips it for that reason;

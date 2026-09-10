@@ -1,4 +1,4 @@
--- Ptas — stop re-learning the same lesson
+-- Pteas — stop re-learning the same lesson
 --
 -- This is the third migration about EXECUTE grants, and that is the point of
 -- it: the previous two both fixed the functions that existed and both claimed

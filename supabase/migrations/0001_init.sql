@@ -1,4 +1,4 @@
--- Ptas — initial schema
+-- Pteas — initial schema
 --
 -- The product thesis lives in this file, not just in the app:
 --   * A listing is only visible while somebody is paying for it.

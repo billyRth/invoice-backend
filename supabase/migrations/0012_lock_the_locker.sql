@@ -1,4 +1,4 @@
--- Ptas — the one function the event trigger could not catch
+-- Pteas — the one function the event trigger could not catch
 --
 -- 0011 said "every function created in public from now on starts with no
 -- EXECUTE for anon or authenticated". True, with exactly one exception it

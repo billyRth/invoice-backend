@@ -1,4 +1,4 @@
-// Ptas — drains the notification outbox to Telegram.
+// Pteas — drains the notification outbox to Telegram.
 //
 // Messages are written by database triggers, in the same transaction as the
 // thing they are about. This sends them. The separation is the point: pausing
@@ -11,7 +11,7 @@
 const URL_BASE = Deno.env.get("SUPABASE_URL")!;
 const SERVICE  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const BOT      = Deno.env.get("TELEGRAM_BOT_TOKEN") ?? "";
-const APP_URL  = Deno.env.get("PTAS_APP_URL") ?? "";
+const APP_URL  = Deno.env.get("PTEAS_APP_URL") ?? "";
 
 const BATCH = 40;
 const GIVE_UP_AFTER = 5;

@@ -1,4 +1,4 @@
--- Ptas — join the tenant to the tenancy
+-- Pteas — join the tenant to the tenancy
 --
 -- The Currently Renting screen has existed since the prototype and has never
 -- shown anything to an actual renter, because nothing ever set tenant_id. The

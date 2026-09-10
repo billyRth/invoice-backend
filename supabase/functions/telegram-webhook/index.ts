@@ -1,4 +1,4 @@
-// Ptas — linking a Telegram account to a Ptas account.
+// Pteas — linking a Telegram account to a Pteas account.
 //
 // Telegram will not let a bot message somebody who has not messaged it first,
 // so linking has to start from the person. The app opens
@@ -62,16 +62,16 @@ Deno.serve(async (req) => {
   const start = /^\/start(?:\s+(\S+))?/.exec(msg.text.trim());
   if (!start) {
     await say(chatId, km
-      ? "សូមបើកកម្មវិធី Ptas រួចចុច ភ្ជាប់ Telegram។"
-      : "Open the Ptas app and tap Connect Telegram.");
+      ? "សូមបើកកម្មវិធី Pteas រួចចុច ភ្ជាប់ Telegram។"
+      : "Open the Pteas app and tap Connect Telegram.");
     return ok();
   }
 
   const token = start[1];
   if (!token) {
     await say(chatId, km
-      ? "សូមបើកតំណភ្ជាប់ពីកម្មវិធី Ptas ដើម្បីភ្ជាប់គណនី។"
-      : "Open the link from inside the Ptas app to connect your account.");
+      ? "សូមបើកតំណភ្ជាប់ពីកម្មវិធី Pteas ដើម្បីភ្ជាប់គណនី។"
+      : "Open the link from inside the Pteas app to connect your account.");
     return ok();
   }
 

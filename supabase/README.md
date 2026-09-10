@@ -1,4 +1,4 @@
-# Ptas database
+# Pteas database
 
 One migration, `migrations/0001_init.sql`. Read it top to bottom; it is ordered
 the way the product works, not the way SQL textbooks are.
@@ -127,7 +127,7 @@ bucket first, then:
 
 ```sql
 insert into receiving_accounts (version, display_name, bank, account_no, qr_path, is_active, activated_at)
-values (1, 'PTAS / YOUR NAME', 'ABA', '000 000 000', 'v1.png', true, now());
+values (1, 'PTEAS / YOUR NAME', 'ABA', '000 000 000', 'v1.png', true, now());
 ```
 
 Only one row may be active. To replace it, deactivate the old one and insert a
@@ -181,7 +181,7 @@ delivered when they do.
 
 1. Make a bot with [@BotFather](https://t.me/BotFather), take the token.
 2. In the dashboard, Edge Functions → Secrets, add `TELEGRAM_BOT_TOKEN`,
-   `TELEGRAM_WEBHOOK_SECRET` (any long random string), and `PTAS_APP_URL`
+   `TELEGRAM_WEBHOOK_SECRET` (any long random string), and `PTEAS_APP_URL`
    (your Netlify link, so messages carry one).
 3. Point Telegram at the webhook:
    ```
@@ -191,7 +191,7 @@ delivered when they do.
    ```sql
    select vault.create_secret('<service role key>', 'service_key', 'used by kick_notify');
    ```
-5. Set `PTAS_BOT` in `ptas.html` to the bot's username.
+5. Set `PTEAS_BOT` in `pteas.html` to the bot's username.
 
 
 ## A tenancy has two parties, and both can see it

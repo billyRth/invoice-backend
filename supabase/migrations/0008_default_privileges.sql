@@ -1,4 +1,4 @@
--- Ptas — make "new functions start locked" actually true
+-- Pteas — make "new functions start locked" actually true
 --
 -- 0004 ended with
 --
