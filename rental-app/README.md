@@ -29,12 +29,17 @@ no signal. Connected, it reads and writes the real database.
 
 ## Deploying
 
-Drag `rental-app/` onto https://app.netlify.com/drop. The redirect in
-`netlify.toml` serves `pteas.html` at `/`.
+It is live at https://pteas.onrender.com, as a Render static site deployed from
+the `claude/new-session-0zohhs` branch of this repository. Every push to that
+branch goes live on its own within a minute or two; there is nothing to upload.
 
-For a host that needs a literal `index.html`, run `npm run build:app` first —
-`index.html` is generated, not checked in, because a checked-in copy went stale
-without anyone noticing.
+Render's build step is a single copy - `cp rental-app/pteas.html rental-app/index.html` -
+because Render wants a literal `index.html` at the publish root and the
+checked-in file is deliberately not called that (a committed copy is what went
+stale before). The publish directory is `rental-app`, so the share card, the
+icons and the manifest are served beside the page.
+
+`netlify.toml` is kept for the drag-and-drop route, which still works.
 
 ## Checking it
 

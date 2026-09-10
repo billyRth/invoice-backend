@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Pteas">
 <meta property="og:title" content="Pteas · ជួលផ្ទះ និងបន្ទប់">
 <meta property="og:description" content="ម្ចាស់ផ្ទះបញ្ជាក់ថានៅទំនេរ មុនពេលអ្នកហៅទូរស័ព្ទ។ បន្ទប់ដែលជួលរួច នឹងបាត់ពីការស្វែងរក។">
-<meta property="og:image" content="https://pteas.netlify.app/share.png">
+<meta property="og:image" content="https://pteas.onrender.com/share.png">
 <meta property="og:url" content="https://pteas.netlify.app/">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -2148,6 +2148,17 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     return /^https?:/.test(name) ? name : photoUrl(name, w, h);
   }
 
+  /* Anything that came from the database or from another person - a title, an
+     area, a receipt reference, a storage path - is text, and must reach the
+     page as text. Several render paths build HTML as strings, and with sign-in
+     unverified anyone can write those fields, so a title of
+     <img src=x onerror=...> would otherwise run in every visitor's browser. */
+  function esc(v) {
+    return String(v == null ? "" : v)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
   function toRow(d) {
     return {
       title: d.title,
@@ -2936,7 +2947,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     var p = powerInfo(l);
     return '' +
       '<div class="card-media">' +
-        '<img src="' + photoSrc(l.photos[0], 800, 600) + '" alt="" loading="lazy" data-flip="' + l.id + '">' +
+        '<img src="' + esc(photoSrc(l.photos[0], 800, 600)) + '" alt="" loading="lazy" data-flip="' + esc(l.id) + '">' +
         '<div class="stamp">' +
           '<span class="badge ' + f.cls + '"><svg class="icon" aria-hidden="true"><use href="#' + f.icon + '"/></svg>' + f.text + '</span>' +
           (l.verified ? '<span class="badge badge-solid"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>' + t("verified") + '</span>' : '') +
@@ -2944,8 +2955,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       '</div>' +
       '<div class="card-body">' +
         '<div class="price"><b>$' + l.price + '</b><span>' + t("perMonth") + '</span></div>' +
-        '<p class="card-title">' + l.title[lang] + '</p>' +
-        '<p class="card-where">' + l.area[lang] + '</p>' +
+        '<p class="card-title">' + esc(l.title[lang]) + '</p>' +
+        '<p class="card-where">' + esc(l.area[lang]) + '</p>' +
         '<div class="facts">' +
           '<span class="fact">' + typeLabel(l) + '</span>' +
           '<span class="fact">' + bedLabel(l) + '</span>' +
@@ -3088,7 +3099,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         st === "paused" ? t("pausedNote") : "";
 
       row.innerHTML =
-        '<div><div class="name">' + l.title[lang] + '</div>' +
+        '<div><div class="name">' + esc(l.title[lang]) + '</div>' +
         '<div class="meta">' + meta + '</div></div>' +
         '<span class="pill ' + st + '">' + t(STATUS[st]) + '</span>';
 
@@ -3413,9 +3424,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       row.className = "simrow";
       row.setAttribute("data-sim", o.id);
       row.innerHTML =
-        '<img src="' + photoSrc(o.photos[0], 200, 200) + '" alt="">' +
-        '<span><span class="s-title">' + o.title[lang] + '</span><br>' +
-        '<span class="s-meta">$' + o.price + " " + t("perMonth") + " · " + o.area[lang] + '</span></span>';
+        '<img src="' + esc(photoSrc(o.photos[0], 200, 200)) + '" alt="">' +
+        '<span><span class="s-title">' + esc(o.title[lang]) + '</span><br>' +
+        '<span class="s-meta">$' + o.price + " " + t("perMonth") + " · " + esc(o.area[lang]) + '</span></span>';
       row.addEventListener("click", function () {
         current = o;
         pushRecent(o.id);
@@ -3450,9 +3461,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       b.setAttribute("data-recent", l.id);
       b.setAttribute("aria-label", l.title[lang]);
       b.innerHTML =
-        '<img src="' + photoSrc(l.photos[0], 300, 220) + '" alt="">' +
+        '<img src="' + esc(photoSrc(l.photos[0], 300, 220)) + '" alt="">' +
         '<div class="r-price">$' + l.price + '</div>' +
-        '<div class="r-area">' + l.area[lang] + '</div>';
+        '<div class="r-area">' + esc(l.area[lang]) + '</div>';
       b.addEventListener("click", function () { openDetail(l, b.querySelector("img")); });
       strip.appendChild(b);
     });
@@ -3527,10 +3538,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
     body.textContent = "";
     body.innerHTML =
-      '<div class="tenancy-head"><span class="t-name">' + l.title[lang] + '</span>' +
+      '<div class="tenancy-head"><span class="t-name">' + esc(l.title[lang]) + '</span>' +
         '<span class="pill ' + (monthsLeft <= 1 ? "paused" : "live") + '">' +
         (monthsLeft <= 1 ? t("endingSoon") : t("monthsLeft", { n: monthsLeft })) + '</span></div>' +
-      '<p class="tenancy-where">' + l.area[lang] + '</p>' +
+      '<p class="tenancy-where">' + esc(l.area[lang]) + '</p>' +
 
       '<div class="due' + (dueIn <= 5 ? " soon" : "") + '">' +
         '<div><div class="amount">$' + l.price + '</div>' +
@@ -3897,7 +3908,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     draft.photos.forEach(function (seed, i) {
       var cell = document.createElement("div");
       cell.className = "photocell";
-      cell.innerHTML = '<img src="' + photoSrc(seed, 300, 300) + '" alt="">';
+      cell.innerHTML = '<img src="' + esc(photoSrc(seed, 300, 300)) + '" alt="">';
       var del = document.createElement("button");
       del.type = "button";
       del.setAttribute("aria-label", "Remove photo " + (i + 1));
@@ -3916,8 +3927,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     document.getElementById("new-preview").innerHTML =
       '<h3>' + t("reviewTitle") + '</h3>' +
       '<dl class="kv">' +
-        "<dt>" + t("titleLabel") + "</dt><dd>" + (draft.title || "—") + "</dd>" +
-        "<dt>" + t("areaLabel") + "</dt><dd>" + (draft.area || "—") + "</dd>" +
+        "<dt>" + t("titleLabel") + "</dt><dd>" + esc(draft.title || "—") + "</dd>" +
+        "<dt>" + t("areaLabel") + "</dt><dd>" + esc(draft.area || "—") + "</dd>" +
         "<dt>" + t("fType") + "</dt><dd>" + t(TYPE_KEY[draft.type]) + "</dd>" +
         "<dt>" + t("rent") + "</dt><dd>$" + (draft.rent || 0) + "</dd>" +
         "<dt>" + t("depositWord") + "</dt><dd>" + draft.deposit + " " + monthsWord(draft.deposit) + "</dd>" +
@@ -4233,7 +4244,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       var line = document.createElement("div");
       line.className = "myrow";
       line.setAttribute("data-watch", row.id);
-      line.innerHTML = '<div><div class="name">' + describeSearch(row) + '</div>' +
+      line.innerHTML = '<div><div class="name">' + esc(describeSearch(row)) + '</div>' +
                        '<div class="meta">' + t("watching") + '</div></div>';
 
       var stop = document.createElement("button");
@@ -4349,9 +4360,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         var row = document.createElement("div");
         row.className = "myrow";
         row.innerHTML =
-          '<div><div class="name">' + (o.listings ? o.listings.title : "—") + '</div>' +
-          '<div class="meta">' + o.order_code + ' · $' + o.amount_usd +
-          (proof && proof.claimed_tx_reference ? ' · ' + proof.claimed_tx_reference : '') +
+          '<div><div class="name">' + esc(o.listings ? o.listings.title : "—") + '</div>' +
+          '<div class="meta">' + esc(o.order_code) + ' · $' + esc(o.amount_usd) +
+          (proof && proof.claimed_tx_reference ? ' · ' + esc(proof.claimed_tx_reference) : '') +
           '</div></div>';
 
         var actions = document.createElement("div");
