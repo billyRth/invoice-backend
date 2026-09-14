@@ -78,6 +78,7 @@ supabase/tests/run.sh        # against any local Postgres
 | `0013_payment_messages` | approval and rejection were never told to anyone |
 | `0014_record_tenancy` | link the tenancy to the tenant, by phone |
 | `0015_tenant_sees_the_room` | a tenant could read their tenancy but not the room |
+| `0016_column_grants` | an owner could PATCH `status`, `paid_until`, `verified` — every rule, one request |
 
 The last two are worth reading before adding anything. Both were places where a
 check existed, looked right, and did nothing.
@@ -211,3 +212,45 @@ harvesting numbers.
 the tenant hit an odd wall: recording the tenancy takes the room off the
 market, so the moment their record existed they lost sight of the listing it
 pointed at, and their own screen could not say which room it was for.
+
+
+## Which columns, not just which rows
+
+Row-level security answers *which rows*; it says nothing about *which
+columns*. `listings_owner_edit` let an owner update their own row — every
+column of it. So a single request,
+
+```
+PATCH /rest/v1/listings?id=eq.<mine>
+{"status":"live","paid_until":"2099-01-01","verified":true,"last_confirmed_at":"<now>"}
+```
+
+made a listing visible forever without paying, badged as ID-checked without a
+check, and invisible to the nightly sweep. Every rule this file says the
+database enforces by itself was one request from being decoration. The same
+shape let a landlord re-point a tenancy at any user, and let anyone rewrite
+their own phone to hijack the lookup that links a tenancy to its tenant.
+
+`0016` replaces the table-wide INSERT/UPDATE grants with per-column ones that
+list exactly what a landlord types. `status`, `paid_until`, `verified`,
+`last_confirmed_at` are reachable only through the functions that own them;
+"it's gone" is now `mark_rented()`, which only ever moves a room *off* the
+market. Tenancies: a landlord may end one or correct the money, not move it.
+Profiles: `display_name`, `lang`, `mode` — never `phone` or the Telegram fields.
+
+Found by an independent security review, verified three ways, on the day the
+site went public. The test that used to pass — `mark rented` via PATCH — was
+testing the hole.
+
+## The admin's number is on every listing they post
+
+`dev-signin` signs anyone in as any number. The admin approves money and reads
+every uploaded bank receipt, and their phone is `contact_phone` on their own
+listings — so "anyone can be any number" meant "anyone can be the admin".
+
+Numbers in `admins` now also need `ADMIN_PIN`, sent as `pin` in the sign-in
+body. Set it as an edge-function secret (**Project Settings → Edge Functions →
+Secrets**). Until it is set, admin numbers cannot use `dev-signin` at all,
+which is the safe default. The reply is the same for a wrong pin and a
+non-admin number, so the endpoint never confirms which numbers are worth
+attacking.

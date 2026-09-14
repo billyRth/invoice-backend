@@ -23,7 +23,7 @@ const MIGRATIONS = ["0001_init", "0002_payments", "0004_lock_down_functions",
                     "0008_default_privileges", "0009_signals_and_telegram",
                     "0011_lock_new_functions", "0012_lock_the_locker",
                     "0013_payment_messages", "0014_record_tenancy",
-                    "0015_tenant_sees_the_room"];
+                    "0015_tenant_sees_the_room", "0016_column_grants"];
 
 function psql(args, opts = {}) {
   const r = spawnSync("psql", ["-q", "-v", "ON_ERROR_STOP=1", ...args], {
@@ -140,7 +140,9 @@ console.log("\n== connected to the database ==");
   // Compared against what the server actually returns, not a fixed number:
   // the database accumulates listings as these tests post them.
   const served = await page.evaluate(async () => {
-    const r = await fetch("https://eycfpacmwderetosrsss.supabase.co/rest/v1/rpc/search_listings",
+    // With the embed, as the app sends it: real PostgREST returns photos only when asked.
+    const r = await fetch("https://eycfpacmwderetosrsss.supabase.co/rest/v1/rpc/search_listings?select=" +
+      encodeURIComponent("*,listing_photos(path,position)"),
       { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ p_limit: 60 }) });
     return (await r.json()).length;
   });
@@ -253,7 +255,9 @@ console.log("\n== a landlord posts, and it reaches the feed ==");
   await page2.waitForSelector(".card", { timeout: 8000 });
   const feed = await page2.$$eval(".card-title", els => els.map(e => e.textContent));
   const server = await page2.evaluate(async () => {
-    const r = await fetch("https://eycfpacmwderetosrsss.supabase.co/rest/v1/rpc/search_listings",
+    // With the embed, as the app sends it: real PostgREST returns photos only when asked.
+    const r = await fetch("https://eycfpacmwderetosrsss.supabase.co/rest/v1/rpc/search_listings?select=" +
+      encodeURIComponent("*,listing_photos(path,position)"),
       { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ p_limit: 60 }) });
     return (await r.json()).map(x => x.title);
   });
@@ -673,6 +677,54 @@ console.log("\n== a session with no refresh token signs out cleanly ==");
   const note = await p2.$eval("#data-note", e => e.hidden);
   ok("and it is not reported as an outage", note);
   await c2.close();
+}
+
+console.log("\n== a shared link opens the room ==");
+{
+  const id = psql(["-d", "pteas_app", "-t", "-A", "-c",
+    "select id from listings where status='live' order by last_confirmed_at desc limit 1"]).stdout.trim();
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await ctx.newPage();
+  await page.route(SUPA + "/**", async (route) => {
+    const req = route.request(); const u = new URL(req.url());
+    const r = await fetch(SHIM + u.pathname + u.search, { method: req.method(), headers: req.headers(),
+      body: ["GET", "HEAD"].includes(req.method()) ? undefined : req.postData() });
+    route.fulfill({ status: r.status, headers: { "content-type": "application/json" }, body: await r.text() });
+  });
+  await page.route("https://picsum.photos/**", r => r.abort());
+  await page.goto("http://127.0.0.1:8099/#" + id, { waitUntil: "domcontentloaded" });
+  if (await page.isVisible("#gate-browse")) await page.click("#gate-browse");
+  await page.waitForTimeout(1500);
+  const detailUp = await page.$eval("#s-detail", e => !e.hidden);
+  ok("the link lands on the listing, not the feed", detailUp);
+  await ctx.close();
+}
+
+console.log("\n== an empty database is not an outage ==");
+{
+  // Last, because it empties the fixture for everyone after it.
+  // Earlier tests recorded tenancies, and a listing with one cannot be deleted
+  // (on delete restrict - a rented room must not vanish from under its tenant).
+  // Truncate cascades through every dependent table, which is what "empty
+  // database" means here.
+  psql(["-d", "pteas_app", "-c", "truncate listings cascade"]);
+  const { ctx, page } = await open();
+  await page.waitForTimeout(1200);
+  const note = await page.$eval("#data-note", e => e.hidden);
+  ok("no 'sample listings' note when the server answered with nothing", note);
+  const cards = (await page.$$(".card")).length;
+  ok("and no sample rooms are shown as real", cards === 0, cards + " cards");
+  const empty = await page.$eval("#empty", e => !e.hidden);
+  ok("the empty state shows instead", empty);
+
+  // The landlord path must still be the connected one.
+  await page.evaluate(() => document.getElementById("gate").hidden = false);
+  await page.fill("#gate-phone", newPhone());
+  await page.click("#gate-continue");
+  await page.waitForSelector("#gate-step-role:not([hidden])", { timeout: 8000 });
+  const devnote = await page.$eval("#gate-devnote", e => !e.hidden);
+  ok("sign-in went to the server (dev note shown), not the offline shortcut", devnote);
+  await ctx.close();
 }
 
 await browser.close();

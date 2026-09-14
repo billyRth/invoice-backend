@@ -177,3 +177,25 @@ set request.jwt.claim.sub = '33333333-3333-3333-3333-333333333333';
 select 'S26 a stranger still cannot: ' || count(*) from listings
   where id='cccccccc-0000-0000-0000-00000000000a';
 reset role; reset request.jwt.claim.sub;
+
+\echo == the columns a landlord may write are not the columns the business owns
+set role authenticated; set request.jwt.claim.sub = '11111111-1111-1111-1111-111111111111';
+\set ON_ERROR_STOP off
+update listings set status='live', paid_until='2099-01-01', verified=true, last_confirmed_at=now()
+  where id='cccccccc-0000-0000-0000-00000000000b';
+update tenancies set tenant_id='33333333-3333-3333-3333-333333333333'
+  where listing_id='cccccccc-0000-0000-0000-00000000000a';
+update profiles set phone='+855000000000' where id='11111111-1111-1111-1111-111111111111';
+\set ON_ERROR_STOP on
+reset role; reset request.jwt.claim.sub;
+select 'S27 status/paid_until untouched: ' || status || ' / ' || coalesce(paid_until::date::text,'null')
+  from listings where id='cccccccc-0000-0000-0000-00000000000b';
+select 'S28 tenancy still points at the real tenant: ' ||
+  (tenant_id = '22222222-2222-2222-2222-222222222222')::text
+  from tenancies where listing_id='cccccccc-0000-0000-0000-00000000000a';
+select 'S29 phone unchanged: ' || phone from profiles where id='11111111-1111-1111-1111-111111111111';
+set role authenticated; set request.jwt.claim.sub = '11111111-1111-1111-1111-111111111111';
+update listings set price_usd = 155, title = 'Room B, repriced' where id='cccccccc-0000-0000-0000-00000000000b';
+select 'S30 honest edits still land: ' || title || ' $' || price_usd from listings where id='cccccccc-0000-0000-0000-00000000000b';
+select 'S31 mark_rented: ' || (mark_rented('cccccccc-0000-0000-0000-00000000000b')).status;
+reset role; reset request.jwt.claim.sub;

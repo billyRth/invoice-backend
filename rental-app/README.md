@@ -54,6 +54,10 @@ npm run test:app      # the app against the real schema; see test/README.md
 the `dev-signin` edge function, which maps the number onto an ordinary account
 and hands back a real session. Anyone can sign in as anyone. The gate says so.
 
+The one number that is not taken at its word is the admin's: it needs
+`ADMIN_PIN` as well (see `supabase/README.md`), because that account approves
+money and reads receipts, and its phone is printed on every listing it posts.
+
 Everything downstream is real — a real token, real `auth.uid()`, real row level
 security — so the only missing piece is proof that the number belongs to
 whoever typed it. Turning that on is one flag: connect Twilio to the Supabase

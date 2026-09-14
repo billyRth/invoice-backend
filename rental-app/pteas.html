@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="km">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -362,7 +362,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   background: var(--surface); border-radius: var(--r-full);
   padding: 12px 16px; box-shadow: var(--sh-1);
 }
-.searchbar input { flex: 1; border: 0; background: none; font: inherit; font-size: 14px; color: var(--ink); min-width: 0; }
+.searchbar input { flex: 1; border: 0; background: none; font: inherit; font-size: 16px; color: var(--ink); min-width: 0; }  /* under 16px, iOS zooms on focus */
 .searchbar input::placeholder { color: var(--ink-3); }
 .icon.tiny { width: 13px; height: 13px; margin-right: 4px; vertical-align: -2px; }
 .fact .icon.tiny { stroke-width: 2.2; }
@@ -643,6 +643,12 @@ a.btn[aria-disabled="true"] { opacity: .5; pointer-events: none; }
   background: var(--brand-tint, rgba(0,0,0,.05)); color: var(--ink-1); font-size: 13px;
 }
 .grabber { width: 38px; height: 4px; border-radius: var(--r-full); background: var(--line); margin: 4px auto 16px; }
+/* The drag handle must tell the browser the touch is ours, or the very first
+   move is claimed for scrolling and the sheet gets pointercancel instead of
+   pointermove. Only the handle zones - never .sheet-body, which must scroll. */
+.grabber, .sheet > h2, .sheet > .sub { touch-action: none; }
+.grabber { position: relative; }
+.grabber::before { content: ""; position: absolute; inset: -14px -40px; }   /* a thumb-sized hit area */
 .sheet h2 { font-size: 17px; margin: 0 0 4px; }
 .sheet .sub { font-size: 13px; color: var(--ink-2); margin: 0 0 18px; }
 
@@ -1337,9 +1343,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       <div class="scroll pad">
         <div class="panel">
           <div class="who">
-            <div class="avatar" id="me-initial">S</div>
+            <div class="avatar" id="me-initial"></div>
             <div style="flex:1;min-width:0">
-              <div class="who-name" id="me-name">Sokha</div>
+              <div class="who-name" id="me-name"></div>
               <div class="who-sub" id="me-phone"></div>
             </div>
           </div>
@@ -1949,6 +1955,11 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   };
 
   var live = false;            // true once real rows have arrived
+  /* fromRow() needs the district names, which come from their own request.
+     Mapping rows the instant the search returns is a race: when the search
+     wins, every area is the district CODE in both languages. It passed the
+     suite for weeks on timing alone. Anything that maps rows waits on this. */
+  var districtsReady = null;
   /* Until the first fetch settles, the feed shows the skeleton and nothing
      else. Anything that would otherwise render early - switching mode from
      the gate, say - is held back, so a renter never watches sample listings
@@ -2029,8 +2040,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         try { data = text ? JSON.parse(text) : null; } catch (e) { data = text; }
 
         if (!res.ok) {
-          var expired = (res.status === 401) ||
-                        (data && /jwt|token/i.test(data.message || data.msg || "") &&
+          /* GoTrue's "Token has expired or is invalid" is what a MISTYPED code
+             returns; treating it as expiry re-submitted the code a second time.
+             Nothing under /auth/v1/ is ever a stale-session symptom. */
+          var isAuth = path.indexOf("/auth/v1/") === 0;
+          var expired = !isAuth && (res.status === 401) ||
+                        (!isAuth && data && /jwt|token/i.test(data.message || data.msg || "") &&
                                  /expired|invalid/i.test(data.message || data.msg || ""));
 
           /* Once, and only for the call that discovered it. A second failure
@@ -2060,8 +2075,37 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     });
   }
 
-  function rpc(name, args) {
-    return apiFetch("/rest/v1/rpc/" + name, { method: "POST", body: args || {} });
+  /* The database raises in English and PostgREST/GoTrue add their own. The
+     ones this app raises itself are mapped to the language on screen; anything
+     unrecognised gets one plain sentence, and the raw text goes to the console
+     where it is useful. */
+  var KNOWN_ERRORS = [
+    [/not your (listing|order)/i,        "errNotYours"],
+    [/not signed in|jwt|invalid claim/i, "errSignIn"],
+    [/trial already used/i,              "errTrialUsed"],
+    [/not an admin/i,                    "errNotAdmin"],
+    [/no such/i,                         "errNotFound"],
+    [/token has expired or is invalid/i, "codeWrong"],
+    [/timed out/i,                       "errTimeout"]
+  ];
+  function friendly(e) {
+    var msg = (e && e.message) || String(e || "");
+    for (var i = 0; i < KNOWN_ERRORS.length; i++) {
+      if (KNOWN_ERRORS[i][0].test(msg)) return t(KNOWN_ERRORS[i][1]);
+    }
+    if (window.console) console.warn("Pteas:", msg);
+    return /PGRST|^HTTP \d|syntax|violates|permission denied|could not|failed/i.test(msg)
+      ? t("errGeneric") : msg;
+  }
+
+  /* A function that returns setof listings returns listings - PostgREST adds
+     listing_photos only when the URL says select=*,listing_photos(...). The
+     test fixture used to embed them regardless, which is how the feed shipped
+     asking for none: every card would have shown a placeholder against the
+     real service. */
+  function rpc(name, args, select) {
+    return apiFetch("/rest/v1/rpc/" + name + (select ? "?select=" + encodeURIComponent(select) : ""),
+                    { method: "POST", body: args || {} });
   }
 
   /* ---------------------------------------------------------- row mapping
@@ -2199,11 +2243,12 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   var api = {
     districts: function () {
-      return apiFetch("/rest/v1/districts?select=*&order=position")
+      districtsReady = apiFetch("/rest/v1/districts?select=*&order=position")
         .then(function (rows) {
           rows.forEach(function (d) { districts[d.code] = d; });
           return rows;
         });
+      return districtsReady;
     },
 
     /* The feed. search_listings applies the stale-sinks rule server-side; the
@@ -2212,8 +2257,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
        tolerated is that re-sorting fifty cards must not cost a round trip.
        STALE_DAYS below is the single number both sides agree on. */
     search: function () {
-      return rpc("search_listings", { p_limit: 60 }).then(function (rows) {
-        return rows.map(fromRow);
+      return rpc("search_listings", { p_limit: 60 }, SELECT).then(function (rows) {
+        return (districtsReady || Promise.resolve()).then(function () { return rows.map(fromRow); });
       });
     },
 
@@ -2222,7 +2267,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     mine: function () {
       return apiFetch("/rest/v1/listings?select=" + encodeURIComponent(SELECT) +
                       "&owner_id=eq." + session.userId + "&order=created_at.desc")
-        .then(function (rows) { return rows.map(fromRow); });
+        .then(function (rows) {
+          return (districtsReady || Promise.resolve()).then(function () { return rows.map(fromRow); });
+        });
     },
 
     publish: function (draft) {
@@ -2274,11 +2321,11 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
        gone. Refusing them that would only teach them to stop paying instead,
        which leaves the ghost listing up until the month runs out. */
     setRented: function (id) {
-      return apiFetch("/rest/v1/listings?id=eq." + id, {
-        method: "PATCH",
-        headers: { prefer: "return=minimal" },
-        body: { status: "rented", available_now: false }
-      });
+      /* status is not a column the owner may write - 0016 took it away, so
+         that paid_until, verified and status cannot be set by hand. The one
+         change a landlord makes themselves goes through a function that only
+         ever moves a room OFF the market. */
+      return rpc("mark_rented", { p_listing: id });
     },
 
     recordTenancy: function (row) {
@@ -2364,8 +2411,19 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     /* The stand-in. Same shape as verifyCode, so the gate does not care which
        one it called. */
     devSignIn: function (phone) {
-      return apiFetch("/functions/v1/dev-signin", { method: "POST", body: { phone: phone } })
-        .then(keepSession);
+      /* A raw fetch with only the apikey: there is no session yet, and a
+         publishable key is not a JWT, so a Bearer header carrying it is at
+         best ignored and at worst refused by the functions gateway. */
+      return fetch(PTEAS.url + "/functions/v1/dev-signin", {
+        method: "POST",
+        headers: { apikey: PTEAS.key, "content-type": "application/json" },
+        body: JSON.stringify({ phone: phone })
+      }).then(function (res) {
+        return res.json().then(function (out) {
+          if (!res.ok) throw new Error((out && out.message) || ("HTTP " + res.status));
+          return out;
+        });
+      }).then(keepSession);
     },
 
     verifyCode: function (phone, code) {
@@ -2378,6 +2436,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     profile: function () {
       return apiFetch("/rest/v1/profiles?select=*&id=eq." + session.userId)
         .then(function (rows) { return rows[0] || null; });
+    },
+
+    deleteListing: function (id) {
+      return apiFetch("/rest/v1/listings?id=eq." + id, { method: "DELETE" });
     },
 
     saveProfile: function (patch) {
@@ -2448,7 +2510,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     if (!file || !/^image\//.test(file.type) || !window.createImageBitmap) {
       return Promise.resolve(file);
     }
+    /* Older Safari and Chrome reject the orientation option outright rather
+       than ignoring it; the second attempt is the same call without it. */
     return createImageBitmap(file, { imageOrientation: "from-image" })
+      .catch(function () { return createImageBitmap(file); })
       .then(function (bmp) {
         var scale = Math.min(1, max / Math.max(bmp.width, bmp.height));
         var w = Math.round(bmp.width * scale), h = Math.round(bmp.height * scale);
@@ -2460,7 +2525,13 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           c.toBlob(function (blob) { resolve(blob || file); }, "image/jpeg", quality);
         });
       })
-      .catch(function () { return file; });
+      .catch(function () { return file; })
+      .then(function (out) {
+        /* The bucket refuses anything over 5MB. Saying so here beats a 413
+           after a minute of upload on a mobile connection. */
+        if (out && out.size > 5 * 1024 * 1024) throw new Error(t("photoTooBig"));
+        return out;
+      });
   }
 
   /* Cambodian numbers are written 012 345 678 and stored +85512345678. The
@@ -2574,6 +2645,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
       offlineNote:"បង្ហាញទិន្នន័យសាកល្បង។ មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។",
       justLooking:"មើលសិន",
+      close:"បិទ", you:"អ្នក", dayShort:"ថ្ងៃ", photoTooBig:"រូបភាពធំពេក (លើស 5MB)",
+      errGeneric:"មានបញ្ហាបន្តិច។ សូមព្យាយាមម្តងទៀត។", errNotYours:"នេះមិនមែនរបស់អ្នកទេ",
+      errSignIn:"សូមចូលគណនីម្តងទៀត", errTrialUsed:"អ្នកបានប្រើការសាកល្បងឥតគិតថ្លៃរួចហើយ",
+      errNotAdmin:"សម្រាប់តែអ្នកគ្រប់គ្រង", errNotFound:"រកមិនឃើញទេ", errTimeout:"ការតភ្ជាប់យឺតពេក។ សូមព្យាយាមម្តងទៀត។",
       reportNoAnswer:"ខ្ញុំបានហៅ តែគ្មានអ្នកទទួល", noAnswerThanks:"អរគុណ។ បើមានអ្នកផ្សេងហៅមិនលាន់ដែរ យើងនឹងផ្អាកការផ្សាយ",
       watchTitle:"ការស្វែងរកដែលអ្នកតាមដាន", watchNote:"យើងនឹងផ្ញើសារតាម Telegram នៅពេលមានបន្ទប់ត្រូវគ្នា។",
       watchNoteSoon:"យើងកំពុងតាមដានឲ្យអ្នក។ ការជូនដំណឹងនឹងមកដល់ឆាប់ៗ។",
@@ -2632,7 +2707,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       rentLabel:"ថ្លៃជួល ($ ក្នុងមួយខែ)", depositLabel:"ប្រាក់កក់ (ខែ)",
       powerLabel:"អគ្គិសនី (៛/kWh)", powerPh:"០ = រួមបញ្ចូល",
       reviewTitle:"ពិនិត្យមុនផ្សាយ", publish:"ផ្សាយ", back:"ត្រឡប់", next:"បន្ទាប់",
-      required:"ត្រូវការ", publishedToast:"បានផ្សាយ។ ឥតគិតថ្លៃ {d} ថ្ងៃ។",
+      required:"សូមបំពេញ", publishedToast:"បានផ្សាយ។ ឥតគិតថ្លៃ {d} ថ្ងៃ។",
       verifyLater:"ផ្ទៀងផ្ទាត់អត្តសញ្ញាណពេលក្រោយ", verifyNow:"ផ្ទៀងផ្ទាត់ឥឡូវ",
       verifyWhy:"ការផ្សាយដែលបានផ្ទៀងផ្ទាត់ ទទួលបានការទាក់ទងច្រើនជាង។",
       feeReminder:"ឥតគិតថ្លៃ {d} ថ្ងៃ បន្ទាប់មក ${f} ក្នុងមួយខែ។",
@@ -2704,6 +2779,10 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
       offlineNote:"Showing sample listings. Could not reach the server.",
       justLooking:"Just looking",
+      close:"Close", you:"You", dayShort:"d", photoTooBig:"That photo is too large (over 5MB)",
+      errGeneric:"Something went wrong. Please try again.", errNotYours:"That is not yours to change",
+      errSignIn:"Please sign in again", errTrialUsed:"You have already used your free fortnight",
+      errNotAdmin:"Admins only", errNotFound:"Not found", errTimeout:"The connection is too slow. Try again.",
       reportNoAnswer:"I called, nobody answered", noAnswerThanks:"Thanks. If others cannot reach them either, we pause the listing.",
       watchTitle:"Searches you are watching", watchNote:"We message you on Telegram when a room matches.",
       watchNoteSoon:"We are watching for you. Alerts are coming soon.",
@@ -2891,9 +2970,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   }
 
   function shortFresh(l) {
-    if (l.lastConfirmed > STALE_DAYS) return { cls:"badge-dead", icon:"i-clock", text:l.lastConfirmed + "d" };
+    if (l.lastConfirmed > STALE_DAYS) return { cls:"badge-dead", icon:"i-clock", text:l.lastConfirmed + t("dayShort") };
     if (l.lastConfirmed === 0)  return { cls:"badge-ok",   icon:"i-check", text:lang === "km" ? "ថ្ងៃនេះ" : "today" };
-    return { cls: l.lastConfirmed > 7 ? "badge-warn" : "badge-ok", icon:"i-clock", text:l.lastConfirmed + "d" };
+    return { cls: l.lastConfirmed > 7 ? "badge-warn" : "badge-ok", icon:"i-clock", text:l.lastConfirmed + t("dayShort") };
   }
 
   /* Khmer does not pluralise, English does. One helper rather than "1 months". */
@@ -3149,7 +3228,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
             if (!live) { done(); return; }
             api.confirm(l.id).then(done).catch(function (e) {
               b.disabled = false;
-              toast(e.message);
+              toast(friendly(e));
             });
           });
           actions.appendChild(still);
@@ -3172,7 +3251,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           b.disabled = true;
           api.setRented(l.id).then(done).catch(function (e) {
             b.disabled = false;
-            toast(e.message);
+            toast(friendly(e));
           });
         });
         actions.appendChild(rented);
@@ -3553,7 +3632,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         "<dt>" + t("until") + "</dt><dd>" + fmt(end) + "</dd>" +
         "<dt>" + t("dueDay") + "</dt><dd>" + tenancy.dueDay + "</dd>" +
         "<dt>" + t("depositHeld") + "</dt><dd>$" + (l.price * l.deposit) + "</dd>" +
-        "<dt>" + t("tenantName") + "</dt><dd>" + tenancy.name + "</dd>" +
+        "<dt>" + t("tenantName") + "</dt><dd>" + esc(tenancy.name) + "</dd>" +
       "</dl>";
 
     var pay = document.createElement("button");
@@ -3647,10 +3726,19 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     render();
   }
 
+  /* The markup shipped with a demo persona in these two elements, and only
+     the phone line was ever overwritten - so every real user was "Sokha". */
+  function paintMe() {
+    var name = session.name || session.phone || "";
+    document.getElementById("me-name").textContent = name;
+    document.getElementById("me-initial").textContent = (session.name || "?").charAt(0).toUpperCase();
+    document.getElementById("me-phone").textContent = session.phone || "";
+  }
+
   function signIn(phone) {
     session.signedIn = true;
     session.phone = phone;
-    document.getElementById("me-phone").textContent = phone;
+    paintMe();
     document.getElementById("gate").hidden = true;
     rememberSession();
     if (!live) return;
@@ -3776,6 +3864,9 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       document.head.appendChild(js);
 
       window.setTimeout(function () { if (!window.L) reject(new Error("timeout")); }, 8000);
+    }).catch(function (e) {
+      leafletLoading = null;          // so the next tap tries again
+      throw e;
     });
     return leafletLoading;
   }
@@ -4036,7 +4127,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       lastConfirmed: 0,
       owner: "me",
       billing: { state: "trial", daysLeft: FREE_DAYS },
-      landlord: { name: session.name || "You", since: new Date().getFullYear(),
+      landlord: { name: session.name || t("you"), since: new Date().getFullYear(),
                   listings: 1, phone: session.phone || "", telegram: "" },
       photos: draft.photos
     };
@@ -4065,7 +4156,13 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         if (!files.length) return row;
         return Promise.all(files.map(function (f, i) {
           return api.uploadPhoto(row.id, f, i);
-        })).then(function () { return row; });
+        })).then(function () { return row; })
+          /* The row exists before the photos do. If a photo fails, the row
+             must go too, or the landlord's retry creates a second listing
+             beside the orphan - and a third, and a fourth. */
+          .catch(function (e) {
+            return api.deleteListing(row.id).catch(function () {}).then(function () { throw e; });
+          });
       })
       .then(function (row) {
         return api.startTrial(row.id)
@@ -4088,7 +4185,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           }
         });
       })
-      .catch(function (e) { toast(e.message); })
+      .catch(function (e) { toast(friendly(e)); })
       .then(function () { btn.disabled = false; });
   }
 
@@ -4256,7 +4353,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         api.unwatchSearch(row.id).then(function () {
           watching = watching.filter(function (w) { return w.id !== row.id; });
           paintWatching();
-        }).catch(function (e) { stop.disabled = false; toast(e.message); });
+        }).catch(function (e) { stop.disabled = false; toast(friendly(e)); });
       });
 
       var actions = document.createElement("div");
@@ -4291,7 +4388,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         toast(t(!PTEAS_BOT ? "watchAdded"
                 : session.telegramChatId ? "watchAdded" : "watchNoTg"));
       })
-      .catch(function (e) { toast(e.message); })
+      .catch(function (e) { toast(friendly(e)); })
       .then(function () { btn.disabled = false; });
   });
 
@@ -4376,7 +4473,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           see.addEventListener("click", function () {
             api.proofUrl(proof.storage_path).then(function (url) {
               window.open(url, "_blank", "noopener");
-            }).catch(function (e) { toast(e.message); });
+            }).catch(function (e) { toast(friendly(e)); });
           });
           actions.appendChild(see);
         }
@@ -4389,7 +4486,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           yes.disabled = true;
           api.approveOrder(o.id, proof && proof.claimed_tx_reference)
             .then(function () { toast(t("approved")); paintAdmin(); refreshMine(); })
-            .catch(function (e) { yes.disabled = false; toast(e.message); });
+            .catch(function (e) { yes.disabled = false; toast(friendly(e)); });
         });
 
         var no = document.createElement("button");
@@ -4400,7 +4497,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           no.disabled = true;
           api.rejectOrder(o.id, "could not find this transfer")
             .then(function () { toast(t("rejected")); paintAdmin(); })
-            .catch(function (e) { no.disabled = false; toast(e.message); });
+            .catch(function (e) { no.disabled = false; toast(friendly(e)); });
         });
 
         actions.appendChild(yes);
@@ -4463,7 +4560,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         qr.alt = acct.display_name;
         to.textContent = acct.display_name;
       })
-      .catch(function (e) { to.textContent = e.message; });
+      .catch(function (e) { to.textContent = friendly(e); });
 
     api.startPayment(listing.id, 1)
       .then(function (order) {
@@ -4477,7 +4574,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           document.getElementById("pay-send").disabled = true;
         }
       })
-      .catch(function (e) { document.getElementById("pay-error").textContent = e.message; });
+      .catch(function (e) { document.getElementById("pay-error").textContent = friendly(e); });
   }
 
   function closePayment() {
@@ -4509,7 +4606,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         st.hidden = false;
         toast(t("payWait"));
       })
-      .catch(function (e) { err.textContent = e.message; btn.disabled = false; });
+      .catch(function (e) { err.textContent = friendly(e); btn.disabled = false; });
   });
 
   /* ---- the gate ------------------------------------------------------ */
@@ -4574,7 +4671,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
           session.name = (prof && prof.display_name) || "";
           gateStep("role");
         })
-        .catch(function (e) { err.textContent = e.message; })
+        .catch(function (e) { err.textContent = friendly(e); })
         .then(function () { btn.disabled = false; btn.textContent = was; });
       return;
     }
@@ -4614,7 +4711,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
         session.name = (prof && prof.display_name) || "";
         gateStep("role");
       })
-      .catch(function (e) { err.textContent = e.message || t("codeWrong"); })
+      .catch(function (e) { err.textContent = friendly(e); })
       .then(function () { btn.disabled = false; });
   });
 
@@ -4744,7 +4841,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       p_deposit_usd: l.price * (l.deposit || 0)
     })
       .then(done)
-      .catch(function (e) { toast(e.message); })
+      .catch(function (e) { toast(friendly(e)); })
       .then(function () { btn.disabled = false; });
   });
 
@@ -4828,7 +4925,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       /* A duplicate is not a failure worth alarming anyone about: it means
          this person already told us. */
       if (/duplicate|unique/i.test(e.message)) { toast(t("reported")); return; }
-      toast(e.message);
+      toast(friendly(e));
     });
   }
 
@@ -5023,6 +5120,15 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
     }
   }
 
+  /* The installed app must open with no signal. Without a worker, "Add to
+     Home Screen" is a bookmark with an icon, and offline it is the browser's
+     error page instead of the sample listings this file already carries. */
+  if ("serviceWorker" in navigator && /^https?:/.test(location.protocol)) {
+    navigator.serviceWorker.register("sw.js").catch(function (e) {
+      if (window.console) console.warn("Pteas: no service worker -", e.message);
+    });
+  }
+
   applyTheme(readStored("pteas-theme") || "auto");
   var storedLang = readStored("pteas-lang");
   if (storedLang === "en" || storedLang === "km") lang = storedLang;
@@ -5035,7 +5141,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   if (restoreSession()) {
     document.getElementById("gate").hidden = true;
-    document.getElementById("me-phone").textContent = session.phone;
+    paintMe();
   }
 
   applyLang(true);   // labels only, so the skeleton below is not wiped
@@ -5054,7 +5160,11 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   function boot(rows, note) {
     booted = true;
-    if (rows && rows.length) { LISTINGS = rows; live = true; }
+    /* Zero rows is still an answer. Keying `live` off row count meant an
+       empty database on launch day would have shown the eleven sample rooms
+       as real and pushed every landlord down the offline path, where nothing
+       is written anywhere. */
+    if (rows) { LISTINGS = rows; live = true; }
     noteEl.textContent = note || "";
     noteEl.hidden = !note;
     render();
@@ -5062,9 +5172,29 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   var floor = new Promise(function (r) { window.setTimeout(r, reduced ? 0 : 400); });
 
-  Promise.all([api.districts(), api.search(), floor])
+  /* A stalled mobile connection never rejects; it just never answers. Fifteen
+     seconds, then the built-in listings and the note, rather than a skeleton
+     that outlasts the person's patience. */
+  function within(ms, promise) {
+    return Promise.race([promise, new Promise(function (_, rej) {
+      window.setTimeout(function () { rej(new Error("timed out after " + ms + "ms")); }, ms);
+    })]);
+  }
+
+  Promise.all([within(15000, api.districts()), within(15000, api.search()), floor])
     .then(function (out) {
       boot(out[1], null);
+
+      /* A shared link is "#<id>". Until now nothing read it: recipients landed
+         on the feed and had to find the room themselves. */
+      var wanted = (location.hash || "").slice(1);
+      if (wanted) {
+        var hit = LISTINGS.filter(function (l) { return l.id === wanted; })[0];
+        /* Not silent: silent repaints a detail that is already on screen and
+           returns before showing it. A link needs the push. */
+        if (hit) openDetail(hit, null);
+      }
+
       if (session.signedIn) {
         refreshMine();
         refreshSaved();

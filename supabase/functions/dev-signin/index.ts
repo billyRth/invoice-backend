@@ -18,6 +18,12 @@
 
 const URL_BASE = Deno.env.get("SUPABASE_URL")!;
 const SERVICE  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+// The one account this must never hand out freely. An admin approves money and
+// reads every uploaded bank receipt, and their phone number is printed on every
+// listing they post - so "anyone can sign in as any number" would have meant
+// "anyone can be the admin". Numbers in the admins table need ADMIN_PIN as
+// well; until a pin is configured they cannot use this endpoint at all.
+const ADMIN_PIN = Deno.env.get("ADMIN_PIN") ?? "";
 
 const cors = {
   "access-control-allow-origin": "*",
@@ -70,8 +76,24 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ message: "POST only" }, 405);
 
   let phone: string | null = null;
-  try { phone = e164((await req.json()).phone); } catch { /* falls through */ }
+  let pin = "";
+  try {
+    const body = await req.json();
+    phone = e164(body.phone);
+    pin = String(body.pin ?? "");
+  } catch { /* falls through */ }
   if (!phone) return json({ message: "That number does not look like a Cambodian phone number." }, 400);
+
+  const isAdminNumber = await admin(
+    "/rest/v1/admins?select=profile_id,profiles!inner(phone)&profiles.phone=eq." +
+    encodeURIComponent(phone), { method: "GET" },
+  ).then(r => r.ok ? r.json() : []).then(rows => rows.length > 0).catch(() => true);
+
+  if (isAdminNumber && (!ADMIN_PIN || pin !== ADMIN_PIN)) {
+    // Same reply for "no pin set", "wrong pin" and "not an admin number":
+    // the endpoint must not confirm which numbers are worth attacking.
+    return json({ message: "That number cannot sign in this way." }, 403);
+  }
 
   const email = "p" + phone.replace("+", "") + "@pteas.local";
   const password = await passwordFor(phone);
@@ -93,8 +115,8 @@ Deno.serve(async (req) => {
       }),
     });
     if (!made.ok) {
-      const why = await made.text();
-      return json({ message: "could not create the account", detail: why }, 400);
+      console.error("dev-signin: create failed:", (await made.text()).slice(0, 300));
+      return json({ message: "could not create the account" }, 400);
     }
     res = await admin("/auth/v1/token?grant_type=password", {
       method: "POST",

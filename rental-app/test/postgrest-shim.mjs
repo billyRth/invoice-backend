@@ -121,6 +121,11 @@ const server = http.createServer(async (req, res) => {
     /* The dev-signin edge function, standing in for the real one. Same
      * contract: a phone number in, a session out, nothing verified. */
     if (url.pathname === "/functions/v1/dev-signin") {
+      /* The functions gateway may refuse a Bearer that is not a JWT, and the
+       * publishable key is not one. The app must send only the apikey here. */
+      if (req.headers.authorization) {
+        return json(res, 401, { message: "fixture: dev-signin received an Authorization header" });
+      }
       const digits = String(payload.phone || "").replace(/[^0-9]/g, "");
       const phone = "+855" + (digits.startsWith("855") ? digits.slice(3) : digits.replace(/^0+/, ""));
       const r = await pool.query(
@@ -219,6 +224,15 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (url.pathname === "/rest/v1/rpc/search_listings") {
+      /* Real PostgREST returns exactly what a function returns. search_listings
+       * returns setof listings, so listing_photos arrive ONLY if the caller
+       * adds ?select=*,listing_photos(...) to the RPC URL. This fixture used to
+       * embed them regardless, which hid that the app never asked - and every
+       * card would have shown a placeholder against the real service. */
+      const sel = url.searchParams.get("select") || "";
+      if (!/listing_photos\(/.test(sel)) {
+        return json(res, 400, { message: "fixture: search_listings called without select=…,listing_photos(…) - real PostgREST would return no photos" });
+      }
       const r = await asRole(uid, (db) => db.query(
         `select ${selectList("*,listing_photos(path,position)")}
            from search_listings(p_limit => $1) l`, [payload.p_limit || 30]));
