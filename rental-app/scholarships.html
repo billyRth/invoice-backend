@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B5F4A">
+<title>អាហារូបករណ៍ · សម្រាប់សិស្ស និស្សិតខ្មែរ</title>
+<meta name="description" content="អាហារូបករណ៍ក្នុងស្រុក និងក្រៅប្រទេស ដែលសិស្ស និស្សិតខ្មែរអាចដាក់ពាក្យបាន។ ថ្ងៃផុតកំណត់ លក្ខខណ្ឌ និងតំណទៅគេហទំព័រផ្លូវការ។">
+<meta property="og:type" content="website">
+<meta property="og:title" content="អាហារូបករណ៍ · សម្រាប់សិស្ស និស្សិតខ្មែរ">
+<meta property="og:description" content="អាហារូបករណ៍ក្នុងស្រុក និងក្រៅប្រទេស ថ្ងៃផុតកំណត់ និងតំណផ្លូវការ។ ដាក់ពាក្យដោយឥតគិតថ្លៃ។">
+<meta property="og:image" content="https://pteas.onrender.com/share-scholarships.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+
+<!--
+  SCHOLARSHIPS (អាហារូបករណ៍)  ·  a page for Cambodian students
+
+  What this is
+    One file, no build step, no backend. The programs live in the JSON block
+    at the bottom (id="sch-data"); tools/scholarships-build.mjs refreshes it
+    from scholarships-data.json. Every entry was checked against its official
+    page in September 2026, but deadlines move every year, so the page says
+    so and always sends people to the official site.
+
+  Why it looks like Pteas
+    It shares the tokens, the phone shell, the chips, the sheet and the tab
+    bar, so it can be folded into the app later without a redesign. It also
+    reads the theme Pteas stored, so the two pages match on the same phone.
+-->
+
+<style>
+:root {
+  --brand:        #0E7A5F;
+  --brand-press:  #0A5F4A;
+  --brand-wash:   #E4F3ED;
+  --on-brand:     #FFFFFF;
+  --pop:          #F2724B;
+  --pop-wash:     #FDECE5;
+  --bg:           #F7F5F2;
+  --surface:      #FFFDFC;
+  --surface-2:    #F4F2EF;
+  --ink:          #17191C;
+  --ink-2:        #5E6670;
+  --ink-3:        #656C75;
+  --line:         #E9E5E0;
+  --ok:           #0B7A4B;
+  --ok-wash:      #E4F4EC;
+  --warn:         #9A5B00;
+  --warn-wash:    #FBF0DC;
+  --dead:         #5A616A;
+  --dead-wash:    #EEEFF1;
+  --r-sm: 12px; --r-md: 18px; --r-lg: 26px; --r-full: 999px;
+  --sh-1: 0 1px 2px rgba(32,24,16,.05), 0 2px 10px -4px rgba(32,24,16,.07), 0 0 0 1px rgba(32,24,16,.035);
+  --sh-2: 0 10px 26px -10px rgba(32,24,16,.22), 0 0 0 1px rgba(32,24,16,.04);
+  --sh-3: 0 -10px 40px -10px rgba(32,24,16,.26);
+  --ease:     cubic-bezier(.22, 1, .36, 1);
+  --ease-in:  cubic-bezier(.4, 0, 1, 1);
+  --spring:   linear(0,.42 7.2%,.74 14.6%,.955 22.4%,1.032,1.07 32%,1.075,1.066 41%,1.026 54%,1.006 66%,1);
+  --safe-top: 52px;
+  --tab-h: 68px; --tab-icon-row: 34px; --tab-pad-top: 9px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --brand: #52C9A6; --brand-press: #74DCBC; --brand-wash: #123028; --on-brand: #06231C;
+    --pop: #FF8C63; --pop-wash: #35211A;
+    --bg: #0E0F11; --surface: #17191C; --surface-2: #1D2023;
+    --ink: #ECEFF1; --ink-2: #A2ABB5; --ink-3: #78828D; --line: #262B2F;
+    --ok: #5CCB8F; --ok-wash: #10301F; --warn: #E0B060; --warn-wash: #33280F; --dead: #8A929B; --dead-wash: #22262A;
+    --sh-1: 0 1px 2px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.05);
+    --sh-2: 0 6px 16px -6px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05);
+    --sh-3: 0 -8px 32px -8px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"] {
+  --brand: #52C9A6; --brand-press: #74DCBC; --brand-wash: #123028; --on-brand: #06231C;
+  --pop: #FF8C63; --pop-wash: #35211A;
+  --bg: #0E0F11; --surface: #17191C; --surface-2: #1D2023;
+  --ink: #ECEFF1; --ink-2: #A2ABB5; --ink-3: #78828D; --line: #262B2F;
+  --ok: #5CCB8F; --ok-wash: #10301F; --warn: #E0B060; --warn-wash: #33280F; --dead: #8A929B; --dead-wash: #22262A;
+  --sh-1: 0 1px 2px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.05);
+  --sh-2: 0 6px 16px -6px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05);
+  --sh-3: 0 -8px 32px -8px rgba(0,0,0,.7);
+}
+:root[data-theme="khmer"] {
+  --brand: #A11B2E; --brand-press: #7C1223; --brand-wash: #F7E6E6; --on-brand: #FFF8F0;
+  --pop: #C08A2E; --pop-wash: #F8EEDA;
+  --bg: #FBF6EE; --surface: #FFFDF8; --surface-2: #F3EADC;
+  --ink: #2A1A16; --ink-2: #6E5A50; --ink-3: #726257; --line: #E8DBC9;
+  --ok: #2F6E4A; --ok-wash: #E3F0E6; --warn: #8A5A12; --warn-wash: #F7EBD6; --dead: #6A5B50; --dead-wash: #EFE7DA;
+  --sh-1: 0 1px 2px rgba(60,40,24,.06), 0 2px 10px -4px rgba(60,40,24,.09), 0 0 0 1px rgba(60,40,24,.05);
+  --sh-2: 0 10px 26px -10px rgba(60,40,24,.24), 0 0 0 1px rgba(60,40,24,.05);
+  --sh-3: 0 -10px 40px -10px rgba(60,40,24,.28);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: #1A1D1F;
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink); -webkit-font-smoothing: antialiased; overscroll-behavior: none;
+}
+html[lang="km"] body { font-family: "Kantumruy Pro", "Plus Jakarta Sans", sans-serif; }
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+a { color: var(--brand); }
+:where(button, a, input):focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+h1, h2, h3, p { margin: 0; }
+
+/* ------------------------------------------------------------ phone shell */
+.stage { min-height: 100dvh; display: grid; place-items: center; padding: 24px;
+         background: radial-gradient(900px 500px at 50% -10%, #24282B, #131517 70%); }
+.phone { position: relative; width: 390px; height: 844px; max-height: calc(100dvh - 48px);
+         background: var(--bg); border-radius: 46px;
+         box-shadow: 0 0 0 10px #0A0C0D, 0 0 0 12px #2A2E31, 0 40px 80px -20px rgba(0,0,0,.7);
+         overflow: hidden; display: flex; flex-direction: column; }
+.notch { position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
+         width: 122px; height: 30px; background: #0A0C0D; border-radius: var(--r-full); z-index: 60; }
+@media (max-width: 480px) {
+  .stage { padding: 0; background: var(--bg); }
+  .phone { width: 100%; height: 100dvh; max-height: none; border-radius: 0; box-shadow: none; }
+  .notch { display: none; }
+  :root { --safe-top: max(20px, env(safe-area-inset-top)); }
+}
+.screens { position: relative; flex: 1; overflow: hidden; }
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
+.screen[hidden] { display: none; }
+.scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding-bottom: 24px; }
+.scroll.pad { padding-inline: 18px; }
+
+/* ---------------------------------------------------------------- header */
+.top { padding: var(--safe-top) 18px 12px; background: var(--bg); position: sticky; top: 0; z-index: 20; }
+.brandline { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.wordmark { display: flex; align-items: baseline; gap: 7px; min-width: 0; flex: 1; }
+.wordmark b { font-size: 21px; font-weight: 700; letter-spacing: -.02em; flex: none; }
+.wordmark span { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+@media (max-width: 400px) { .wordmark span { display: none; } }
+.lang { flex: none; display: flex; align-items: center; gap: 2px; background: var(--surface); border-radius: var(--r-full); padding: 3px; box-shadow: var(--sh-1); }
+.lang button { position: relative; font-size: 12px; font-weight: 600; padding: 9px 13px; border-radius: var(--r-full); color: var(--ink-3);
+               transition: color 160ms var(--ease), background-color 160ms var(--ease); }
+.lang button::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 44px; transform: translateY(-50%); }
+.lang button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); }
+.searchbar { display: flex; align-items: center; gap: 10px; background: var(--surface); border-radius: var(--r-full); padding: 12px 16px; box-shadow: var(--sh-1); }
+.searchbar input { flex: 1; border: 0; background: none; font: inherit; font-size: 16px; color: var(--ink); min-width: 0; }
+.searchbar input::placeholder { color: var(--ink-3); }
+.searchbar .clear { width: 32px; height: 32px; margin: -6px -8px -6px 0; border-radius: var(--r-full); display: grid; place-items: center; color: var(--ink-3); }
+.searchbar .clear[hidden] { display: none; }
+.icon { width: 19px; height: 19px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.icon.tiny { width: 13px; height: 13px; stroke-width: 2.2; }
+.screenhead { padding: var(--safe-top) 18px 8px; }
+.screenhead h1 { font-size: 21px; font-weight: 700; letter-spacing: -.02em; }
+.screenhead p { font-size: 13px; color: var(--ink-2); margin-top: 4px; line-height: 1.5; }
+
+/* ----------------------------------------------------------------- chips */
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 18px 4px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chips.first { padding-top: 12px; }
+.chip { flex: none; min-height: 44px; padding: 8px 16px; border-radius: var(--r-full); display: inline-flex; align-items: center; gap: 6px;
+        background: var(--surface); box-shadow: var(--sh-1); font-size: 13px; font-weight: 500; color: var(--ink-2);
+        transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 120ms var(--ease); }
+.chip:active { transform: scale(.96); }
+.chip[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); box-shadow: none; }
+.chip .n { font-size: 11px; opacity: .75; }
+.chip.picker { padding-right: 12px; }
+.chip.picker .icon { width: 15px; height: 15px; }
+.resultline { padding: 14px 18px 4px; font-size: 13px; color: var(--ink-2); display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.resultline b { color: var(--ink); font-weight: 600; }
+.resultline button { color: var(--brand); font-weight: 600; font-size: 13px; min-height: 32px; }
+
+/* ------------------------------------------------------------------ cards */
+.list { display: grid; gap: 12px; padding: 10px 18px 0; }
+.card { position: relative; background: var(--surface); border-radius: var(--r-lg); box-shadow: var(--sh-1); overflow: hidden;
+        text-align: left; width: 100%; display: block; transition: transform 140ms var(--ease), box-shadow 200ms var(--ease); }
+.card:active { transform: scale(.985); box-shadow: var(--sh-2); }
+.js .card { animation: cardIn 460ms var(--ease) both; animation-delay: calc(min(var(--i, 0), 6) * 45ms); }
+@keyframes cardIn { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .js .card { animation: none; } }
+.card-body { padding: 16px 16px 14px; }
+.sch-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-right: 44px; font-size: 12.5px; color: var(--ink-2); min-width: 0; }
+.sch-top .flag { font-size: 18px; line-height: 1; flex: none; }
+.sch-top .where { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.card-title { font-size: 15px; font-weight: 600; line-height: 1.4; margin: 0 0 6px; padding-right: 36px; }
+.card-sum { font-size: 13px; color: var(--ink-2); line-height: 1.55; margin: 0 0 12px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.fact { font-size: 11.5px; font-weight: 600; padding: 5px 9px; border-radius: var(--r-full); background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
+.fact.full { background: var(--ok-wash); color: var(--ok); }
+.fact.partial { background: var(--warn-wash); color: var(--warn); }
+.badge { display: inline-flex; align-items: center; gap: 5px; min-height: 26px; padding: 0 10px; border-radius: var(--r-full);
+         font-size: 11.5px; font-weight: 600; white-space: nowrap; margin-left: auto; }
+.badge-ok { background: var(--ok-wash); color: var(--ok); }
+.badge-warn { background: var(--warn-wash); color: var(--warn); }
+.badge-pop { background: var(--pop-wash); color: var(--pop); }
+.badge-dead { background: var(--dead-wash); color: var(--dead); }
+.save { position: absolute; top: 6px; right: 6px; width: 48px; height: 48px; border-radius: var(--r-full);
+        display: grid; place-items: center; color: var(--ink-3); transition: transform 200ms var(--spring), color 160ms var(--ease); z-index: 2; }
+.save:active { transform: scale(.88); }
+.save.is-on { color: #D6335A; }
+.save.is-on .icon { fill: #D6335A; stroke: #D6335A; }
+.save.just-saved { transform: scale(1.18); }
+
+/* -------------------------------------------------------------- calendar */
+.month { padding: 18px 18px 0; }
+.month h2 { font-size: 13px; font-weight: 700; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px; }
+.month.now h2 { color: var(--brand); }
+.rows { background: var(--surface); border-radius: var(--r-md); box-shadow: var(--sh-1); overflow: hidden; }
+.row { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; width: 100%; text-align: left;
+       padding: 12px 14px; min-height: 56px; border-bottom: 1px solid var(--line); }
+.row:last-child { border-bottom: 0; }
+.row:active { background: var(--surface-2); }
+.row .flag { font-size: 20px; line-height: 1; }
+.row .r-title { font-size: 13.5px; font-weight: 600; line-height: 1.35; }
+.row .r-meta { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
+.row .r-day { font-size: 12.5px; font-weight: 700; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.row .r-day.exact { color: var(--brand); }
+
+/* ------------------------------------------------------------------ guide */
+.steps { display: grid; gap: 10px; padding: 6px 18px 0; }
+.step { display: grid; grid-template-columns: 34px 1fr; gap: 12px; background: var(--surface); border-radius: var(--r-md); box-shadow: var(--sh-1); padding: 14px; }
+.step .num { width: 34px; height: 34px; border-radius: var(--r-full); background: var(--brand-wash); color: var(--brand); display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+.step h3 { font-size: 14.5px; font-weight: 600; margin-bottom: 3px; }
+.step p { font-size: 13px; color: var(--ink-2); line-height: 1.55; }
+.callout { margin: 16px 18px 0; padding: 14px 16px; border-radius: var(--r-md); background: var(--warn-wash); color: var(--warn); font-size: 13px; line-height: 1.55; }
+.callout b { display: block; margin-bottom: 3px; font-size: 14px; }
+.sources { padding: 6px 18px 0; display: grid; gap: 8px; }
+.src { display: flex; align-items: center; gap: 12px; background: var(--surface); border-radius: var(--r-md); box-shadow: var(--sh-1);
+       padding: 12px 14px; min-height: 56px; text-decoration: none; color: inherit; }
+.src .s-title { font-size: 13.5px; font-weight: 600; }
+.src .s-meta { font-size: 12px; color: var(--ink-2); margin-top: 2px; line-height: 1.45; }
+.src .icon { margin-left: auto; color: var(--ink-3); }
+.src.pteas { background: var(--brand); color: var(--on-brand); }
+.src.pteas .s-meta, .src.pteas .icon { color: inherit; opacity: .85; }
+.sect { padding: 22px 18px 8px; font-size: 13px; font-weight: 700; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; }
+.fine { padding: 18px 18px 0; font-size: 12px; color: var(--ink-3); line-height: 1.6; }
+
+/* ------------------------------------------------------------------- tabs */
+.tabs { position: relative; z-index: 40; flex: none; height: calc(var(--tab-h) + env(safe-area-inset-bottom));
+        padding-top: var(--tab-pad-top); padding-bottom: env(safe-area-inset-bottom);
+        display: grid; grid-template-columns: repeat(4, 1fr); background: var(--surface); border-top: 1px solid var(--line); }
+.tab { display: grid; grid-template-rows: var(--tab-icon-row) auto; align-items: center; justify-items: center; align-content: start; gap: 2px;
+       font-size: 10.5px; font-weight: 500; line-height: 1.2; color: var(--ink-3); transition: color 160ms var(--ease); position: relative; }
+.tab .icon { width: 22px; height: 22px; transition: transform 240ms var(--spring); }
+.tab[aria-selected="true"] { color: var(--brand); }
+.tab[aria-selected="true"] .icon { transform: translateY(-1px) scale(1.08); }
+.tab:active .icon { transform: scale(.86); }
+.tab .dot { position: absolute; top: 6px; right: calc(50% - 18px); min-width: 16px; height: 16px; padding: 0 4px; border-radius: var(--r-full);
+            background: var(--pop); color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center; }
+.tab .dot[hidden] { display: none; }
+
+/* ------------------------------------------------------------------ sheet */
+.scrim { position: absolute; inset: 0; z-index: 50; background: rgba(10,14,16,.42); opacity: 0; transition: opacity 260ms var(--ease); }
+.scrim.is-open { opacity: 1; }
+.scrim[hidden] { display: none; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; background: var(--surface);
+         border-radius: var(--r-lg) var(--r-lg) 0 0; box-shadow: var(--sh-3);
+         padding: 8px 18px 0; transform: translateY(100%); transition: transform 380ms var(--spring);
+         max-height: 88%; display: flex; flex-direction: column; }
+.sheet.is-open { transform: none; }
+.sheet[hidden] { display: none; }
+.grabber { width: 38px; height: 4px; border-radius: var(--r-full); background: var(--line); margin: 4px auto 16px; position: relative; touch-action: none; }
+.grabber::before { content: ""; position: absolute; inset: -14px -40px; }
+.sheet-body { overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 8px; }
+.sheet h2 { font-size: 17px; line-height: 1.4; margin: 0 0 4px; padding-right: 8px; }
+.sheet .sub { font-size: 13px; color: var(--ink-2); margin: 0 0 14px; }
+.d-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.d-badges .badge { margin-left: 0; }
+.d-sum { font-size: 14px; line-height: 1.65; margin-bottom: 16px; }
+.kv { display: grid; gap: 12px; margin-bottom: 16px; }
+.kv > div { display: grid; grid-template-columns: 96px 1fr; gap: 12px; font-size: 13.5px; line-height: 1.5; }
+.kv dt { color: var(--ink-2); margin: 0; }
+.kv dd { margin: 0; font-weight: 500; }
+.kv dd.en { font-family: "Plus Jakarta Sans", ui-sans-serif, sans-serif; }
+.d-fine { font-size: 12px; color: var(--ink-3); line-height: 1.55; margin-bottom: 10px; }
+.sheet-actions { position: sticky; bottom: 0; display: flex; gap: 10px; padding: 12px 0 calc(14px + env(safe-area-inset-bottom));
+                 background: linear-gradient(180deg, transparent, var(--surface) 22%); }
+.btn { flex: 1; min-height: 50px; border-radius: var(--r-md); font-size: 15px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+       transition: transform 120ms var(--ease), background-color 160ms var(--ease); text-decoration: none; }
+.btn:active { transform: scale(.975); }
+.btn-primary { background: var(--brand); color: var(--on-brand); }
+.btn-primary:active { background: var(--brand-press); }
+.btn-ghost { flex: none; width: 50px; background: var(--surface-2); color: var(--ink-2); }
+.btn-ghost.is-on { color: #D6335A; }
+.btn-ghost.is-on .icon { fill: #D6335A; stroke: #D6335A; }
+.seg.wrap { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
+.seg button { padding: 10px 13px; border-radius: var(--r-sm); background: var(--surface-2); font-size: 13.5px; font-weight: 600; color: var(--ink-2);
+              min-height: 44px; display: inline-flex; align-items: center; gap: 6px;
+              transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 120ms var(--ease); }
+.seg button:active { transform: scale(.96); }
+.seg button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); }
+.seg button .n { font-size: 11px; opacity: .75; }
+
+/* ----------------------------------------------------------------- states */
+.empty { padding: 64px 32px; text-align: center; color: var(--ink-2); }
+.empty .big { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.empty p { font-size: 13.5px; margin: 0 0 18px; line-height: 1.6; }
+.empty button { color: var(--brand); font-weight: 600; min-height: 44px; }
+.toast { position: absolute; left: 18px; right: 18px; z-index: 70; bottom: calc(var(--tab-h) + 16px + env(safe-area-inset-bottom));
+         background: #14171A; color: #fff; border-radius: var(--r-md); padding: 13px 16px; font-size: 13.5px; font-weight: 500;
+         box-shadow: var(--sh-2); transform: translateY(16px); opacity: 0; transition: transform 300ms var(--ease), opacity 300ms var(--ease); pointer-events: none; }
+.toast.is-up { transform: none; opacity: 1; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.6-7-9.4A4.1 4.1 0 0 1 12 7a4.1 4.1 0 0 1 7 3.6C19 15.4 12 20 12 20z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M4 10h16M8 3.5v4M16 3.5v4"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V4M8.5 7.5L12 4l3.5 3.5"/><path d="M5 13v5.5a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5V13"/></symbol>
+    <symbol id="i-out" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M19 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 18.5v-11A1.5 1.5 0 0 1 6.5 6H11"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15 9l-2 5-4 2 2-5z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 3.8 5.4 3.8 8.5s-1.2 5.9-3.8 8.5c-2.6-2.6-3.8-5.4-3.8-8.5S9.4 6.1 12 3.5z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.5l7 2.7v5.2c0 4.3-2.9 7.6-7 9.1-4.1-1.5-7-4.8-7-9.1V6.2z"/><path d="M9 12l2.2 2.2L15.5 10"/></symbol>
+  </defs>
+</svg>
+
+<div class="stage">
+<div class="phone" id="phone">
+  <div class="notch"></div>
+
+  <div class="screens" id="screens">
+
+    <!-- ========================================================== BROWSE -->
+    <section class="screen" id="s-browse" aria-label="Browse">
+      <header class="top">
+        <div class="brandline">
+          <div class="wordmark"><b data-t="title">អាហារូបករណ៍</b><span data-t="tagline">for Cambodian students</span></div>
+          <div class="lang" role="group" aria-label="Language">
+            <button type="button" data-lang="km" aria-pressed="true">ខ្មែរ</button>
+            <button type="button" data-lang="en" aria-pressed="false">EN</button>
+          </div>
+        </div>
+        <div class="searchbar">
+          <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+          <input id="q" type="search" data-t-ph="searchPh" placeholder="Japan, MEXT, master's…" aria-label="Search scholarships" autocomplete="off">
+          <button class="clear" type="button" id="q-clear" hidden data-t-aria="clearSearch" aria-label="Clear search"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+        </div>
+      </header>
+      <div class="scroll" id="browse-scroll">
+        <div class="chips first" id="where" role="group" data-t-aria="whereLabel" aria-label="Where">
+          <button class="chip" type="button" data-where="all" aria-pressed="true"><span data-t="all">All</span></button>
+          <button class="chip" type="button" data-where="kh" aria-pressed="false"><span>🇰🇭</span><span data-t="inKh">In Cambodia</span></button>
+          <button class="chip" type="button" data-where="abroad" aria-pressed="false"><span>✈️</span><span data-t="abroad">Abroad</span></button>
+          <button class="chip picker" type="button" id="open-country" aria-pressed="false"><span id="country-label" data-t="country">Country</span><svg class="icon" aria-hidden="true"><use href="#i-down"/></svg></button>
+        </div>
+        <div class="chips" id="levels" role="group" data-t-aria="levelLabel" aria-label="Level"></div>
+        <div class="resultline"><span id="count"></span><button type="button" id="reset" hidden data-t="clear">Clear filters</button></div>
+        <div class="list" id="list" aria-live="polite"></div>
+        <div class="empty" id="browse-empty" hidden>
+          <div class="big" data-t="noResults">Nothing matches</div>
+          <p data-t="noResultsP">Try fewer filters, or another word.</p>
+          <button type="button" id="reset2" data-t="clear">Clear filters</button>
+        </div>
+        <p class="fine" data-t="verified">Checked against official pages in September 2026. Deadlines change every year: always confirm on the official site before you apply.</p>
+      </div>
+    </section>
+
+    <!-- ======================================================== CALENDAR -->
+    <section class="screen" id="s-cal" aria-label="Calendar" hidden>
+      <div class="screenhead">
+        <h1 data-t="calTitle">Deadlines</h1>
+        <p data-t="calSub">The next 12 months. Exact dates in green; the rest are the usual month.</p>
+      </div>
+      <div class="scroll" id="cal"></div>
+    </section>
+
+    <!-- =========================================================== SAVED -->
+    <section class="screen" id="s-saved" aria-label="Saved" hidden>
+      <div class="screenhead">
+        <h1 data-t="tabSaved">Saved</h1>
+        <p data-t="savedSub">Your shortlist stays on this phone.</p>
+      </div>
+      <div class="scroll">
+        <div class="list" id="saved-list"></div>
+        <div class="empty" id="saved-empty" hidden>
+          <div class="big" data-t="savedEmpty">Nothing saved yet</div>
+          <p data-t="savedEmptyP">Tap the heart on any scholarship you like and it will wait for you here.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================== GUIDE -->
+    <section class="screen" id="s-guide" aria-label="Guide" hidden>
+      <div class="screenhead">
+        <h1 data-t="guideTitle">How to apply</h1>
+        <p data-t="guideSub">What every scholarship asks for, and how students from Cambodia usually apply.</p>
+      </div>
+      <div class="scroll">
+        <div class="steps" id="steps"></div>
+        <div class="callout"><b data-t="scamTitle">Never pay to apply</b><span data-t="scamP">A real scholarship never asks applicants for money. Apply only through the official page listed here or through the embassy.</span></div>
+        <div class="sect" data-t="sourcesTitle">Official sources</div>
+        <div class="sources" id="sources"></div>
+        <div class="sect" data-t="communityTitle">Community pages (unofficial)</div>
+        <p class="fine" style="padding-top:0" data-t="communityNote">Popular Khmer pages that repost calls. Good for hearing about a program first; always confirm the year and the deadline on the official page.</p>
+        <div class="sources" id="sources-community"></div>
+        <div class="sect" data-t="moreTitle">More</div>
+        <div class="sources">
+          <a class="src pteas" href="./">
+            <span style="font-size:22px">🏠</span>
+            <span><span class="s-title" data-t="pteasLink">Find a room near your school</span><span class="s-meta" style="display:block" data-t="pteasSub">Rentals in Phnom Penh, on Pteas</span></span>
+            <svg class="icon" aria-hidden="true"><use href="#i-chev"/></svg>
+          </a>
+        </div>
+        <p class="fine" data-t="verified">Checked against official pages in September 2026. Deadlines change every year: always confirm on the official site before you apply.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" type="button" data-tab="s-browse" aria-selected="true"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg><span data-t="tabBrowse">Browse</span></button>
+    <button class="tab" role="tab" type="button" data-tab="s-cal" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-cal"/></svg><span data-t="tabCal">Deadlines</span></button>
+    <button class="tab" role="tab" type="button" data-tab="s-saved" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg><span data-t="tabSaved">Saved</span><span class="dot" id="saved-dot" hidden>0</span></button>
+    <button class="tab" role="tab" type="button" data-tab="s-guide" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span data-t="tabGuide">Guide</span></button>
+  </nav>
+
+  <div class="scrim" id="scrim" hidden></div>
+
+  <!-- ---------------------------------------------------------- DETAIL -->
+  <div class="sheet" id="sheet-detail" role="dialog" aria-modal="true" aria-labelledby="d-title" hidden>
+    <div class="grabber"></div>
+    <div class="sheet-body" id="d-body"></div>
+    <div class="sheet-actions">
+      <a class="btn btn-primary" id="d-link" href="#" target="_blank" rel="noopener"><span data-t="official">Official page</span><svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
+      <button class="btn btn-ghost" type="button" id="d-share" data-t-aria="share" aria-label="Share"><svg class="icon" aria-hidden="true"><use href="#i-share"/></svg></button>
+      <button class="btn btn-ghost" type="button" id="d-save" data-t-aria="save" aria-label="Save"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg></button>
+    </div>
+  </div>
+
+  <!-- --------------------------------------------------------- COUNTRY -->
+  <div class="sheet" id="sheet-country" role="dialog" aria-modal="true" aria-labelledby="c-title" hidden>
+    <div class="grabber"></div>
+    <div class="sheet-body">
+      <h2 id="c-title" data-t="pick">Choose a country</h2>
+      <p class="sub" data-t="pickSub">Only countries with at least one program appear.</p>
+      <div class="seg wrap" id="country-seg"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+</div>
+</div>
+
+<script id="sch-data" type="application/json">{"scholarships":[],"sources":[],"verified":"2026-09"}</script>
+
+<script>
+(function () {
+  "use strict";
+  document.documentElement.classList.add("js");
+
+  /* --------------------------------------------------------- data */
+  var RAW = {};
+  try { RAW = JSON.parse(document.getElementById("sch-data").textContent) || {}; } catch (e) { RAW = {}; }
+  var DATA = RAW.scholarships || [];
+  var SOURCES = RAW.sources || [];
+
+  var TODAY = new Date(); TODAY.setHours(0, 0, 0, 0);
+  var DAY = 86400000;
+
+  /* --------------------------------------------------------- strings */
+  var T = {
+    km: {
+      title: "អាហារូបករណ៍", tagline: "សម្រាប់សិស្ស និស្សិតខ្មែរ",
+      searchPh: "ស្វែងរក: ជប៉ុន, MEXT, អនុបណ្ឌិត…", clearSearch: "លុបការស្វែងរក",
+      whereLabel: "ទីតាំង", levelLabel: "កម្រិតសិក្សា",
+      all: "ទាំងអស់", inKh: "នៅកម្ពុជា", abroad: "ក្រៅប្រទេស", country: "ប្រទេស", anyCountry: "គ្រប់ប្រទេស",
+      fullOnly: "ពេញលេញ", soon: "ជិតផុតកំណត់",
+      results: "{n} កម្មវិធី", clear: "លុបតម្រង",
+      noResults: "រកមិនឃើញ", noResultsP: "សាកល្បងលុបតម្រងខ្លះ ឬស្វែងរកពាក្យផ្សេង។",
+      daysLeft: "នៅសល់ {n} ថ្ងៃ", today: "ថ្ងៃនេះ", tomorrow: "ថ្ងៃស្អែក", closesOn: "បិទ {d}", usually: "ជាធម្មតាខែ{m}", unknownDeadline: "ពិនិត្យកាលបរិច្ឆេទ",
+      official: "គេហទំព័រផ្លូវការ", share: "ចែករំលែក", save: "រក្សាទុក", saved: "បានរក្សាទុក", unsaved: "ដកចេញហើយ", copied: "បានចម្លងតំណ",
+      covers: "ផ្តល់ជូន", eligibility: "លក្ខខណ្ឌ", fields: "មុខវិជ្ជា", language: "ភាសា", deadline: "ផុតកំណត់", fromCambodia: "ដាក់ពាក្យពីកម្ពុជា", provider: "ផ្តល់ដោយ",
+      alsoKnown: "ឈ្មោះផ្សេង", confidence: "ព័ត៌មាននេះផ្ទៀងផ្ទាត់ជាមួយគេហទំព័រផ្លូវការ ខែកញ្ញា 2026។ លក្ខខណ្ឌ និងកាលបរិច្ឆេទអាចផ្លាស់ប្តូររៀងរាល់ឆ្នាំ។",
+      verified: "ផ្ទៀងផ្ទាត់ជាមួយគេហទំព័រផ្លូវការ ខែកញ្ញា 2026។ ថ្ងៃផុតកំណត់ផ្លាស់ប្តូររៀងរាល់ឆ្នាំ សូមពិនិត្យគេហទំព័រផ្លូវការមុនដាក់ពាក្យ។",
+      tabBrowse: "រុករក", tabCal: "ផុតកំណត់", tabSaved: "រក្សាទុក", tabGuide: "ណែនាំ",
+      savedSub: "បញ្ជីរបស់អ្នក រក្សាទុកក្នុងទូរស័ព្ទនេះ។", savedEmpty: "មិនទាន់មានអ្វីរក្សាទុក", savedEmptyP: "ចុចរូបបេះដូងលើអាហារូបករណ៍ដែលអ្នកចាប់អារម្មណ៍ វានឹងរង់ចាំអ្នកនៅទីនេះ។",
+      calTitle: "ថ្ងៃផុតកំណត់", calSub: "12 ខែខាងមុខ។ ពណ៌បៃតងគឺកាលបរិច្ឆេទពិតប្រាកដ ក្រៅពីនោះគឺខែដែលធ្លាប់បិទ។", calUnknown: "មិនទាន់ប្រកាសកាលបរិច្ឆេទ", calEmpty: "គ្មានកម្មវិធីបិទក្នុងខែនេះ",
+      guideTitle: "របៀបដាក់ពាក្យ", guideSub: "អ្វីដែលអាហារូបករណ៍ភាគច្រើនទាមទារ និងរបៀបដែលសិស្សពីកម្ពុជាដាក់ពាក្យ។",
+      scamTitle: "កុំបង់លុយដើម្បីដាក់ពាក្យ", scamP: "អាហារូបករណ៍ពិត មិនដែលទារលុយពីអ្នកដាក់ពាក្យទេ។ ដាក់ពាក្យតាមគេហទំព័រផ្លូវការ ឬតាមស្ថានទូតតែប៉ុណ្ណោះ។",
+      sourcesTitle: "ប្រភពផ្លូវការ", communityTitle: "ទំព័រសហគមន៍ (មិនផ្លូវការ)", communityNote: "ទំព័រខ្មែរដែលចែករំលែកអាហារូបករណ៍ញឹកញាប់។ ល្អសម្រាប់ដឹងដំណឹងមុនគេ ប៉ុន្តែត្រូវពិនិត្យឆ្នាំ និងថ្ងៃផុតកំណត់នៅគេហទំព័រផ្លូវការជានិច្ច។", moreTitle: "បន្ថែម", pteasLink: "រកបន្ទប់ជួលជិតសាលា", pteasSub: "ជួលផ្ទះ និងបន្ទប់ក្នុងភ្នំពេញ នៅលើ Pteas",
+      pick: "ជ្រើសរើសប្រទេស", pickSub: "បង្ហាញតែប្រទេសដែលមានកម្មវិធីយ៉ាងហោចមួយ។",
+      lvl_highschool: "វិទ្យាល័យ", lvl_vocational: "វិជ្ជាជីវៈ", lvl_bachelor: "បរិញ្ញាបត្រ", lvl_master: "អនុបណ្ឌិត", lvl_phd: "បណ្ឌិត", lvl_short: "វគ្គខ្លី", lvl_research: "ស្រាវជ្រាវ", lvl_postdoc: "ក្រោយបណ្ឌិត",
+      fund_full: "ពេញលេញ", fund_partial: "មួយផ្នែក", fund_varies: "អាស្រ័យ",
+      months: ["មករា","កុម្ភៈ","មីនា","មេសា","ឧសភា","មិថុនា","កក្កដា","សីហា","កញ្ញា","តុលា","វិច្ឆិកា","ធ្នូ"]
+    },
+    en: {
+      title: "Scholarships", tagline: "for Cambodian students",
+      searchPh: "Search: Japan, MEXT, master's…", clearSearch: "Clear search",
+      whereLabel: "Where", levelLabel: "Level",
+      all: "All", inKh: "In Cambodia", abroad: "Abroad", country: "Country", anyCountry: "Any country",
+      fullOnly: "Fully funded", soon: "Closing soon",
+      results: "{n} programs", clear: "Clear filters",
+      noResults: "Nothing matches", noResultsP: "Try fewer filters, or another word.",
+      daysLeft: "{n} days left", today: "Today", tomorrow: "Tomorrow", closesOn: "Closes {d}", usually: "Usually {m}", unknownDeadline: "Check dates",
+      official: "Official page", share: "Share", save: "Save", saved: "Saved", unsaved: "Removed", copied: "Link copied",
+      covers: "Covers", eligibility: "Who can apply", fields: "Fields", language: "Language", deadline: "Deadline", fromCambodia: "From Cambodia", provider: "Funded by",
+      alsoKnown: "Also called", confidence: "Checked against the official page in September 2026. Rules and dates can change every year.",
+      verified: "Checked against official pages in September 2026. Deadlines change every year: always confirm on the official site before you apply.",
+      tabBrowse: "Browse", tabCal: "Deadlines", tabSaved: "Saved", tabGuide: "Guide",
+      savedSub: "Your shortlist stays on this phone.", savedEmpty: "Nothing saved yet", savedEmptyP: "Tap the heart on any scholarship you like and it will wait for you here.",
+      calTitle: "Deadlines", calSub: "The next 12 months. Green is an exact date; the rest is the month it usually closes.", calUnknown: "Date not announced", calEmpty: "Nothing closes this month",
+      guideTitle: "How to apply", guideSub: "What most scholarships ask for, and how students from Cambodia apply.",
+      scamTitle: "Never pay to apply", scamP: "A real scholarship never asks applicants for money. Apply only through the official page or the embassy.",
+      sourcesTitle: "Official sources", communityTitle: "Community pages (unofficial)", communityNote: "Popular Khmer pages that repost calls. Good for hearing about a program first; always confirm the year and the deadline on the official page.", moreTitle: "More", pteasLink: "Find a room near your school", pteasSub: "Houses and rooms in Phnom Penh, on Pteas",
+      pick: "Choose a country", pickSub: "Only countries with at least one program appear.",
+      lvl_highschool: "High school", lvl_vocational: "Vocational", lvl_bachelor: "Bachelor's", lvl_master: "Master's", lvl_phd: "PhD", lvl_short: "Short program", lvl_research: "Research", lvl_postdoc: "Postdoc",
+      fund_full: "Fully funded", fund_partial: "Partial", fund_varies: "Varies",
+      months: ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    }
+  };
+
+  var STEPS = {
+    km: [
+      ["អានលក្ខខណ្ឌឱ្យច្បាស់", "អាយុ សញ្ញាបត្រ ពិន្ទុ និងភាសា។ បើមិនគ្រប់លក្ខខណ្ឌ កុំខាតពេលដាក់ពាក្យ។"],
+      ["រៀបចំឯកសារពីមុន", "សញ្ញាបត្រ ព្រឹត្តិបត្រពិន្ទុ លិខិតឆ្លងដែន លិខិតណែនាំពីគ្រូ និងលិខិតបង្ហាញបំណង (Statement of Purpose)។ ការបញ្ជាក់ឯកសារ (សាកលវិទ្យាល័យ → ក្រសួងអប់រំ → ក្រសួងការបរទេស → ស្ថានទូត) ត្រូវការពេល 3-5 សប្តាហ៍។"],
+      ["ប្រឡងភាសាឱ្យទាន់ពេល", "IELTS ឬ TOEFL ត្រូវការពេលរៀបចំ 1-2 ខែ និងថ្លៃប្រឡងប្រហែល 200 ដុល្លារ។ MEXT, GKS, CSC និង Stipendium Hungaricum មិនទាមទារ IELTS ពេលដាក់ពាក្យទេ។"],
+      ["ដាក់ពាក្យតាមផ្លូវការ", "អាហារូបករណ៍រដ្ឋាភិបាលភាគច្រើន ដាក់ពាក្យតាមស្ថានទូតនៅភ្នំពេញ ឬតាមក្រសួងអប់រំ (MoEYS)។ សាកលវិទ្យាល័យ ដាក់តាមគេហទំព័ររបស់វាផ្ទាល់។"],
+      ["ដាក់ពាក្យច្រើនកន្លែង", "កុំពឹងលើកម្មវិធីតែមួយ។ ដាក់ពាក្យ 3-5 កម្មវិធីក្នុងមួយឆ្នាំ ហើយចាប់ផ្តើមមុនផុតកំណត់ 2 ខែ។"]
+    ],
+    en: [
+      ["Read the rules first", "Age, degree, grades and language. If you do not meet them, do not spend the time."],
+      ["Prepare documents early", "Diploma, transcript, passport, a recommendation letter from a teacher, and a statement of purpose. Getting documents attested (university, then MoEYS, then the Ministry of Foreign Affairs, then the embassy) takes three to five weeks."],
+      ["Book the language test in time", "IELTS or TOEFL needs one to two months of preparation and costs about 200 dollars. MEXT, GKS, CSC and Stipendium Hungaricum do not ask for IELTS at application."],
+      ["Apply through the official channel", "Most government scholarships go through the embassy in Phnom Penh or the Ministry of Education (MoEYS). Universities take applications on their own site."],
+      ["Apply to several", "Do not rely on one program. Apply to three to five a year, and start two months before the deadline."]
+    ]
+  };
+
+  var COUNTRIES = {
+    "Cambodia": ["កម្ពុជា", "🇰🇭"], "Japan": ["ជប៉ុន", "🇯🇵"], "South Korea": ["កូរ៉េ", "🇰🇷"], "China": ["ចិន", "🇨🇳"], "Taiwan": ["តៃវ៉ាន់", "🇹🇼"],
+    "Thailand": ["ថៃ", "🇹🇭"], "Singapore": ["សិង្ហបុរី", "🇸🇬"], "India": ["ឥណ្ឌា", "🇮🇳"], "Brunei": ["ព្រុយណេ", "🇧🇳"], "Malaysia": ["ម៉ាឡេស៊ី", "🇲🇾"],
+    "Indonesia": ["ឥណ្ឌូនេស៊ី", "🇮🇩"], "Vietnam": ["វៀតណាម", "🇻🇳"], "Hong Kong": ["ហុងកុង", "🇭🇰"], "Macau": ["ម៉ាកាវ", "🇲🇴"], "Philippines": ["ហ្វីលីពីន", "🇵🇭"],
+    "Laos": ["ឡាវ", "🇱🇦"], "Myanmar": ["មីយ៉ាន់ម៉ា", "🇲🇲"], "Mongolia": ["ម៉ុងហ្គោលី", "🇲🇳"], "Kazakhstan": ["កាហ្សាក់ស្ថាន", "🇰🇿"], "Sri Lanka": ["ស្រីលង្កា", "🇱🇰"],
+    "Pakistan": ["ប៉ាគីស្ថាន", "🇵🇰"], "Bangladesh": ["បង់ក្លាដែស", "🇧🇩"], "Nepal": ["នេប៉ាល់", "🇳🇵"],
+    "Australia": ["អូស្ត្រាលី", "🇦🇺"], "New Zealand": ["នូវែលសេឡង់", "🇳🇿"],
+    "United Kingdom": ["អង់គ្លេស", "🇬🇧"], "United States": ["អាមេរិក", "🇺🇸"], "Canada": ["កាណាដា", "🇨🇦"], "Mexico": ["ម៉ិកស៊ិក", "🇲🇽"], "Chile": ["ឈីលី", "🇨🇱"], "Brazil": ["ប្រេស៊ីល", "🇧🇷"], "Cuba": ["គុយបា", "🇨🇺"],
+    "Germany": ["អាល្លឺម៉ង់", "🇩🇪"], "France": ["បារាំង", "🇫🇷"], "Netherlands": ["ហូឡង់", "🇳🇱"], "Belgium": ["បែលហ្ស៊ិក", "🇧🇪"], "Switzerland": ["ស្វីស", "🇨🇭"], "Austria": ["អូទ្រីស", "🇦🇹"],
+    "Sweden": ["ស៊ុយអែត", "🇸🇪"], "Norway": ["ន័រវែស", "🇳🇴"], "Finland": ["ហ្វាំងឡង់", "🇫🇮"], "Denmark": ["ដាណឺម៉ាក", "🇩🇰"], "Iceland": ["អ៊ីស្លង់", "🇮🇸"],
+    "Italy": ["អ៊ីតាលី", "🇮🇹"], "Spain": ["អេស្ប៉ាញ", "🇪🇸"], "Portugal": ["ព័រទុយហ្គាល់", "🇵🇹"], "Greece": ["ក្រិក", "🇬🇷"], "Ireland": ["អៀរឡង់", "🇮🇪"],
+    "Hungary": ["ហុងគ្រី", "🇭🇺"], "Poland": ["ប៉ូឡូញ", "🇵🇱"], "Czechia": ["ឆេក", "🇨🇿"], "Slovakia": ["ស្លូវ៉ាគី", "🇸🇰"], "Romania": ["រ៉ូម៉ានី", "🇷🇴"], "Bulgaria": ["ប៊ុលហ្គារី", "🇧🇬"],
+    "Serbia": ["ស៊ែប៊ី", "🇷🇸"], "Slovenia": ["ស្លូវេនី", "🇸🇮"], "Croatia": ["ក្រូអាត", "🇭🇷"], "Estonia": ["អេស្តូនី", "🇪🇪"], "Latvia": ["ឡេតូនី", "🇱🇻"], "Lithuania": ["លីទុយអានី", "🇱🇹"],
+    "Luxembourg": ["លុចសំបួ", "🇱🇺"], "Ukraine": ["អ៊ុយក្រែន", "🇺🇦"], "Georgia": ["ហ្សកហ្ស៊ី", "🇬🇪"], "Azerbaijan": ["អាស៊ែបៃហ្សង់", "🇦🇿"], "Russia": ["រុស្ស៊ី", "🇷🇺"], "Türkiye": ["តួកគី", "🇹🇷"],
+    "Israel": ["អ៊ីស្រាអែល", "🇮🇱"], "Saudi Arabia": ["អារ៉ាប៊ីសាអូឌីត", "🇸🇦"], "Qatar": ["កាតា", "🇶🇦"], "United Arab Emirates": ["អេមីរ៉ាតអារ៉ាប់រួម", "🇦🇪"], "Egypt": ["អេហ្ស៊ីប", "🇪🇬"], "Morocco": ["ម៉ារ៉ុក", "🇲🇦"], "South Africa": ["អាហ្វ្រិកខាងត្បូង", "🇿🇦"],
+    "Europe": ["អឺរ៉ុប", "🇪🇺"], "Asia": ["អាស៊ី", "🌏"], "Various": ["ច្រើនប្រទេស", "🌏"]
+  };
+
+  var LEVELS = ["highschool", "vocational", "bachelor", "master", "phd", "short"];
+
+  /* --------------------------------------------------------- helpers */
+  function esc(v) { return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+  function $(id) { return document.getElementById(id); }
+  function load(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function store(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* private mode */ } }
+
+  var lang = load("pteas-sch-lang") || load("pteas-lang") || "km";
+  if (lang !== "km" && lang !== "en") lang = "km";
+  function t(key, vars) {
+    var s = (T[lang] && T[lang][key]); if (s == null) s = T.en[key]; if (s == null) s = key;
+    if (vars) Object.keys(vars).forEach(function (k) { s = s.replace("{" + k + "}", vars[k]); });
+    return s;
+  }
+  function country(name) {
+    var c = COUNTRIES[name];
+    return { km: c ? c[0] : name, en: name, flag: c ? c[1] : "🌏", label: c && lang === "km" ? c[0] : name };
+  }
+  function levelLabel(l) { return t("lvl_" + l); }
+  function fmtDate(d) {
+    var m = T[lang].months[d.getMonth()];
+    return lang === "km" ? d.getDate() + " " + m : m.slice(0, 3) + " " + d.getDate();
+  }
+  function parseISO(s) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ""); if (!m) return null;
+    var d = new Date(+m[1], +m[2] - 1, +m[3]); return isNaN(d) ? null : d;
+  }
+
+  /* The one date that drives the badge, the sort and the calendar. An exact
+     deadline counts only while it is still ahead; once it has passed we fall
+     back to the month the program usually closes, in the coming year. */
+  function eff(e) {
+    var d = parseISO(e.next_deadline);
+    if (d && d >= TODAY) return { date: d, exact: true };
+    var m = +e.close_month || 0;
+    if (m >= 1 && m <= 12) {
+      var y = TODAY.getFullYear();
+      if (m < TODAY.getMonth() + 1) y += 1;
+      return { date: new Date(y, m - 1, 28), exact: false };
+    }
+    return { date: null, exact: false };
+  }
+  function daysUntil(d) { return Math.round((d - TODAY) / DAY); }
+  function deadlineBadge(e) {
+    var x = eff(e);
+    if (!x.date) return { cls: "badge-dead", text: t("unknownDeadline") };
+    if (x.exact) {
+      var n = daysUntil(x.date);
+      if (n <= 0) return { cls: "badge-pop", text: t("today") };
+      if (n === 1) return { cls: "badge-pop", text: t("tomorrow") };
+      if (n <= 30) return { cls: "badge-warn", text: t("daysLeft", { n: n }) };
+      return { cls: "badge-ok", text: t("closesOn", { d: fmtDate(x.date) }) };
+    }
+    return { cls: "badge-dead", text: t("usually", { m: T[lang].months[x.date.getMonth()] }) };
+  }
+
+  /* --------------------------------------------------------- state */
+  var saved = [];
+  try { saved = JSON.parse(load("pteas-sch-saved") || "[]"); if (!Array.isArray(saved)) saved = []; } catch (e) { saved = []; }
+  var F = { q: "", where: "all", country: "", levels: [], full: false, soon: false };
+  var activeTab = "s-browse";
+  var current = null;
+
+  function isSaved(id) { return saved.indexOf(id) !== -1; }
+  function toggleSave(id) {
+    var i = saved.indexOf(id);
+    if (i === -1) saved.push(id); else saved.splice(i, 1);
+    store("pteas-sch-saved", JSON.stringify(saved));
+    paintSavedDot();
+    return i === -1;
+  }
+  function paintSavedDot() {
+    var d = $("saved-dot"); d.textContent = saved.length; d.hidden = !saved.length;
+  }
+
+  /* --------------------------------------------------------- filtering */
+  function matches(e) {
+    if (F.where === "kh" && e.abroad) return false;
+    if (F.where === "abroad" && !e.abroad) return false;
+    if (F.country && e.host_country !== F.country) return false;
+    if (F.levels.length && !F.levels.some(function (l) { return (e.levels || []).indexOf(l) !== -1; })) return false;
+    if (F.full && e.funding !== "full") return false;
+    if (F.soon) { var x = eff(e); if (!x.date || daysUntil(x.date) > 45) return false; }
+    if (F.q) {
+      var hay = [e.name, e.name_km, e.provider, e.provider_km, e.host_country, country(e.host_country).km, e.fields, e.fields_km, e.summary_km, e.summary_en, (e.levels || []).map(levelLabel).join(" ")].join(" ").toLowerCase();
+      var words = F.q.toLowerCase().split(/\s+/).filter(Boolean);
+      if (!words.every(function (w) { return hay.indexOf(w) !== -1; })) return false;
+    }
+    return true;
+  }
+  function sortKey(e) {
+    var x = eff(e);
+    return x.date ? x.date.getTime() + (x.exact ? 0 : 1) : 8.64e15;
+  }
+  function visible() {
+    return DATA.filter(matches).sort(function (a, b) {
+      var d = sortKey(a) - sortKey(b); if (d) return d;
+      return (b.confidence || 0) - (a.confidence || 0);
+    });
+  }
+  function filtersActive() { return F.where !== "all" || F.country || F.levels.length || F.full || F.soon || F.q; }
+
+  /* --------------------------------------------------------- render: cards */
+  function cardHTML(e, i) {
+    var c = country(e.host_country), b = deadlineBadge(e);
+    var title = lang === "km" ? (e.name_km || e.name) : e.name;
+    var sum = lang === "km" ? (e.summary_km || e.summary_en || "") : (e.summary_en || "");
+    var prov = lang === "km" ? (e.provider_km || e.provider) : e.provider;
+    var facts = (e.levels || []).filter(function (l) { return LEVELS.indexOf(l) !== -1 || l === "research" || l === "postdoc"; })
+      .map(function (l) { return '<span class="fact">' + esc(levelLabel(l)) + "</span>"; }).join("");
+    facts += '<span class="fact ' + esc(e.funding) + '">' + esc(t("fund_" + e.funding)) + "</span>";
+    return '<div class="card" style="--i:' + i + '">' +
+      '<button class="save' + (isSaved(e.id) ? " is-on" : "") + '" type="button" data-save="' + esc(e.id) + '" aria-pressed="' + isSaved(e.id) + '" aria-label="' + esc(t("save")) + '"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg></button>' +
+      '<button type="button" class="card-body" style="display:block;width:100%;text-align:left" data-open="' + esc(e.id) + '">' +
+        '<div class="sch-top"><span class="flag" aria-hidden="true">' + c.flag + '</span><span class="where">' + esc(c.label) + " · " + esc(prov) + "</span></div>" +
+        '<h3 class="card-title">' + esc(title) + "</h3>" +
+        (sum ? '<p class="card-sum">' + esc(sum) + "</p>" : "") +
+        '<div class="facts">' + facts + '<span class="badge ' + b.cls + '"><svg class="icon tiny" aria-hidden="true"><use href="#i-clock"/></svg>' + esc(b.text) + "</span></div>" +
+      "</button></div>";
+  }
+  function renderList() {
+    var rows = visible();
+    $("list").innerHTML = rows.map(cardHTML).join("");
+    $("browse-empty").hidden = rows.length > 0;
+    $("count").innerHTML = "<b>" + rows.length + "</b> " + esc(t("results", { n: "" })).trim();
+    $("reset").hidden = !filtersActive();
+  }
+  function renderSaved() {
+    var rows = DATA.filter(function (e) { return isSaved(e.id); }).sort(function (a, b) { return sortKey(a) - sortKey(b); });
+    $("saved-list").innerHTML = rows.map(cardHTML).join("");
+    $("saved-empty").hidden = rows.length > 0;
+  }
+
+  /* --------------------------------------------------------- render: chips */
+  function renderLevelChips() {
+    var html = LEVELS.map(function (l) {
+      var n = DATA.filter(function (e) { return (e.levels || []).indexOf(l) !== -1; }).length;
+      if (!n) return "";
+      return '<button class="chip" type="button" data-level="' + l + '" aria-pressed="' + (F.levels.indexOf(l) !== -1) + '">' + esc(levelLabel(l)) + '<span class="n">' + n + "</span></button>";
+    }).join("");
+    html += '<button class="chip" type="button" id="chip-full" aria-pressed="' + F.full + '">' + esc(t("fullOnly")) + "</button>";
+    html += '<button class="chip" type="button" id="chip-soon" aria-pressed="' + F.soon + '">' + esc(t("soon")) + "</button>";
+    $("levels").innerHTML = html;
+  }
+  function renderWhereChips() {
+    document.querySelectorAll("#where [data-where]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.where === F.where)); });
+    var pick = $("open-country");
+    pick.setAttribute("aria-pressed", String(!!F.country));
+    $("country-label").textContent = F.country ? country(F.country).flag + " " + country(F.country).label : t("country");
+  }
+  function renderCountrySeg() {
+    var counts = {};
+    DATA.forEach(function (e) { if (e.abroad) counts[e.host_country] = (counts[e.host_country] || 0) + 1; });
+    var names = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a] || a.localeCompare(b); });
+    var html = '<button type="button" data-country="" aria-pressed="' + (!F.country) + '">' + esc(t("anyCountry")) + "</button>";
+    html += names.map(function (n) {
+      var c = country(n);
+      return '<button type="button" data-country="' + esc(n) + '" aria-pressed="' + (F.country === n) + '">' + c.flag + " " + esc(c.label) + '<span class="n">' + counts[n] + "</span></button>";
+    }).join("");
+    $("country-seg").innerHTML = html;
+  }
+
+  /* --------------------------------------------------------- render: calendar */
+  function renderCalendar() {
+    var groups = [], unknown = [];
+    for (var i = 0; i < 12; i++) {
+      var d = new Date(TODAY.getFullYear(), TODAY.getMonth() + i, 1);
+      groups.push({ y: d.getFullYear(), m: d.getMonth(), items: [] });
+    }
+    DATA.forEach(function (e) {
+      var x = eff(e);
+      if (!x.date) { unknown.push(e); return; }
+      var g = groups.filter(function (g) { return g.y === x.date.getFullYear() && g.m === x.date.getMonth(); })[0];
+      if (g) g.items.push({ e: e, x: x });
+    });
+    var html = groups.map(function (g, gi) {
+      g.items.sort(function (a, b) { return (a.x.exact === b.x.exact ? a.x.date - b.x.date : (a.x.exact ? -1 : 1)); });
+      var rows = g.items.map(function (it) {
+        var e = it.e, c = country(e.host_country);
+        var title = lang === "km" ? (e.name_km || e.name) : e.name;
+        var day = it.x.exact ? (lang === "km" ? it.x.date.getDate() + " " + T.km.months[g.m] : T.en.months[g.m].slice(0, 3) + " " + it.x.date.getDate()) : "~";
+        return '<button class="row" type="button" data-open="' + esc(e.id) + '"><span class="flag" aria-hidden="true">' + c.flag + "</span>" +
+          '<span><span class="r-title">' + esc(title) + '</span><span class="r-meta" style="display:block">' + esc(c.label) + " · " + esc((e.levels || []).map(levelLabel).join(", ")) + "</span></span>" +
+          '<span class="r-day' + (it.x.exact ? " exact" : "") + '">' + esc(day) + "</span></button>";
+      }).join("");
+      var label = T[lang].months[g.m] + " " + g.y;
+      return '<div class="month' + (gi === 0 ? " now" : "") + '"><h2>' + esc(label) + "</h2>" +
+        (rows ? '<div class="rows">' + rows + "</div>" : '<p class="fine" style="padding:4px 0 0">' + esc(t("calEmpty")) + "</p>") + "</div>";
+    }).join("");
+    if (unknown.length) {
+      html += '<div class="month"><h2>' + esc(t("calUnknown")) + '</h2><div class="rows">' + unknown.map(function (e) {
+        var c = country(e.host_country), title = lang === "km" ? (e.name_km || e.name) : e.name;
+        return '<button class="row" type="button" data-open="' + esc(e.id) + '"><span class="flag" aria-hidden="true">' + c.flag + "</span>" +
+          '<span><span class="r-title">' + esc(title) + '</span><span class="r-meta" style="display:block">' + esc(c.label) + "</span></span><span class=\"r-day\">–</span></button>";
+      }).join("") + "</div></div>";
+    }
+    $("cal").innerHTML = html + '<p class="fine">' + esc(t("verified")) + "</p>";
+  }
+
+  /* --------------------------------------------------------- render: guide */
+  function renderGuide() {
+    $("steps").innerHTML = STEPS[lang].map(function (s, i) {
+      return '<div class="step"><span class="num">' + (i + 1) + "</span><div><h3>" + esc(s[0]) + "</h3><p>" + esc(s[1]) + "</p></div></div>";
+    }).join("");
+    function srcHTML(s) {
+      var meta = lang === "km" ? (s.what_km || s.what) : s.what;
+      var name = lang === "km" ? (s.name_km || s.name) : s.name;
+      return '<a class="src" href="' + esc(s.url) + '" target="_blank" rel="noopener"><span><span class="s-title">' + esc(name) + '</span><span class="s-meta" style="display:block">' + esc(meta) + '</span></span><svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>';
+    }
+    $("sources").innerHTML = SOURCES.filter(function (s) { return s.official; }).map(srcHTML).join("");
+    $("sources-community").innerHTML = SOURCES.filter(function (s) { return !s.official; }).map(srcHTML).join("");
+  }
+
+  /* --------------------------------------------------------- detail sheet */
+  function kvRow(label, value, en) {
+    if (!value) return "";
+    return "<div><dt>" + esc(label) + '</dt><dd' + (en ? ' class="en"' : "") + ">" + esc(value) + "</dd></div>";
+  }
+  function openDetail(id, push) {
+    var e = DATA.filter(function (x) { return x.id === id; })[0];
+    if (!e) return;
+    current = e;
+    var c = country(e.host_country), b = deadlineBadge(e), x = eff(e);
+    var title = lang === "km" ? (e.name_km || e.name) : e.name;
+    var prov = lang === "km" ? (e.provider_km || e.provider) : e.provider;
+    var sum = lang === "km" ? (e.summary_km || e.summary_en) : e.summary_en;
+    var covers = lang === "km" ? (e.covers_km || (e.covers || []).join(", ")) : (e.covers || []).join(", ");
+    var elig = lang === "km" ? (e.eligibility_km || e.eligibility) : e.eligibility;
+    var fields = lang === "km" ? (e.fields_km || e.fields) : e.fields;
+    var deadline = lang === "km" ? (e.deadline_km || e.deadline_note) : e.deadline_note;
+    /* An exact date replaces the "usually closes in" phrase; both together read as a contradiction. */
+    if (x.exact) deadline = fmtDate(x.date) + " " + x.date.getFullYear();
+    var camb = lang === "km" ? (e.cambodia_km || e.cambodia_note) : e.cambodia_note;
+    var langReq = lang === "km" ? (e.language_km || e.language_req) : e.language_req;
+    var badges = (e.levels || []).map(function (l) { return '<span class="badge badge-dead">' + esc(levelLabel(l)) + "</span>"; }).join("") +
+      '<span class="badge ' + (e.funding === "full" ? "badge-ok" : "badge-warn") + '">' + esc(t("fund_" + e.funding)) + "</span>" +
+      '<span class="badge ' + b.cls + '"><svg class="icon tiny" aria-hidden="true"><use href="#i-clock"/></svg>' + esc(b.text) + "</span>";
+    $("d-body").innerHTML =
+      '<h2 id="d-title">' + esc(title) + "</h2>" +
+      '<p class="sub">' + c.flag + " " + esc(e.host_detail || c.label) + " · " + esc(prov) + (lang === "km" && e.name_km ? ' · <span lang="en">' + esc(e.name) + "</span>" : "") + "</p>" +
+      '<div class="d-badges">' + badges + "</div>" +
+      (sum ? '<p class="d-sum">' + esc(sum) + "</p>" : "") +
+      '<dl class="kv">' +
+        kvRow(t("covers"), covers) + kvRow(t("eligibility"), elig) + kvRow(t("fields"), fields) +
+        kvRow(t("language"), langReq, !e.language_km) + kvRow(t("deadline"), deadline) +
+        kvRow(t("fromCambodia"), camb, lang === "km" && !e.cambodia_km) +
+        ((e.also_known_as || []).length ? kvRow(t("alsoKnown"), e.also_known_as.join(" · "), true) : "") +
+      "</dl>" +
+      '<p class="d-fine">' + esc(t("confidence")) + "</p>";
+    var link = $("d-link"); link.href = e.apply_url || e.url;
+    paintDetailSave();
+    openSheet("sheet-detail");
+    if (push !== false) { try { history.replaceState(null, "", "#" + e.id); } catch (err) { /* file: */ } }
+  }
+  function paintDetailSave() {
+    if (!current) return;
+    var on = isSaved(current.id), b = $("d-save");
+    b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", String(on));
+  }
+
+  /* --------------------------------------------------------- sheets */
+  var openId = null;
+  function openSheet(id) {
+    var s = $(id), scrim = $("scrim");
+    openId = id;
+    scrim.hidden = false; s.hidden = false;
+    s.querySelector(".sheet-body").scrollTop = 0;
+    requestAnimationFrame(function () { requestAnimationFrame(function () { scrim.classList.add("is-open"); s.classList.add("is-open"); }); });
+  }
+  function closeSheet() {
+    if (!openId) return;
+    var s = $(openId), scrim = $("scrim"), id = openId;
+    openId = null;
+    scrim.classList.remove("is-open"); s.classList.remove("is-open");
+    setTimeout(function () { if (openId !== id) { s.hidden = true; if (!openId) scrim.hidden = true; } }, 400);
+    if (id === "sheet-detail") { current = null; try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { /* file: */ } }
+  }
+  $("scrim").addEventListener("click", closeSheet);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeSheet(); });
+  document.querySelectorAll(".grabber").forEach(function (g) {
+    var y0 = null;
+    g.addEventListener("pointerdown", function (e) { y0 = e.clientY; });
+    g.addEventListener("pointerup", function (e) { if (y0 != null && e.clientY - y0 > 40) closeSheet(); y0 = null; });
+    g.addEventListener("click", closeSheet);
+  });
+
+  /* --------------------------------------------------------- tabs */
+  function showTab(id) {
+    activeTab = id;
+    document.querySelectorAll(".screen").forEach(function (s) { s.hidden = s.id !== id; });
+    document.querySelectorAll(".tab").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === id)); });
+    if (id === "s-saved") renderSaved();
+    if (id === "s-cal") renderCalendar();
+    if (id === "s-guide") renderGuide();
+  }
+  document.querySelectorAll(".tab").forEach(function (b) { b.addEventListener("click", function () { showTab(b.dataset.tab); }); });
+
+  /* --------------------------------------------------------- toast */
+  var toastTimer = null;
+  function toast(msg) {
+    var el = $("toast"); el.textContent = msg; el.classList.add("is-up");
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.classList.remove("is-up"); }, 1800);
+  }
+
+  /* --------------------------------------------------------- events */
+  document.addEventListener("click", function (ev) {
+    var open = ev.target.closest("[data-open]");
+    if (open) { openDetail(open.dataset.open); return; }
+    var sv = ev.target.closest("[data-save]");
+    if (sv) {
+      var on = toggleSave(sv.dataset.save);
+      document.querySelectorAll('[data-save="' + sv.dataset.save + '"]').forEach(function (b) {
+        b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", String(on));
+        if (on) { b.classList.add("just-saved"); setTimeout(function () { b.classList.remove("just-saved"); }, 260); }
+      });
+      if (activeTab === "s-saved") renderSaved();
+      toast(t(on ? "saved" : "unsaved"));
+      return;
+    }
+    var w = ev.target.closest("[data-where]");
+    if (w) { F.where = w.dataset.where; if (F.where === "kh") F.country = ""; renderWhereChips(); renderList(); return; }
+    var lv = ev.target.closest("[data-level]");
+    if (lv) {
+      var i = F.levels.indexOf(lv.dataset.level);
+      if (i === -1) F.levels.push(lv.dataset.level); else F.levels.splice(i, 1);
+      lv.setAttribute("aria-pressed", String(i === -1)); renderList(); return;
+    }
+    var co = ev.target.closest("[data-country]");
+    if (co) { F.country = co.dataset.country; if (F.country) F.where = "abroad"; renderCountrySeg(); renderWhereChips(); renderList(); closeSheet(); return; }
+  });
+  $("levels").addEventListener("click", function (ev) {
+    if (ev.target.closest("#chip-full")) { F.full = !F.full; ev.target.closest("#chip-full").setAttribute("aria-pressed", String(F.full)); renderList(); }
+    if (ev.target.closest("#chip-soon")) { F.soon = !F.soon; ev.target.closest("#chip-soon").setAttribute("aria-pressed", String(F.soon)); renderList(); }
+  });
+  $("open-country").addEventListener("click", function () { renderCountrySeg(); openSheet("sheet-country"); });
+  function resetFilters() {
+    F = { q: "", where: "all", country: "", levels: [], full: false, soon: false };
+    $("q").value = ""; $("q-clear").hidden = true;
+    renderWhereChips(); renderLevelChips(); renderList();
+    $("browse-scroll").scrollTop = 0;
+  }
+  $("reset").addEventListener("click", resetFilters);
+  $("reset2").addEventListener("click", resetFilters);
+  var qTimer = null;
+  $("q").addEventListener("input", function () {
+    F.q = this.value.trim(); $("q-clear").hidden = !F.q;
+    clearTimeout(qTimer); qTimer = setTimeout(renderList, 120);
+  });
+  $("q-clear").addEventListener("click", function () { $("q").value = ""; F.q = ""; this.hidden = true; renderList(); $("q").focus(); });
+
+  $("d-save").addEventListener("click", function () {
+    if (!current) return;
+    var on = toggleSave(current.id); paintDetailSave();
+    document.querySelectorAll('[data-save="' + current.id + '"]').forEach(function (b) { b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", String(on)); });
+    toast(t(on ? "saved" : "unsaved"));
+  });
+  $("d-share").addEventListener("click", function () {
+    if (!current) return;
+    var url = location.origin + location.pathname + "#" + current.id;
+    var title = lang === "km" ? (current.name_km || current.name) : current.name;
+    if (navigator.share) { navigator.share({ title: title, url: url }).catch(function () { /* cancelled */ }); return; }
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { toast(t("copied")); });
+  });
+
+  /* --------------------------------------------------------- language & theme */
+  function applyLang() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-t]").forEach(function (el) { el.textContent = t(el.dataset.t); });
+    document.querySelectorAll("[data-t-ph]").forEach(function (el) { el.placeholder = t(el.dataset.tPh); });
+    document.querySelectorAll("[data-t-aria]").forEach(function (el) { el.setAttribute("aria-label", t(el.dataset.tAria)); });
+    document.querySelectorAll("[data-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.lang === lang)); });
+    document.title = t("title") + " · " + t("tagline");
+    renderWhereChips(); renderLevelChips(); renderList();
+    if (activeTab === "s-saved") renderSaved();
+    if (activeTab === "s-cal") renderCalendar();
+    if (activeTab === "s-guide") renderGuide();
+    if (current) openDetail(current.id, false);
+  }
+  document.querySelectorAll("[data-lang]").forEach(function (b) {
+    b.addEventListener("click", function () { lang = b.dataset.lang; store("pteas-sch-lang", lang); applyLang(); });
+  });
+  var theme = load("pteas-theme");
+  if (theme && theme !== "auto") document.documentElement.setAttribute("data-theme", theme);
+
+  /* --------------------------------------------------------- boot */
+  paintSavedDot();
+  applyLang();
+  var hash = decodeURIComponent((location.hash || "").slice(1));
+  if (hash && DATA.some(function (e) { return e.id === hash; })) openDetail(hash, false);
+})();
+</script>
+</body>
+</html>
