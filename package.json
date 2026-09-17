@@ -12,9 +12,11 @@
     "dev": "node --watch --env-file-if-exists=.env server.js",
     "check": "node --check server.js",
     "test:app": "node rental-app/test/e2e.mjs",
+    "test:scholarships": "node rental-app/test/scholarships.mjs",
     "audit:app": "node rental-app/audit.mjs",
     "test:db": "supabase/tests/run.sh",
-    "build:app": "cp rental-app/pteas.html rental-app/index.html"
+    "build:app": "node -e \"require('fs').copyFileSync('rental-app/pteas.html','rental-app/index.html')\"",
+    "build:scholarships": "node rental-app/tools/scholarships-data.mjs && node rental-app/tools/scholarships-build.mjs"
   },
   "dependencies": {
     "express": "^4.19.2",
