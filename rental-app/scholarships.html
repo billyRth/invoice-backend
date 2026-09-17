@@ -26,9 +26,10 @@
   What this is
     One file, no build step, no backend. The programs live in the JSON block
     at the bottom (id="sch-data"); tools/scholarships-build.mjs refreshes it
-    from scholarships-data.json. Every entry was checked against its official
-    page in September 2026, but deadlines move every year, so the page says
-    so and always sends people to the official site.
+    from scholarships-data.json. The entries come from web research in
+    September 2026 (the research environment could not open most official
+    sites), so deadlines are "usually" unless a date was published, the page
+    says so, and every card sends people to the official site.
 
   Why it looks like Pteas
     It shares the tokens, the phone shell, the chips, the sheet and the tab
@@ -364,7 +365,7 @@ h1, h2, h3, p { margin: 0; }
           <p data-t="noResultsP">Try fewer filters, or another word.</p>
           <button type="button" id="reset2" data-t="clear">Clear filters</button>
         </div>
-        <p class="fine" data-t="verified">Checked against official pages in September 2026. Deadlines change every year: always confirm on the official site before you apply.</p>
+        <p class="fine" data-t="verified">Compiled from web research in September 2026. Deadlines change every year: always confirm on the official site before you apply.</p>
       </div>
     </section>
 
@@ -414,7 +415,7 @@ h1, h2, h3, p { margin: 0; }
             <svg class="icon" aria-hidden="true"><use href="#i-chev"/></svg>
           </a>
         </div>
-        <p class="fine" data-t="verified">Checked against official pages in September 2026. Deadlines change every year: always confirm on the official site before you apply.</p>
+        <p class="fine" data-t="verified">Compiled from web research in September 2026. Deadlines change every year: always confirm on the official site before you apply.</p>
       </div>
     </section>
 
@@ -483,8 +484,8 @@ h1, h2, h3, p { margin: 0; }
       daysLeft: "នៅសល់ {n} ថ្ងៃ", today: "ថ្ងៃនេះ", tomorrow: "ថ្ងៃស្អែក", closesOn: "បិទ {d}", usually: "ជាធម្មតាខែ{m}", unknownDeadline: "ពិនិត្យកាលបរិច្ឆេទ",
       official: "គេហទំព័រផ្លូវការ", share: "ចែករំលែក", save: "រក្សាទុក", saved: "បានរក្សាទុក", unsaved: "ដកចេញហើយ", copied: "បានចម្លងតំណ",
       covers: "ផ្តល់ជូន", eligibility: "លក្ខខណ្ឌ", fields: "មុខវិជ្ជា", language: "ភាសា", deadline: "ផុតកំណត់", fromCambodia: "ដាក់ពាក្យពីកម្ពុជា", provider: "ផ្តល់ដោយ",
-      alsoKnown: "ឈ្មោះផ្សេង", confidence: "ព័ត៌មាននេះផ្ទៀងផ្ទាត់ជាមួយគេហទំព័រផ្លូវការ ខែកញ្ញា 2026។ លក្ខខណ្ឌ និងកាលបរិច្ឆេទអាចផ្លាស់ប្តូររៀងរាល់ឆ្នាំ។",
-      verified: "ផ្ទៀងផ្ទាត់ជាមួយគេហទំព័រផ្លូវការ ខែកញ្ញា 2026។ ថ្ងៃផុតកំណត់ផ្លាស់ប្តូររៀងរាល់ឆ្នាំ សូមពិនិត្យគេហទំព័រផ្លូវការមុនដាក់ពាក្យ។",
+      alsoKnown: "ឈ្មោះផ្សេង", confidence: "ព័ត៌មាននេះប្រមូលពីការស្វែងរក ខែកញ្ញា 2026 មិនមែនពីការដាក់ពាក្យផ្ទាល់ទេ។ លក្ខខណ្ឌ និងកាលបរិច្ឆេទផ្លាស់ប្តូររៀងរាល់ឆ្នាំ សូមពិនិត្យគេហទំព័រផ្លូវការមុននឹងរៀបចំឯកសារ។",
+      verified: "ព័ត៌មានប្រមូលពីការស្វែងរក ខែកញ្ញា 2026។ ថ្ងៃផុតកំណត់ផ្លាស់ប្តូររៀងរាល់ឆ្នាំ សូមពិនិត្យគេហទំព័រផ្លូវការមុនដាក់ពាក្យ។",
       tabBrowse: "រុករក", tabCal: "ផុតកំណត់", tabSaved: "រក្សាទុក", tabGuide: "ណែនាំ",
       savedSub: "បញ្ជីរបស់អ្នក រក្សាទុកក្នុងទូរស័ព្ទនេះ។", savedEmpty: "មិនទាន់មានអ្វីរក្សាទុក", savedEmptyP: "ចុចរូបបេះដូងលើអាហារូបករណ៍ដែលអ្នកចាប់អារម្មណ៍ វានឹងរង់ចាំអ្នកនៅទីនេះ។",
       calTitle: "ថ្ងៃផុតកំណត់", calSub: "12 ខែខាងមុខ។ ពណ៌បៃតងគឺកាលបរិច្ឆេទពិតប្រាកដ ក្រៅពីនោះគឺខែដែលធ្លាប់បិទ។", calUnknown: "មិនទាន់ប្រកាសកាលបរិច្ឆេទ", calEmpty: "គ្មានកម្មវិធីបិទក្នុងខែនេះ",
@@ -507,8 +508,8 @@ h1, h2, h3, p { margin: 0; }
       daysLeft: "{n} days left", today: "Today", tomorrow: "Tomorrow", closesOn: "Closes {d}", usually: "Usually {m}", unknownDeadline: "Check dates",
       official: "Official page", share: "Share", save: "Save", saved: "Saved", unsaved: "Removed", copied: "Link copied",
       covers: "Covers", eligibility: "Who can apply", fields: "Fields", language: "Language", deadline: "Deadline", fromCambodia: "From Cambodia", provider: "Funded by",
-      alsoKnown: "Also called", confidence: "Checked against the official page in September 2026. Rules and dates can change every year.",
-      verified: "Checked against official pages in September 2026. Deadlines change every year: always confirm on the official site before you apply.",
+      alsoKnown: "Also called", confidence: "Compiled from web research in September 2026, not from applying. Rules and dates change every year: check the official page before you prepare documents.",
+      verified: "Compiled from web research in September 2026. Deadlines change every year: always confirm on the official site before you apply.",
       tabBrowse: "Browse", tabCal: "Deadlines", tabSaved: "Saved", tabGuide: "Guide",
       savedSub: "Your shortlist stays on this phone.", savedEmpty: "Nothing saved yet", savedEmptyP: "Tap the heart on any scholarship you like and it will wait for you here.",
       calTitle: "Deadlines", calSub: "The next 12 months. Green is an exact date; the rest is the month it usually closes.", calUnknown: "Date not announced", calEmpty: "Nothing closes this month",
