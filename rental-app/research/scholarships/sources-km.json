@@ -1,0 +1,274 @@
+{
+ "sources": [
+  {
+   "name": "MoEYS scholarships page (ក្រសួងអប់រំ យុវជន និងកីឡា – អាហារូបករណ៍)",
+   "name_km": "ក្រសួងអប់រំ (MoEYS) – ទំព័រអាហារូបករណ៍",
+   "url": "https://www.moeys.gov.kh/index.php/en/scholarships.html",
+   "what": "Government-to-government scholarship notices (Hungary, China, Korea, Japan) as Khmer PDFs; Facebook posts them faster.",
+   "what_km": "សេចក្តីជូនដំណឹងអាហារូបករណ៍រដ្ឋាភិបាល (ហុងគ្រី ចិន កូរ៉េ ជប៉ុន) ជាឯកសារ PDF ភាសាខ្មែរ។",
+   "language": "Khmer (some English)",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "MoEYS Cambodia Facebook page",
+   "name_km": "ក្រសួងអប់រំ (MoEYS) – ទំព័រ Facebook ផ្លូវការ",
+   "url": "https://www.facebook.com/moeys.gov.kh/",
+   "what": "Every ministry scholarship notice (MEXT, GKS, Hungary, ASEAN and domestic full-tuition places) posted first here.",
+   "what_km": "សេចក្តីជូនដំណឹងអាហារូបករណ៍គ្រប់ប្រភេទ ទាំងក្រៅប្រទេស និងក្នុងស្រុក ចេញលឿនបំផុតនៅទីនេះ។",
+   "language": "Khmer",
+   "official": true,
+   "channel": "facebook"
+  },
+  {
+   "name": "MoEYS News Telegram (ព័ត៌មានអប់រំ យុវជន និងកីឡា)",
+   "name_km": "ក្រសួងអប់រំ (MoEYS) – ឆានែល Telegram ព័ត៌មាន",
+   "url": "https://t.me/moeysnews",
+   "what": "Official MoEYS Telegram channel mirroring ministry notices, including scholarship announcements.",
+   "what_km": "សេចក្តីជូនដំណឹងអាហារូបករណ៍របស់ក្រសួង ផ្ញើចូល Telegram ដូចនៅ Facebook។",
+   "language": "Khmer",
+   "official": true,
+   "channel": "telegram"
+  },
+  {
+   "name": "ប្រព័ន្ធអាហារូបករណ៍ឧត្តមសិក្សា – DGHE higher-education scholarship system",
+   "name_km": "អគ្គនាយកដ្ឋានឧត្តមសិក្សា (DGHE) – ប្រព័ន្ធអាហារូបករណ៍ឧត្តមសិក្សា",
+   "url": "https://scholarship.dghekh.com/",
+   "what": "DGHE portal where students apply for domestic MoEYS scholarships at public universities after Bac II results.",
+   "what_km": "កន្លែងដាក់ពាក្យអាហារូបករណ៍ក្នុងស្រុករបស់ក្រសួង បន្ទាប់ពីចេញលទ្ធផលបាក់ឌុប។",
+   "language": "Khmer",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Australia Awards Cambodia – Scholarships",
+   "name_km": "Australia Awards Cambodia – អាហារូបករណ៍រដ្ឋាភិបាលអូស្ត្រាលី",
+   "url": "https://www.australiaawardscambodia.org/scholarships/",
+   "what": "Official site with eligibility, priority fields, brochure and OASIS application link; intake opens each February.",
+   "what_km": "លក្ខខណ្ឌ វិស័យអាទិភាព និងតំណដាក់ពាក្យអាហារូបករណ៍អនុបណ្ឌិតទៅអូស្ត្រាលី។",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "EducationUSA Advising Center – U.S. Embassy in Cambodia",
+   "name_km": "EducationUSA – មជ្ឈមណ្ឌលប្រឹក្សាសិក្សានៅអាមេរិក (ស្ថានទូតអាមេរិក)",
+   "url": "https://kh.usembassy.gov/educationusa-advising-center/",
+   "what": "Free advising on U.S. study and scholarships at centres in Phnom Penh and Siem Reap.",
+   "what_km": "ការប្រឹក្សាឥតគិតថ្លៃអំពីការសិក្សា និងអាហារូបករណ៍នៅអាមេរិក នៅភ្នំពេញ និងសៀមរាប។",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Fulbright Foreign Student Program – U.S. Embassy in Cambodia",
+   "name_km": "ស្ថានទូតអាមេរិក – អាហារូបករណ៍ Fulbright",
+   "url": "https://kh.usembassy.gov/fulbright-foreign-student-program/",
+   "what": "Annual call for Cambodian master's and PhD candidates; applications open each spring on apply.iie.org.",
+   "what_km": "ការប្រកាសប្រចាំឆ្នាំសម្រាប់អាហារូបករណ៍អនុបណ្ឌិត និងបណ្ឌិត Fulbright ទៅអាមេរិក។",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Embassy of Japan in Cambodia – Scholarship section",
+   "name_km": "ស្ថានទូតជប៉ុន – អាហារូបករណ៍ MEXT",
+   "url": "https://www.kh.emb-japan.go.jp/itpr_en/c_000078.html",
+   "what": "Index of MEXT scholarship pages (research, undergraduate, KOSEN, training college, teacher training) with past exam papers.",
+   "what_km": "ព័ត៌មានអាហារូបករណ៍ MEXT គ្រប់កម្រិត និងវិញ្ញាសាប្រឡងឆ្នាំមុនៗ។",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Embassy of the Republic of Korea in Cambodia – Announcements",
+   "name_km": "ស្ថានទូតកូរ៉េ – សេចក្តីជូនដំណឹងអាហារូបករណ៍ GKS",
+   "url": "https://overseas.mofa.go.kr/kh-en/brd/m_25856/list.do",
+   "what": "Announcement board for GKS Embassy Track calls: undergraduate each September, graduate each February, plus TOPIK dates.",
+   "what_km": "ការប្រកាសអាហារូបករណ៍ GKS តាមស្ថានទូត ថ្នាក់បរិញ្ញាបត្រខែកញ្ញា និងក្រោយបរិញ្ញាបត្រខែកុម្ភៈ។",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Study in Korea – GKS notices and online application",
+   "name_km": "Study in Korea – វិបផតថល GKS (NIIED)",
+   "url": "https://www.studyinkorea.go.kr",
+   "what": "NIIED portal with GKS guidelines, the university list and GKS-U online applications.",
+   "what_km": "គោលការណ៍ណែនាំ GKS បញ្ជីសាកលវិទ្យាល័យ និងកន្លែងដាក់ពាក្យអនឡាញថ្នាក់បរិញ្ញាបត្រ។",
+   "language": "English/Korean",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Embassy of the People's Republic of China in Cambodia",
+   "name_km": "ស្ថានទូតចិន – អាហារូបករណ៍រដ្ឋាភិបាលចិន (CSC)",
+   "url": "https://kh.china-embassy.gov.cn/eng/",
+   "what": "Embassy notices for Chinese Government Scholarship (CSC Type A): apply on campuschina.org, documents due mid-February.",
+   "what_km": "សេចក្តីជូនដំណឹងអាហារូបករណ៍រដ្ឋាភិបាលចិនតាមស្ថានទូត ដាក់ឯកសារនៅដើមខែកុម្ភៈ។",
+   "language": "English/Chinese",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Campus China – CSC online application",
+   "name_km": "Campus China – ដាក់ពាក្យអាហារូបករណ៍ CSC អនឡាញ",
+   "url": "https://www.campuschina.org",
+   "what": "China Scholarship Council portal where all CSC applications are created, usually December to April.",
+   "what_km": "កន្លែងបង្កើតពាក្យសុំអាហារូបករណ៍រដ្ឋាភិបាលចិនទាំងអស់ ចាប់ពីខែធ្នូដល់មេសា។",
+   "language": "English/Chinese",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Campus France Cambodge – Obtenir une bourse",
+   "name_km": "Campus France កម្ពុជា – អាហារូបករណ៍សិក្សានៅបារាំង",
+   "url": "https://www.cambodge.campusfrance.org/fr/obtenir-une-bourse",
+   "what": "Official French study office: France Excellence and Eiffel scholarships for master's/PhD; campaign runs December to January.",
+   "what_km": "អាហារូបករណ៍ France Excellence និង Eiffel សម្រាប់អនុបណ្ឌិត និងបណ្ឌិត ដាក់ពាក្យខែធ្នូដល់មករា។",
+   "language": "French/English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "DAAD in Cambodia (DAAD Regional Office Hanoi)",
+   "name_km": "DAAD – ការិយាល័យតំបន់ហាណូយ (ទទួលបន្ទុកកម្ពុជា)",
+   "url": "https://www.daad-vietnam.org/en/about-us/daad-in-cambodia/",
+   "what": "Hanoi regional office and a DAAD lecturer at RUPP handle Cambodian DAAD scholarship questions.",
+   "what_km": "ទំនាក់ទំនងសម្រាប់សួរអំពីអាហារូបករណ៍ DAAD ទៅអាល្លឺម៉ង់ តាមរយៈសាស្ត្រាចារ្យនៅ RUPP។",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Chevening – Cambodia",
+   "name_km": "Chevening – អាហារូបករណ៍រដ្ឋាភិបាលអង់គ្លេស សម្រាប់កម្ពុជា",
+   "url": "https://www.chevening.org/scholarship/cambodia/",
+   "what": "Official country page; applications open August to early October and require two years' work experience.",
+   "what_km": "ទំព័រផ្លូវការ Chevening ដាក់ពាក្យខែសីហាដល់តុលា ត្រូវមានបទពិសោធន៍ការងារពីរឆ្នាំ។",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "EU Delegation to Cambodia – Travel & Study (Erasmus+)",
+   "name_km": "គណៈប្រតិភូសហភាពអឺរ៉ុប – Erasmus+ និងការសិក្សានៅអឺរ៉ុប",
+   "url": "https://www.eeas.europa.eu/cambodia/travel-study_en",
+   "what": "EU Delegation page on Erasmus+ opportunities; it also runs the annual European Scholarship Fair in Phnom Penh.",
+   "what_km": "ព័ត៌មានអាហារូបករណ៍ Erasmus+ និងពិព័រណ៍អាហារូបករណ៍អឺរ៉ុបប្រចាំឆ្នាំនៅភ្នំពេញ។",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Stipendium Hungaricum – Cambodia",
+   "name_km": "Stipendium Hungaricum – អាហារូបករណ៍រដ្ឋាភិបាលហុងគ្រី សម្រាប់កម្ពុជា",
+   "url": "https://stipendiumhungaricum.hu/country/cambodia/",
+   "what": "Hungarian programme page for Cambodia; apply online by 15 January, MoEYS publishes the call and nominates.",
+   "what_km": "ព័ត៌មានអាហារូបករណ៍ហុងគ្រី ដាក់ពាក្យអនឡាញមុនថ្ងៃ ១៥ មករា ហើយក្រសួងអប់រំជាអ្នកតែងតាំង។",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "ASEAN Scholarships for Cambodia – Singapore MOE",
+   "name_km": "ក្រសួងអប់រំសិង្ហបុរី – អាហារូបករណ៍ ASEAN សម្រាប់កម្ពុជា",
+   "url": "https://www.moe.gov.sg/financial-matters/awards-scholarships/asean-scholarships/cambodia",
+   "what": "Singapore secondary/pre-university scholarship; applications open April to May with tests and interviews in Phnom Penh.",
+   "what_km": "អាហារូបករណ៍មធ្យមសិក្សានៅសិង្ហបុរី ដាក់ពាក្យខែមេសាដល់ឧសភា ប្រឡង និងសម្ភាសនៅភ្នំពេញ។",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "UWC Cambodia national committee",
+   "name_km": "UWC កម្ពុជា – គណៈកម្មាធិការជាតិជ្រើសរើស",
+   "url": "https://cambodia.uwc.org/",
+   "what": "Selects grade 11-12 students for two-year UWC IB scholarships; deadline 15 November, multi-stage selection.",
+   "what_km": "អាហារូបករណ៍ IB ពីរឆ្នាំសម្រាប់សិស្សថ្នាក់ទី ១១-១២ ដាក់ពាក្យមុនថ្ងៃ ១៥ វិច្ឆិកា។",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "New Zealand Scholarships – Cambodia Facebook",
+   "name_km": "អាហារូបករណ៍នូវែលសេឡង់ (Manaaki) – ទំព័រ Facebook",
+   "url": "https://www.facebook.com/NZScholarships/",
+   "what": "Facebook page used for Manaaki New Zealand Scholarship calls in Cambodia.",
+   "what_km": "ការប្រកាសអាហារូបករណ៍ Manaaki របស់រដ្ឋាភិបាលនូវែលសេឡង់សម្រាប់កម្ពុជា។",
+   "language": "English",
+   "official": true,
+   "channel": "facebook"
+  },
+  {
+   "name": "RUPP scholarship announcements",
+   "name_km": "សាកលវិទ្យាល័យភូមិន្ទភ្នំពេញ (RUPP) – សេចក្តីជូនដំណឹងអាហារូបករណ៍",
+   "url": "https://www.rupp.edu.kh/scholarship/",
+   "what": "Running list of scholarship and exchange announcements posted by RUPP.",
+   "what_km": "បញ្ជីអាហារូបករណ៍ និងកម្មវិធីផ្លាស់ប្តូរនិស្សិត ដែល RUPP ប្រកាស។",
+   "language": "English/Khmer",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Cambodia Academy of Digital Technology (CADT) Telegram",
+   "name_km": "បណ្ឌិត្យសភាបច្ចេកវិទ្យាឌីជីថលកម្ពុជា (CADT) – ឆានែល Telegram",
+   "url": "https://t.me/cadt_official",
+   "what": "Official CADT channel posting digital-technology scholarships such as MoEYS digital scholarships and China-ASEAN Digital Academy.",
+   "what_km": "អាហារូបករណ៍ផ្នែកបច្ចេកវិទ្យាឌីជីថល ដូចជាអាហារូបករណ៍ឌីជីថលក្រសួង និង China-ASEAN Digital Academy។",
+   "language": "Khmer/English",
+   "official": true,
+   "channel": "telegram"
+  },
+  {
+   "name": "Scholarship for Cambodia (Facebook)",
+   "name_km": "Scholarship for Cambodia – ទំព័រ Facebook សហគមន៍",
+   "url": "https://www.facebook.com/ScholarshipCambodia/",
+   "what": "Largest community scholarship page (~167K followers) reposting embassy, MoEYS, university and NGO scholarships with Khmer summaries.",
+   "what_km": "ទំព័រសហគមន៍ធំបំផុត ចែករំលែកអាហារូបករណ៍ពីស្ថានទូត ក្រសួង និងសាកលវិទ្យាល័យ ជាមួយសង្ខេបខ្មែរ។",
+   "language": "Khmer/English",
+   "official": false,
+   "channel": "facebook"
+  },
+  {
+   "name": "WEduShare",
+   "name_km": "WEduShare – វេទិកាឱកាសសិក្សាកម្ពុជា",
+   "url": "https://www.wedushare.com",
+   "what": "Cambodia's largest opportunity platform: scholarship listings with deadlines, how-to articles and Khmer explainers.",
+   "what_km": "បញ្ជីអាហារូបករណ៍ជាមួយថ្ងៃផុតកំណត់ និងអត្ថបទណែនាំជាភាសាខ្មែរ។",
+   "language": "English/Khmer",
+   "official": false,
+   "channel": "website"
+  },
+  {
+   "name": "Ahladang – អាឡាដាំង (Facebook)",
+   "name_km": "អាឡាដាំង (Ahladang) – ទំព័រ Facebook អប់រំ",
+   "url": "https://www.facebook.com/ahladangkh",
+   "what": "Education page (~147K likes) sharing scholarship information, free mentoring for rural students and application tips.",
+   "what_km": "ព័ត៌មានអាហារូបករណ៍ ការណែនាំឥតគិតថ្លៃសម្រាប់សិស្សជនបទ និងគន្លឹះដាក់ពាក្យ។",
+   "language": "Khmer",
+   "official": false,
+   "channel": "facebook"
+  },
+  {
+   "name": "Study Abroad Center មជ្ឈមណ្ឌលអាហារូបករណ៍សិក្សាក្រៅប្រទេស",
+   "name_km": "មជ្ឈមណ្ឌលអាហារូបករណ៍សិក្សាក្រៅប្រទេស – ទំព័រ Facebook",
+   "url": "https://www.facebook.com/studyabroadcenterforcambodia/",
+   "what": "Khmer-language page (~146K likes) reposting scholarships with tips; linked to a study-abroad consultancy.",
+   "what_km": "អាហារូបករណ៍ចែករំលែកឡើងវិញជាភាសាខ្មែរ ជាមួយគន្លឹះ ពីក្រុមហ៊ុនប្រឹក្សាសិក្សាក្រៅប្រទេស។",
+   "language": "Khmer",
+   "official": false,
+   "channel": "facebook"
+  },
+  {
+   "name": "Federation of Cambodian Students Abroad – CamStudent (Telegram)",
+   "name_km": "សហព័ន្ធនិស្សិតកម្ពុជានៅក្រៅប្រទេស (CamStudent) – ឆានែល Telegram",
+   "url": "https://t.me/camstudentcambodia",
+   "what": "Federation of Cambodian student associations abroad sharing scholarship calls and first-hand advice from students overseas.",
+   "what_km": "ការប្រកាសអាហារូបករណ៍ និងដំបូន្មានផ្ទាល់ពីនិស្សិតខ្មែរដែលកំពុងសិក្សានៅក្រៅប្រទេស។",
+   "language": "Khmer/English",
+   "official": false,
+   "channel": "telegram"
+  }
+ ]
+}
