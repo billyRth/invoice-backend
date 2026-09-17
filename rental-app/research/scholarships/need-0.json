@@ -1,0 +1,597 @@
+{
+ "entries": [
+  {
+   "name": "Singapore Cooperation Programme (SCP) Training Courses",
+   "provider": "Ministry of Foreign Affairs, Singapore",
+   "host_country": "Singapore",
+   "levels": [
+    "short"
+   ],
+   "fields": "Short courses for officials in public administration, economic development, urban planning, education, health, ICT, aviation and more",
+   "funding": "full",
+   "covers": [
+    "course fees",
+    "round-trip airfare",
+    "accommodation",
+    "living allowance"
+   ],
+   "eligibility": "Government officials of developing partner countries (Cambodia is a long-standing partner) nominated by their agency; relevant job role; working English",
+   "cambodia_note": "Cambodian officials are nominated through their ministries and the Cambodia-Singapore Cooperation Centre (CSCC) in Phnom Penh; the Singapore Embassy in Phnom Penh coordinates; over 17,700 Cambodian officials have trained under SCP.",
+   "deadline_note": "Rolling; each course on the SCP calendar has its own nomination deadline",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English",
+   "url": "https://www.mfa.gov.sg/Overseas-Mission/Phnompenh/Technical-Cooperation"
+  },
+  {
+   "name": "ICCR Scholarships (General Scholarship Scheme and Mekong-Ganga Cooperation Scholarship Scheme)",
+   "provider": "Indian Council for Cultural Relations (ICCR), Ministry of External Affairs, Government of India",
+   "host_country": "India",
+   "levels": [
+    "bachelor",
+    "master",
+    "phd"
+   ],
+   "fields": "Most fields except medicine/dentistry (engineering, IT, humanities, social sciences, business, agriculture, Buddhist studies, forensic science, arts, yoga)",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "monthly stipend (approx. INR 18,000 UG / 20,000 PG / 22,000 PhD)",
+    "house rent/hostel allowance",
+    "contingent and book grant",
+    "medical cover",
+    "return economy airfare"
+   ],
+   "eligibility": "Cambodian citizens aged 18–30 for undergraduate/postgraduate under the general scheme (up to 40 under the Mekong-Ganga scheme, higher for PhD); completed secondary school or bachelor's with good marks; English proficiency; medical fitness",
+   "cambodia_note": "Apply online on the ICCR A2A portal selecting the Embassy of India, Phnom Penh; the embassy Education Wing (edu.phnompenh@mea.gov.in, +855 23 210 912) screens candidates and administers an English test; Cambodia also has dedicated Mekong-Ganga Cooperation places; 41 Cambodians were selected for 2026–27.",
+   "deadline_note": "Opens around February and closes mid-April each year (2026–27: 15 April 2026); classes begin July–August",
+   "open_month": 2,
+   "close_month": 4,
+   "next_deadline": "",
+   "language_req": "English proficiency (embassy-administered test; some institutions ask for TOEFL/IELTS)",
+   "url": "https://a2ascholarships.iccr.gov.in/"
+  },
+  {
+   "name": "Indian Technical and Economic Cooperation (ITEC) Programme",
+   "provider": "Ministry of External Affairs, Government of India",
+   "host_country": "India",
+   "levels": [
+    "short"
+   ],
+   "fields": "About 400 short professional courses (IT, management, public administration, finance, agriculture, renewable energy, English, defence etc.) at 100+ Indian institutes",
+   "funding": "full",
+   "covers": [
+    "round-trip airfare",
+    "course fees",
+    "accommodation",
+    "living allowance",
+    "book allowance",
+    "medical cover"
+   ],
+   "eligibility": "Working professionals and government officials of ITEC partner countries (Cambodia included), aged 25–45, at least 5 years' work experience, working knowledge of English, nominated/endorsed by employer",
+   "cambodia_note": "Apply online at itecgoi.in choosing the Embassy of India, Phnom Penh; the embassy vets applications and forwards them to MEA; the embassy holds ITEC briefings for Cambodian officials.",
+   "deadline_note": "Year-round; apply at least about 3 months before the course starts (course calendar runs April–March)",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "working knowledge of English",
+   "url": "https://www.itecgoi.in/index"
+  },
+  {
+   "name": "Government of Brunei Darussalam Scholarship to Foreign Students (BDGS)",
+   "provider": "Ministry of Foreign Affairs, Brunei Darussalam",
+   "host_country": "Brunei",
+   "levels": [
+    "vocational",
+    "bachelor",
+    "master"
+   ],
+   "fields": "Diploma, undergraduate and master's programmes at UBD, UNISSA, UTB, KUPU SB and Politeknik Brunei",
+   "funding": "full",
+   "covers": [
+    "tuition and compulsory fees",
+    "monthly personal allowance BND 500",
+    "monthly meal allowance BND 150",
+    "annual book allowance BND 600",
+    "accommodation at the institution's residential college",
+    "one return economy air ticket and baggage allowance",
+    "medical care at government hospitals"
+   ],
+   "eligibility": "Citizens of ASEAN, Commonwealth, OIC and other countries (not Brunei permanent residents); studying in Brunei for the first time; not above 25 for diploma/undergraduate and 35 for master's on 1 July of the start year; meets institution's entry requirements; English proficiency (IELTS 6.0/TOEFL 550 for English-medium)",
+   "cambodia_note": "Cambodia is eligible as an ASEAN member; apply online on the MFA Brunei BDGS portal within the window; awardees are confirmed through the Brunei Embassy in Phnom Penh/Cambodian authorities.",
+   "deadline_note": "Opens around December–January and closes mid-February (2026/27: 15 February 2026); academic year starts July/August",
+   "open_month": 12,
+   "close_month": 2,
+   "next_deadline": "",
+   "language_req": "IELTS 6.0 / TOEFL 550 or equivalent for English-medium programmes",
+   "url": "https://www.mfa.gov.bn/Pages/online-bdgs.aspx"
+  },
+  {
+   "name": "Malaysian Technical Cooperation Programme (MTCP) Scholarship",
+   "provider": "Ministry of Foreign Affairs, Malaysia",
+   "host_country": "Malaysia",
+   "levels": [
+    "master"
+   ],
+   "fields": "Most fields at Malaysian public universities, except medicine, nursing and clinical pharmacy",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "monthly allowance RM 3,500",
+    "return airfare",
+    "medical insurance"
+   ],
+   "eligibility": "Citizens of MTCP recipient countries (Cambodia included); not more than 45 at application; Second Class Upper or minimum CGPA 3.0–3.5 at bachelor level (per current guidelines); IELTS 6.0 / TOEFL iBT 60 or English-medium degree; not concurrently on another scholarship; full-time master's at an approved Malaysian university",
+   "cambodia_note": "Apply online on the MTCP scholarship portal; no embassy nomination required, though the Malaysian Embassy in Phnom Penh may verify documents.",
+   "deadline_note": "Opens around April and closes in June (2026: 12 June 2026) for the September/October intake",
+   "open_month": 4,
+   "close_month": 6,
+   "next_deadline": "",
+   "language_req": "IELTS 6.0 or TOEFL iBT 60 (or English-medium prior degree)",
+   "url": "https://mtcp.kln.gov.my/scholarship"
+  },
+  {
+   "name": "Malaysia International Scholarship (MIS)",
+   "provider": "Ministry of Higher Education, Malaysia",
+   "host_country": "Malaysia",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "Priority areas: science and engineering, agriculture and fisheries, economics and Islamic finance, ICT, biotechnology, biosecurity and food safety, infrastructure and utility, environmental studies, health sciences (not medicine, nursing, pharmacy)",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "monthly living allowance",
+    "round-trip airfare (per guidelines)"
+   ],
+   "eligibility": "International students (Cambodians eligible); not above 40 for master's / 45 for PhD; CGPA 3.5 or equivalent; IELTS 6.5 or TOEFL iBT 92 (or equivalent); admission offer from a Malaysian university",
+   "cambodia_note": "Open to all nationalities including Cambodian; apply online on the MOHE biasiswa portal; no embassy step.",
+   "deadline_note": "Opens early March and closes early April (2026/27: 4 March–3 April 2026); shortlisted applicants interviewed afterwards",
+   "open_month": 3,
+   "close_month": 4,
+   "next_deadline": "",
+   "language_req": "IELTS 6.5 / TOEFL iBT 92 or equivalent",
+   "url": "https://biasiswa.mohe.gov.my/INTER/index.php"
+  },
+  {
+   "name": "KNB Scholarship (Kemitraan Negara Berkembang / Developing Countries Partnership)",
+   "provider": "Ministry of Higher Education, Science and Technology (Kemdiktisaintek), Republic of Indonesia",
+   "host_country": "Indonesia",
+   "levels": [
+    "bachelor",
+    "master",
+    "phd"
+   ],
+   "fields": "any of about 1,170 study programmes at 47 Indonesian universities",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "monthly living allowance",
+    "round-trip airfare",
+    "health insurance",
+    "1-year Indonesian language course",
+    "settlement allowance",
+    "research/thesis and book allowances"
+   ],
+   "eligibility": "Citizens of developing countries with diplomatic relations with Indonesia (Cambodia eligible); maximum age 21 for bachelor's, 35 for master's, 40 for doctoral; required prior qualification; IELTS 5.5 / TOEFL iBT 53 (bachelor) or IELTS 6.0 / TOEFL iBT 61–71 (master/PhD) unless English-medium degree; recommendation letter from the Indonesian Embassy",
+   "cambodia_note": "Obtain a recommendation letter from the Indonesian Embassy in Phnom Penh (submit passport, certificates, transcripts and university invitation letter), then apply online on the KNB portal.",
+   "deadline_note": "Opens early February and closes end of March (2026: 2 February–31 March 2026); results mid-June; departure August",
+   "open_month": 2,
+   "close_month": 3,
+   "next_deadline": "",
+   "language_req": "IELTS 5.5 (bachelor) or 6.0 (master/PhD) / TOEFL equivalents; Indonesian language year provided",
+   "url": "https://knb.kemdiktisaintek.go.id/"
+  },
+  {
+   "name": "Darmasiswa Indonesian Scholarship",
+   "provider": "Ministry of Primary and Secondary Education, Republic of Indonesia (with the Ministry of Foreign Affairs)",
+   "host_country": "Indonesia",
+   "levels": [
+    "short"
+   ],
+   "fields": "One-year non-degree study of Indonesian language, arts and culture at about 54 universities",
+   "funding": "partial",
+   "covers": [
+    "tuition",
+    "monthly allowance IDR 4,700,000",
+    "one-off settlement allowance IDR 4,700,000",
+    "book allowance IDR 2,000,000",
+    "orientation accommodation in Jakarta",
+    "basic medical cover (no international airfare)"
+   ],
+   "eligibility": "Foreign nationals from countries with diplomatic relations with Indonesia (Cambodia included); aged about 18–32 (window set each cycle); completed secondary education; able to communicate in English; good health; not a Darmasiswa/KNB alumnus or currently studying/working in Indonesia",
+   "cambodia_note": "Cambodians apply online on the Darmasiswa portal; the Indonesian Embassy in Phnom Penh interviews and endorses shortlisted applicants.",
+   "deadline_note": "Registration usually in the first half of the year (2026/27: 15 May–15 June 2026); programme starts late August/September",
+   "open_month": 5,
+   "close_month": 6,
+   "next_deadline": "",
+   "language_req": "basic English; courses taught in Indonesian",
+   "url": "https://apply.darmasiswa.kemendikdasmen.go.id/"
+  },
+  {
+   "name": "Hong Kong PhD Fellowship Scheme (HKPFS)",
+   "provider": "Research Grants Council (RGC), Hong Kong SAR Government",
+   "host_country": "Hong Kong",
+   "levels": [
+    "phd"
+   ],
+   "fields": "any (full-time PhD at the eight UGC-funded universities)",
+   "funding": "full",
+   "covers": [
+    "annual stipend HK$344,400",
+    "conference and research travel allowance HK$14,400 per year",
+    "support for up to 3 years (universities usually add tuition waivers/extra support)"
+   ],
+   "eligibility": "New applicants to full-time PhD programmes at UGC-funded Hong Kong universities, any nationality; outstanding academic performance, research potential, communication and leadership",
+   "cambodia_note": "No country quota; Cambodians submit an initial application on the RGC HKPFS online system and full applications to up to two chosen universities by their own deadlines.",
+   "deadline_note": "Opens 1 September; initial application closes 1 December (12:00 noon HKT) each year for entry the following September (400 fellowships for 2027/28)",
+   "open_month": 9,
+   "close_month": 12,
+   "next_deadline": "2026-12-01",
+   "language_req": "English (IELTS/TOEFL per university)",
+   "url": "https://www.ugc.edu.hk/eng/rgc/funding_opport/hkpfs/"
+  },
+  {
+   "name": "Macao Foundation Belt and Road Scholarship",
+   "provider": "Macao Foundation (Macao SAR Government)",
+   "host_country": "Macao",
+   "levels": [
+    "bachelor",
+    "master",
+    "phd"
+   ],
+   "fields": "any full-time programme at Macao higher-education institutions (University of Macau, MUST, Macao Polytechnic University, City University of Macau etc.)",
+   "funding": "varies",
+   "covers": [
+    "annual scholarship of MOP 60,000–80,000 towards tuition and living costs"
+   ],
+   "eligibility": "Students from Bangladesh, Brazil, Cambodia, Hungary, Indonesia, Malaysia, Mongolia, Philippines, Portugal, Thailand or Vietnam, recommended by their home ministry of education or a PRC diplomatic post, and accepted and recommended by a Macao higher-education institution; about 20 places per year",
+   "cambodia_note": "Cambodia is named; obtain a recommendation from Cambodia's Ministry of Education, Youth and Sport (or via the Chinese Embassy in Phnom Penh) and apply through the Macao university's international office.",
+   "deadline_note": "Through the universities' admission cycles, generally spring for August entry",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English or Chinese per programme",
+   "url": "https://es.dsedj.gov.mo/scholarships/MF_E.html"
+  },
+  {
+   "name": "Kazakhstan Government Scholarship for Foreign Citizens",
+   "provider": "Ministry of Science and Higher Education of the Republic of Kazakhstan, administered by the Center for International Programs",
+   "host_country": "Kazakhstan",
+   "levels": [
+    "bachelor",
+    "master",
+    "phd"
+   ],
+   "fields": "any at 27 participating Kazakh universities (550 grants: 490 bachelor, 50 master, 10 PhD)",
+   "funding": "partial",
+   "covers": [
+    "tuition",
+    "monthly stipend (no airfare)"
+   ],
+   "eligibility": "Foreign citizens of any country (Cambodians eligible), including ethnic Kazakhs without Kazakh citizenship; completed secondary/bachelor's/master's education; language of instruction Kazakh, Russian or English per programme",
+   "cambodia_note": "No embassy step; apply online at studyin.kz/admission during the annual window.",
+   "deadline_note": "Online window roughly late March to 31 May (2026: closed 31 May 2026); results in summer for September entry",
+   "open_month": 3,
+   "close_month": 5,
+   "next_deadline": "",
+   "language_req": "Kazakh, Russian or English depending on programme",
+   "url": "https://bolashak.gov.kz/en/allnews/list-scholarship-recipients-20252026-academic-year-studies-kazakhstan-under-scholarship-program-foreign-citizens-has-been-approved"
+  },
+  {
+   "name": "SEARCA Graduate Scholarship (Master's and PhD)",
+   "provider": "SEAMEO Southeast Asian Regional Center for Graduate Study and Research in Agriculture (SEARCA), hosted by the Philippines",
+   "host_country": "Various (Philippines, Thailand, Malaysia, Indonesia partner universities)",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "Agriculture and related sciences (agri-food systems, rural development, natural resources, agricultural economics)",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "monthly stipend",
+    "health insurance",
+    "travel",
+    "thesis/research support",
+    "book allowance"
+   ],
+   "eligibility": "Nationals of SEAMEO member countries (Cambodia included); typically under 35 (MS) / under 40 (PhD); employed by a university, government agency or research institution in the home country; strong academic record; English proficiency",
+   "cambodia_note": "Cambodians apply online through SEARCA's iSCHO portal with endorsement from their employer/ministry (e.g. Ministry of Agriculture or MoEYS); no embassy step.",
+   "deadline_note": "Call opens around June–July with deadline 30 September for the following academic year (AY2026–27 closed 30 September 2025)",
+   "open_month": 6,
+   "close_month": 9,
+   "next_deadline": "",
+   "language_req": "English (TOEFL/IELTS per host university)",
+   "url": "https://www.searca.org/scholarships"
+  },
+  {
+   "name": "JDS – Project for Human Resource Development Scholarship (Cambodia)",
+   "provider": "Government of Japan (JICA grant aid), implemented by JICE",
+   "host_country": "Japan",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "Development-related English-taught programmes (public policy, economics, law, engineering, agriculture, education, ICT, health, environment)",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "monthly allowance",
+    "round-trip airfare",
+    "arrival allowance",
+    "insurance"
+   ],
+   "eligibility": "Cambodian nationals aged about 22–39 (master's), university graduates working in the Cambodian government or designated organizations with around 2+ years' experience; doctoral track for officials/JDS alumni (older age cap); English-taught study",
+   "cambodia_note": "Cambodia-specific programme managed by the JICE JDS Project Office in Phnom Penh; apply via the JDS Cambodia page, with document screening, English test and interviews; about 20–25 places a year.",
+   "deadline_note": "Call opens around September–October with deadline in late November (2026 intake: 28 November 2025, 3pm); results around March; departure August/September",
+   "open_month": 9,
+   "close_month": 11,
+   "next_deadline": "",
+   "language_req": "English (TOEFL/IELTS per university, typically IELTS 5.5–6.0)",
+   "url": "https://jds-scholarship.org/country/cambodia/index.html"
+  },
+  {
+   "name": "KOICA Scholarship Program (Master's and Doctoral)",
+   "provider": "Korea International Cooperation Agency (KOICA), Government of the Republic of Korea",
+   "host_country": "South Korea",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "Development-related programmes (public policy, economic development, ICT, health, engineering, agriculture, education) at partner Korean universities",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "monthly allowance",
+    "round-trip airfare",
+    "settlement allowance",
+    "accommodation",
+    "medical insurance"
+   ],
+   "eligibility": "Government officials and public-sector employees of KOICA partner countries (Cambodia included), usually under 40 (master's) / 45 (doctoral), bachelor's degree, nominated by their ministry; English proficiency; not previously KOICA degree scholars",
+   "cambodia_note": "Apply through the KOICA Cambodia Office in Phnom Penh with nomination from the employing ministry/Cambodian government; programme-specific information sheets are issued with the annual guideline.",
+   "deadline_note": "Guideline published around June; applications close June–July (2027 programme: 29 June 2026, 4pm); study begins the following August/September",
+   "open_month": 5,
+   "close_month": 7,
+   "next_deadline": "",
+   "language_req": "English (TOEFL/IELTS may be required by the host university)",
+   "url": "https://www.koica.go.kr/sites/ciat/index.do"
+  },
+  {
+   "name": "Australia Awards Scholarships (Cambodia)",
+   "provider": "Australian Government, Department of Foreign Affairs and Trade (DFAT)",
+   "host_country": "Australia",
+   "levels": [
+    "master"
+   ],
+   "fields": "All fields relevant to Cambodia's development (climate-related study strongly encouraged); general management degrees such as MBA are not funded",
+   "funding": "full",
+   "covers": [
+    "full tuition fees",
+    "return air travel",
+    "establishment allowance on arrival",
+    "contribution to living expenses (fortnightly stipend)",
+    "Overseas Student Health Cover",
+    "introductory academic program",
+    "pre-departure English language training in Cambodia",
+    "fieldwork allowance and academic support"
+   ],
+   "eligibility": "Cambodian citizen resident in Cambodia for the 24 months before the closing date; bachelor degree; at least 24 months of relevant full-time work experience at closing date; IELTS 6.5 overall with no band below 6.0 (or equivalent) at application; not an Australian citizen/permanent resident; women, people with disability and applicants from provinces encouraged",
+   "cambodia_note": "Cambodia is a priority country with its own Australia Awards Cambodia office in Phnom Penh. Apply online through DFAT's OASIS portal; the 2027 intake also allocated Mekong-Australia Partnership (AA-MAP) places to Cambodians under the same application.",
+   "deadline_note": "Opens 1 February and closes 30 April (14:00 AEST) each year; the 2027 intake ran 1 February–30 April 2026, and the 2028 intake is expected to open February 2027",
+   "open_month": 2,
+   "close_month": 4,
+   "next_deadline": "",
+   "language_req": "IELTS 6.5 overall, no band below 6.0 (or equivalent TOEFL iBT/PTE) at time of application",
+   "url": "https://www.australiaawardscambodia.org/scholarships/"
+  },
+  {
+   "name": "Australia Awards Mekong-Australia Partnership Scholarships (AA-MAP)",
+   "provider": "Australian Government DFAT – Mekong-Australia Partnership",
+   "host_country": "Australia",
+   "levels": [
+    "master"
+   ],
+   "fields": "Water security, climate action, gender equality/disability equity and social inclusion (GEDSI), combatting transnational crime, economic resilience and subregional integration",
+   "funding": "full",
+   "covers": [
+    "full tuition fees",
+    "return air travel",
+    "establishment allowance",
+    "contribution to living expenses",
+    "Overseas Student Health Cover",
+    "introductory academic program",
+    "Mekong Leaders Network enrichment program"
+   ],
+   "eligibility": "Citizens of Cambodia, Laos, Myanmar, Thailand or Vietnam meeting the standard Australia Awards criteria (bachelor degree, minimum work experience, IELTS 6.5 no band below 6.0, residency in home country); Master's by coursework or research in the MAP thematic areas",
+   "cambodia_note": "30 AA-MAP scholarships across the Mekong subregion with 5 allocated to Cambodian citizens; Cambodians apply through the same OASIS application and Australia Awards Cambodia process as the main Australia Awards intake.",
+   "deadline_note": "Same window as Australia Awards: opens 1 February and closes 30 April each year (2027 intake closed 30 April 2026); 2028 intake expected February–April 2027",
+   "open_month": 2,
+   "close_month": 4,
+   "next_deadline": "",
+   "language_req": "IELTS 6.5 overall, no band below 6.0 (or equivalent)",
+   "url": "https://australiaawardsmap.org/"
+  },
+  {
+   "name": "Manaaki New Zealand Scholarships",
+   "provider": "New Zealand Government – Ministry of Foreign Affairs and Trade (New Zealand Aid Programme)",
+   "host_country": "New Zealand",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "Postgraduate study in subjects that contribute to Cambodia's development (e.g., agriculture, climate and renewable energy, disaster risk management, public sector management, education, health)",
+   "funding": "full",
+   "covers": [
+    "full tuition fees",
+    "weekly living allowance",
+    "establishment allowance",
+    "medical and travel insurance",
+    "return airfares",
+    "home leave/reunion travel for long programmes",
+    "research and thesis costs",
+    "up to one year of English language training in Cambodia for preferred candidates"
+   ],
+   "eligibility": "Cambodian citizen aged 18+, resident in Cambodia for at least 2 years before applying; at least 1 year full-time (or 2 years part-time) work experience; must not hold NZ/Australian citizenship or residence; must return to Cambodia for at least 2 years after study; Cambodians may only study at postgraduate level (Postgraduate Diploma, Master's, PhD)",
+   "cambodia_note": "Cambodia is an eligible Asian country (postgraduate only). Apply online at nzscholarships.govt.nz; the Manaaki New Zealand Scholarships Office in Cambodia is hosted by IDP Education at the ACE Tuol Tom Poung campus, Phnom Penh.",
+   "deadline_note": "One selection round per year, usually opening in February/March and closing in March; the 2026 round (for study from 2027) opened 1 March 2026 and closed 31 March (extended to 10 April) 2026; the next round is expected in February–March 2027",
+   "open_month": 3,
+   "close_month": 3,
+   "next_deadline": "",
+   "language_req": "IELTS 6.5 (no band below 6.0) or equivalent for postgraduate entry; English language training pathway available for Cambodian candidates",
+   "url": "https://www.nzscholarships.govt.nz/"
+  },
+  {
+   "name": "Chevening Scholarships",
+   "provider": "UK Government – Foreign, Commonwealth & Development Office",
+   "host_country": "United Kingdom",
+   "levels": [
+    "master"
+   ],
+   "fields": "Any one-year taught master's degree at a UK university",
+   "funding": "full",
+   "covers": [
+    "full tuition fees",
+    "monthly living stipend",
+    "return economy airfare to the UK",
+    "arrival allowance",
+    "homeward departure allowance",
+    "one visa application",
+    "travel grant to attend Chevening events in the UK",
+    "tuition",
+    "monthly stipend",
+    "flights",
+    "visa",
+    "thesis grant"
+   ],
+   "eligibility": "Cambodian citizen who will return to Cambodia for at least 2 years after the award; completed undergraduate degree enabling entry to a UK postgraduate programme; at least 2 years (2,800 hours) of work experience; apply to three eligible UK master's courses and hold an unconditional offer from one by 8 July 2027; not previously funded by a UK government scholarship",
+   "cambodia_note": "Cambodia has its own Chevening country page and allocation; applications are made through the Chevening online application system and interviews are held with the British Embassy in Phnom Penh.",
+   "deadline_note": "Opens in early August and closes in early October each year; 2027/2028 applications close 6 October 2026 at 11:00 UTC",
+   "open_month": 8,
+   "close_month": 10,
+   "next_deadline": "2026-10-06",
+   "language_req": "No English test required at application; must meet the chosen UK university's English requirement (typically IELTS 6.5) for an unconditional offer",
+   "url": "https://www.chevening.org/scholarship/cambodia/"
+  },
+  {
+   "name": "Fulbright Foreign Student Program (Cambodia)",
+   "provider": "U.S. Department of State – administered by the U.S. Embassy Phnom Penh, Public Diplomacy Section",
+   "host_country": "United States",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "Most academic fields (clinical medicine and programmes requiring patient contact excluded)",
+   "funding": "full",
+   "covers": [
+    "round-trip airfare to the United States",
+    "tuition and university fees",
+    "monthly living stipend",
+    "health and accident benefits",
+    "books and settling-in allowance",
+    "tuition",
+    "monthly stipend",
+    "flights",
+    "health insurance",
+    "pre-academic English/orientation"
+   ],
+   "eligibility": "Cambodian citizen residing in Cambodia at time of application; bachelor's degree (for master's study) or master's degree (for doctoral study) with a strong academic record; minimum TOEFL iBT 88 / TOEFL ITP 570 / IELTS 7.0; relevant work experience preferred; not a U.S. citizen or permanent resident",
+   "cambodia_note": "Cambodians apply directly through the U.S. Embassy Phnom Penh, which runs its own annual competition and online application; the 2027-2028 competition closed on 30 April 2026 (23:59 ET).",
+   "deadline_note": "Announced around February and closes 30 April each year; the 2027-2028 cycle closed 30 April 2026 and the 2028-2029 cycle is expected to open around February 2027",
+   "open_month": 2,
+   "close_month": 4,
+   "next_deadline": "",
+   "language_req": "TOEFL iBT 88 or IELTS 7.0 (or TOEFL ITP 570) minimum",
+   "url": "https://kh.usembassy.gov/fulbright-foreign-student-program/"
+  },
+  {
+   "name": "Hubert H. Humphrey Fellowship Program",
+   "provider": "U.S. Department of State (Fulbright program) – via U.S. Embassy Phnom Penh",
+   "host_country": "United States",
+   "levels": [
+    "short",
+    "research"
+   ],
+   "fields": "Public policy-related fields: sustainable development, democratic institution building, education, public health, journalism, law and human rights, technology policy, etc.",
+   "funding": "full",
+   "covers": [
+    "tuition and university fees",
+    "monthly living allowance",
+    "accident and sickness insurance",
+    "book allowance",
+    "computer subsidy",
+    "round-trip international travel",
+    "professional development allowance",
+    "book and professional development allowance"
+   ],
+   "eligibility": "Young or mid-career professionals with a completed undergraduate degree, at least five years of substantial full-time professional experience, demonstrated leadership and public-service commitment, limited or no prior experience in the United States, and English proficiency (TOEFL required for finalists). Ten-month non-degree program.",
+   "cambodia_note": "Cambodian candidates apply directly to the Public Diplomacy Section of the U.S. Embassy in Phnom Penh, which recruits and nominates Cambodian applicants each year. The 2027-2028 call closed on 19 July 2026 (23:59 Cambodia time); the next call (for 2028-2029) is expected in mid-2027.",
+   "deadline_note": "Announced in the second quarter each year; 2027-2028 cycle closed 19 July 2026. Next call expected around May-July 2027.",
+   "open_month": 5,
+   "close_month": 7,
+   "next_deadline": "",
+   "language_req": "English proficiency required; TOEFL (typically iBT 71+) or IELTS 6.0 for finalists",
+   "url": "https://kh.usembassy.gov/hubert-h-humphrey-fellowship/"
+  },
+  {
+   "name": "Global Undergraduate Exchange Program (Global UGRAD)",
+   "provider": "U.S. Department of State, Bureau of Educational and Cultural Affairs – administered by World Learning",
+   "host_country": "United States",
+   "levels": [
+    "bachelor",
+    "short"
+   ],
+   "fields": "Any field (one semester of non-degree undergraduate study plus community service and professional development)",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "housing and meals",
+    "international round-trip travel",
+    "health insurance",
+    "monthly stipend",
+    "books allowance",
+    "round-trip international travel",
+    "book allowance"
+   ],
+   "eligibility": "Cambodian citizen aged 18+ currently enrolled full-time in an undergraduate degree in Cambodia, having completed at least the first semester and with at least one full academic year remaining after the programme; demonstrated leadership; minimum TOEFL iBT 48 for finalists; not a U.S. citizen/permanent resident",
+   "cambodia_note": "Cambodia is an eligible country; applications are submitted through the World Learning online portal and screened by the U.S. Embassy Phnom Penh Public Affairs Section (PASExchanges@state.gov). The 2026-27 application has closed and the 2027-28 cycle had not yet been announced at time of research; confirm status with the embassy.",
+   "deadline_note": "Historically opens in November/December and closes in January/February for the following academic year; 2027-28 dates not yet published",
+   "open_month": 11,
+   "close_month": 2,
+   "next_deadline": "",
+   "language_req": "TOEFL iBT 48 minimum (finalists); good written and spoken English",
+   "url": "https://kh.usembassy.gov/global-ugrad/"
+  },
+  {
+   "name": "DAAD Development-Related Postgraduate Courses (EPOS)",
+   "provider": "DAAD – German Academic Exchange Service, funded by the German Federal Ministry for Economic Cooperation and Development (BMZ)",
+   "host_country": "Germany",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "Development-related postgraduate courses: economics/business, development cooperation, engineering, mathematics, regional and urban planning, agriculture and forestry, natural and environmental sciences, medicine and public health, social sciences, education, law, media",
+   "funding": "full",
+   "covers": [
+    "monthly payment of EUR 992 (postgraduate) or EUR 1,400 (doctoral)",
+    "health, accident and personal liability insurance",
+    "travel allowance",
+    "tuition-free study or fee coverage at the selected course",
+    "up to 6-month German language course",
+    "study and research allowance",
+    "rent subsidy and family allowances where applicable"
+   ],
+   "eligibility": "Nationals of developing countries on the DAAD list (Cambodia included); bachelor degree (usually four-year) in an appropriate subject normally not older than six years; at least two years of relevant professional experience after the first degree; willingness to return and contribute to home-country development; language proficiency required by the course",
+   "cambodia_note": "Cambodia is on the EPOS eligible country list. There is no embassy nomination: applicants apply directly to the German university course of their choice, which forwards its shortlist to DAAD.",
+   "deadline_note": "Deadlines are set by each course; most fall between August and October 2026 (some until December) for courses starting in 2027/2028 — see the DAAD EPOS deadline list",
+   "open_month": 8,
+   "close_month": 12,
+   "next_deadline": "",
+   "language_req": "English (typically IELTS 6.0 / TOEFL iBT 80+) or German depending on the course",
+   "url": "https://www.daad.de/en/information-services-for-higher-education-institutions/further-information-on-daad-programmes/epos/"
+  }
+ ]
+}

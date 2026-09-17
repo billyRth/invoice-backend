@@ -1,0 +1,549 @@
+{
+ "entries": [
+  {
+   "name": "Cambodia Rural Students Trust (CRST) Scholarship",
+   "provider": "Cambodia Rural Students Trust (local NGO, Siem Reap)",
+   "host_country": "Cambodia",
+   "levels": [
+    "highschool",
+    "bachelor"
+   ],
+   "fields": "any (private high school then university in Siem Reap)",
+   "funding": "full",
+   "covers": [
+    "high school and university tuition",
+    "living allowance",
+    "full health care",
+    "daily English and computer classes",
+    "life skills courses"
+   ],
+   "eligibility": "Bright students from poor rural families in Siem Reap area with passion for education and desire to help others; selected on merit and financial need; up to 20 new students a year",
+   "cambodia_note": "Cambodia-only; candidates go through three stages: written test, interview and home visit; contact CRST in Siem Reap via the website contact page",
+   "deadline_note": "Annual intake with testing before the school year; exact dates announced locally",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none stated",
+   "url": "https://www.cambodiaruralstudentstrust.org/"
+  },
+  {
+   "name": "Ponheary Ly Foundation University & Vocational Training Scholarships",
+   "provider": "Ponheary Ly Foundation (US/Cambodian NGO, Siem Reap)",
+   "host_country": "Cambodia",
+   "levels": [
+    "bachelor",
+    "vocational"
+   ],
+   "fields": "any; about 65% of awards go to STEM (medicine, engineering, IT) plus vocational trades (mechanics, culinary)",
+   "funding": "full",
+   "covers": [
+    "university or vocational school tuition",
+    "living support",
+    "mentoring"
+   ],
+   "eligibility": "High school graduates, primarily from PLF-supported rural schools in Siem Reap province, with strong academic skills (university) or aptitude for vocational training; priority to young women",
+   "cambodia_note": "Cambodia-only; students apply after Grade 12 graduation through PLF staff in Siem Reap; enquiries by email via theplf.org",
+   "deadline_note": "Applications taken after the national Grade 12 exam for the academic year starting late in the year",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "https://www.theplf.org/programs/university-vocational-training-scholarships/"
+  },
+  {
+   "name": "Jay Pritzker Academy Full Academic Scholarship",
+   "provider": "Jay Pritzker Academy (private foundation school, Siem Reap)",
+   "host_country": "Cambodia",
+   "levels": [
+    "highschool"
+   ],
+   "fields": "K-12 international college-preparatory curriculum with AP courses",
+   "funding": "full",
+   "covers": [
+    "full tuition from kindergarten to Grade 12",
+    "meals and health care",
+    "school supplies",
+    "university counselling"
+   ],
+   "eligibility": "Children aged four from rural villages of Puok District, Siem Reap Province; about 60 places a year, all admitted students receive full scholarships",
+   "cambodia_note": "Cambodia-only and limited to Puok District families; recruitment done locally by the school each year",
+   "deadline_note": "Annual intake of four-year-olds before the school year; dates announced locally",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "https://www.jpa.org.kh/our-students"
+  },
+  {
+   "name": "Cambodian Scholarship Foundation (CASF) Girls' Scholarship",
+   "provider": "Cambodian Scholarship Foundation (US non-profit)",
+   "host_country": "Cambodia",
+   "levels": [
+    "highschool",
+    "bachelor"
+   ],
+   "fields": "any",
+   "funding": "full",
+   "covers": [
+    "secondary school support and local educational coordinator",
+    "university tuition",
+    "housing in Phnom Penh",
+    "monthly stipend",
+    "medical care, computer lab and mentoring"
+   ],
+   "eligibility": "Adolescent girls from Kandal and Svay Rieng provinces showing motivation, merit and financial need; university support continues once the student passes the national exam and is accepted to university",
+   "cambodia_note": "Cambodia-only, limited to Kandal and Svay Rieng; students identified through local communities and CASF coordinators rather than an open online form",
+   "deadline_note": "Selection around the start of lower secondary school; no published window",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "http://www.cambodianscholarship.org/ourprograms"
+  },
+  {
+   "name": "Cambodian Village Fund Scholarship Program",
+   "provider": "Cambodian Village Fund (US non-profit)",
+   "host_country": "Cambodia",
+   "levels": [
+    "highschool",
+    "bachelor"
+   ],
+   "fields": "any (universities in Battambang such as National University of Battambang)",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "room and board in CVF scholarship house in Battambang",
+    "uniforms, books, supplies",
+    "English classes",
+    "healthcare"
+   ],
+   "eligibility": "Students in grades 7-12 and high school graduates from very poor families in CVF's partner villages (Battambang area) at risk of dropping out for financial reasons and committed to continuing to college",
+   "cambodia_note": "Cambodia-only; candidates identified by a village screening committee (CVF English teachers, school officials, operations manager), then student and parents submit an application; final selection by CVF board",
+   "deadline_note": "Selected annually before the school year; no public deadline",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "https://cambodianvillagefund.org/scholarships"
+  },
+  {
+   "name": "Lotus Outreach GATE and CATALYST Scholarships for Girls",
+   "provider": "Lotus Outreach International / Lotus Outreach Cambodia",
+   "host_country": "Cambodia",
+   "levels": [
+    "highschool",
+    "bachelor",
+    "vocational"
+   ],
+   "fields": "any",
+   "funding": "full",
+   "covers": [
+    "GATE (grades 7-12): school materials, uniforms, transportation, rice support for family, protective housing for some",
+    "CATALYST (tertiary): tuition, food, residence, utilities, class fees, daily allowance",
+    "leadership and professional development seminars, mentoring"
+   ],
+   "eligibility": "At-risk girls from families in extreme poverty in Phnom Penh, Siem Reap and Banteay Meanchey (GATE); CATALYST university scholarships go to GATE graduates who pass Grade 12",
+   "cambodia_note": "Cambodia-only; girls are identified through Lotus Outreach Cambodia's community partners and schools; CATALYST applications come from GATE graduates",
+   "deadline_note": "Annual selection tied to the school year; no public deadline",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "https://lotusoutreach.org/empowering-through-education-training/catalyst/"
+  },
+  {
+   "name": "JWOC (Journeys Within Our Community) University Scholarship Program",
+   "provider": "Journeys Within Our Community (local NGO, Siem Reap)",
+   "host_country": "Cambodia",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any (universities in Siem Reap)",
+   "funding": "partial",
+   "covers": [
+    "full university tuition",
+    "textbooks",
+    "English, computer, life-skills, career guidance and leadership training"
+   ],
+   "eligibility": "Cambodian high school graduates from Siem Reap or other provinces with demonstrated desire for higher education, willingness to help their community, past academic performance and financial need; scholars give back through volunteering",
+   "cambodia_note": "Cambodia-only; JWOC announces the call through high schools, NGOs and social media; application forms collected at the JWOC office in Siem Reap or downloaded online",
+   "deadline_note": "Annual call usually after the Grade 12 exam results, before the university year starts",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "https://jwoc.info/scholarship-program-new/"
+  },
+  {
+   "name": "Child's Dream University Scholarship Programme - Cambodia (Bachelor level)",
+   "provider": "Child's Dream Foundation (Swiss charity, Chiang Mai)",
+   "host_country": "Cambodia",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any, at Cambodian universities",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "living allowance",
+    "books and materials",
+    "health insurance"
+   ],
+   "eligibility": "Academically strong, financially disadvantaged Cambodian high school graduates who could not otherwise afford tertiary education; typically four-year support",
+   "cambodia_note": "Cambodia-specific programme; application via the Child's Dream 'Apply for Scholarships' page and its Cambodia partner office; enquiries to info@childsdream.org",
+   "deadline_note": "Annual call published on the Child's Dream website, usually before the Cambodian university year",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "https://childsdream.org/projects/university-scholarships-cambodian-students-bachelor-level/"
+  },
+  {
+   "name": "Child's Dream University Scholarships (International Bachelor's, Thailand)",
+   "provider": "Child's Dream Foundation",
+   "host_country": "Thailand",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any, at partner universities in Thailand",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "accommodation and living allowance",
+    "health insurance",
+    "travel"
+   ],
+   "eligibility": "Academically strong, disadvantaged high school graduates from Cambodia, Myanmar, Laos and Thailand with good English, meeting the admission requirements of the partner Thai universities",
+   "cambodia_note": "Cambodia is one of the four eligible countries; apply online via childsdream.org; contact uspib@childsdream.org",
+   "deadline_note": "Application period December to January; the 2025 intake closed 28 February 2025; similar window expected for the 2027 intake",
+   "open_month": 12,
+   "close_month": 2,
+   "next_deadline": "",
+   "language_req": "English (university admission requirement)",
+   "url": "https://childsdream.org/engage/apply-for-scholarships/university-scholarships-international-bachelors/"
+  },
+  {
+   "name": "Cambodian Children's Fund University Scholarships",
+   "provider": "Cambodian Children's Fund (NGO, Phnom Penh)",
+   "host_country": "Cambodia",
+   "levels": [
+    "bachelor",
+    "vocational"
+   ],
+   "fields": "any",
+   "funding": "full",
+   "covers": [
+    "four-year university tuition",
+    "study materials and textbooks",
+    "shared laptops/tablets",
+    "career guidance and job placement",
+    "transportation"
+   ],
+   "eligibility": "Students enrolled in CCF's education programs (Steung Meanchey area, Phnom Penh) who graduate Grade 12 and are accepted to university or vocational training; about 70% of CCF students go on to university",
+   "cambodia_note": "Cambodia-only and limited to CCF students; CCF also nominates top female students to the SHE-CAN US scholarship and Trinity College Melbourne scholarships",
+   "deadline_note": "Internal selection after the Grade 12 national exam each year",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "https://www.cambodianchildrensfund.org/how-we-work/education/university-scholarships"
+  },
+  {
+   "name": "Empowering Youth in Cambodia (EYC) High School and University Scholarship Support",
+   "provider": "Empowering Youth in Cambodia (local NGO, Phnom Penh)",
+   "host_country": "Cambodia",
+   "levels": [
+    "highschool",
+    "bachelor"
+   ],
+   "fields": "any",
+   "funding": "partial",
+   "covers": [
+    "high school and university fees",
+    "English, digital literacy and STEM courses",
+    "leadership development"
+   ],
+   "eligibility": "Young people from low-income families attending EYC's three community centres in Phnom Penh who show strong academic potential",
+   "cambodia_note": "Cambodia-only; students apply through their EYC community centre",
+   "deadline_note": "Selected each academic year; no public deadline",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "https://eycambodia.org/"
+  },
+  {
+   "name": "This Life Cambodia Scholarship and Student Assistance Program",
+   "provider": "This Life Cambodia (local NGO, Siem Reap)",
+   "host_country": "Cambodia",
+   "levels": [
+    "highschool",
+    "bachelor",
+    "vocational"
+   ],
+   "fields": "any",
+   "funding": "partial",
+   "covers": [
+    "secondary school or university scholarship",
+    "bicycle for transport to school",
+    "solar lamp and study materials",
+    "internship opportunities for top scholars"
+   ],
+   "eligibility": "Poorest students in Siem Reap, Banteay Meanchey and Kandal provinces, with a specific scholarship stream for children whose parents are in conflict with the law",
+   "cambodia_note": "Cambodia-only; selection through This Life Cambodia community and school programs",
+   "deadline_note": "Annual selection tied to the school year",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "https://thislife.ngo/"
+  },
+  {
+   "name": "YSEALI Professional Fellows Program",
+   "provider": "U.S. Department of State (Young Southeast Asian Leaders Initiative)",
+   "host_country": "United States",
+   "levels": [
+    "short"
+   ],
+   "fields": "Civic engagement, NGO management, economic empowerment, governance and legislative process, environmental and natural resources management",
+   "funding": "full",
+   "covers": [
+    "international and domestic travel",
+    "housing",
+    "living stipend",
+    "health insurance",
+    "program costs"
+   ],
+   "eligibility": "Emerging leaders aged 25-35 from ASEAN countries (including Cambodia) working in one of the program themes, with professional experience and English proficiency sufficient for a four-week U.S. work placement; five weeks total in the United States.",
+   "cambodia_note": "Cambodia is one of the ten ASEAN countries covered by YSEALI. Applications are submitted online through the program website (www.ysealipfp.org); Cambodia-specific questions go to the U.S. Embassy YSEALI team (YSEALICambodia@state.gov). Check current status, as the related YSEALI Academic Fellows program is paused.",
+   "deadline_note": "Cycles have historically been announced once or twice a year on the program website; no 2026-2027 deadline confirmed.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "Professional English",
+   "url": "https://exchanges.state.gov/non-us/program/yseali-professional-fellows-program"
+  },
+  {
+   "name": "Study of the U.S. Institutes (SUSI) for Secondary Educators",
+   "provider": "U.S. Department of State; recruited by the U.S. Embassy Phnom Penh Public Diplomacy Section",
+   "host_country": "United States",
+   "levels": [
+    "short"
+   ],
+   "fields": "U.S. society, culture, values and institutions for secondary school teachers, administrators, teacher trainers, curriculum developers and ministry of education officials",
+   "funding": "full",
+   "covers": [
+    "round-trip transportation to the United States",
+    "tuition",
+    "living allowances"
+   ],
+   "eligibility": "Mid-career secondary educators, typically aged 30-50, experienced and highly motivated, with English fluency; five-week intensive post-graduate-level institute (Summer 2026 institutes hosted by the University of Montana). U.S. citizens and green-card holders not eligible.",
+   "cambodia_note": "Cambodian educators email the completed SUSI application form to PDExchanges@state.gov (subject 'SUSIs for Secondary Educators – Summer 2026'); the form is downloaded from the U.S. Embassy Cambodia page. The embassy also periodically recruits Cambodian undergraduates for SUSI Student Leaders institutes.",
+   "deadline_note": "Embassy call for the summer institutes is usually published in the preceding autumn/winter; Summer 2026 call posted on the embassy site. Check the page for the next summer's deadline.",
+   "open_month": 10,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English fluency",
+   "url": "https://kh.usembassy.gov/susi-secondary-school-educators-summer/"
+  },
+  {
+   "name": "Fulbright Teaching Excellence and Achievement (TEA) Program",
+   "provider": "U.S. Department of State, implemented by IREX; recruited by the U.S. Embassy Phnom Penh",
+   "host_country": "United States",
+   "levels": [
+    "short"
+   ],
+   "fields": "Secondary-school teaching (English, social studies, mathematics, science, special education)",
+   "funding": "full",
+   "covers": [
+    "international travel",
+    "tuition and program costs",
+    "housing and meals",
+    "accident and sickness insurance",
+    "cultural allowance"
+   ],
+   "eligibility": "Secondary-level teachers with several years of full-time classroom experience, a bachelor's degree or equivalent, and English proficiency; six-week professional development program at a U.S. university with a school practicum.",
+   "cambodia_note": "The U.S. Embassy in Cambodia posts the annual TEA call for Cambodian teachers on its website (2026-2027 program page); applications are submitted online through IREX with embassy nomination.",
+   "deadline_note": "Embassy call for each program year usually published in early-to-mid year; consult the 2026-2027 TEA page for the exact date.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English proficiency (TOEFL or equivalent)",
+   "url": "https://kh.usembassy.gov/2026-2027-fulbright-teaching-excellence-and-achievement-tea-program/"
+  },
+  {
+   "name": "JENESYS Phase III (Japan-ASEAN Network of Exchange for Sustainable Partnership)",
+   "provider": "Ministry of Foreign Affairs of Japan, implemented by Japan International Cooperation Center (JICE)",
+   "host_country": "Japan",
+   "levels": [
+    "short",
+    "bachelor",
+    "master"
+   ],
+   "fields": "Social business and economic/social exchange themes between Japan and ASEAN",
+   "funding": "full",
+   "covers": [
+    "international airfare",
+    "accommodation",
+    "meals",
+    "program transportation",
+    "insurance"
+   ],
+   "eligibility": "University students, graduate students or young professionals from Japan and ASEAN member states, up to 30 years old during the program period; ability to take part in lectures, site visits and group presentations in English. Roughly two weeks in Japan and Thailand.",
+   "cambodia_note": "Cambodia is an ASEAN member and JENESYS batches are regularly organised for Cambodian youth. Recruitment is through JICE's public call and, for other JENESYS batches, via nomination by the Embassy of Japan in Cambodia and Cambodian ministries/universities.",
+   "deadline_note": "JICE call published in October 2025 for the Phase III program; other JENESYS batches are announced throughout the Japanese fiscal year with a few weeks to apply.",
+   "open_month": 10,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English",
+   "url": "https://www.jice.org/exchange/en/info/2025/10/asean-jenesys-phaseasean.html"
+  },
+  {
+   "name": "Ship for Southeast Asian and Japanese Youth Program (SSEAYP)",
+   "provider": "Cabinet Office, Government of Japan, with ASEAN member governments (Cambodia: Ministry of Education, Youth and Sport)",
+   "host_country": "Japan",
+   "levels": [
+    "short"
+   ],
+   "fields": "any (youth leadership, cultural exchange, discussion programs)",
+   "funding": "full",
+   "covers": [
+    "international travel",
+    "accommodation aboard the ship and in Japan",
+    "meals",
+    "program activities"
+   ],
+   "eligibility": "Participating youths aged 18-30 (Cambodia's General Department of Youth has recruited Khmer nationals aged 18-33), with good English, leadership record and ability to join the full multi-week voyage. Cambodia joined SSEAYP in 2000.",
+   "cambodia_note": "Cambodian delegates (around 10 per year) are selected by the General Department of Youth of the Ministry of Education, Youth and Sport, which publishes the recruitment notice. Cambodia will host a port of call for the 50th SSEAYP in 2027 (Preah Sihanouk and Phnom Penh).",
+   "deadline_note": "MoEYS recruitment usually runs a few months before the voyage; 50th program scheduled for early 2027 with the Cambodia port call in January 2027.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English",
+   "url": "https://www8.cao.go.jp/youth/kouryu/en/sseayp/sseayp.html"
+  },
+  {
+   "name": "ASEAN Youth Fellowship (AYF)",
+   "provider": "Singapore International Foundation and National Youth Council Singapore (Singapore-ASEAN Youth Fund)",
+   "host_country": "Singapore",
+   "levels": [
+    "short"
+   ],
+   "fields": "any (regional leadership development for young professionals)",
+   "funding": "full",
+   "covers": [
+    "return airfare",
+    "accommodation",
+    "meals",
+    "program costs"
+   ],
+   "eligibility": "Young professional leaders aged 27-35 who are nationals of an ASEAN member state (including Cambodia), with a record of leadership and impact and working proficiency in English; one-week residential program (2026 edition 13-20 November 2026 in Singapore and Manila).",
+   "cambodia_note": "Cambodian nationals apply directly online via the SIF/NYC application form; Cambodia has fellows in every cohort. AYF 2026 applications closed 31 May 2026.",
+   "deadline_note": "Opens around March-April and closes end of May each year for a November program.",
+   "open_month": 3,
+   "close_month": 5,
+   "next_deadline": "",
+   "language_req": "English",
+   "url": "https://www.sif.org.sg/Our-Work/Youth/ASEAN-Youth-Fellowship"
+  },
+  {
+   "name": "Obama Foundation Leaders Asia-Pacific",
+   "provider": "The Obama Foundation",
+   "host_country": "Various",
+   "levels": [
+    "short"
+   ],
+   "fields": "any (values-based leadership for changemakers in government, civil society and private sector)",
+   "funding": "full",
+   "covers": [
+    "program costs",
+    "travel and accommodation for in-person convenings"
+   ],
+   "eligibility": "Aged 24-45 on 1 September of the program year, at least three years of relevant experience in their issue area, professionally proficient in English, and currently residing in an eligible Asia-Pacific country or territory; eight-month non-residential program combining virtual sessions and in-person gatherings.",
+   "cambodia_note": "Cambodia is explicitly listed among eligible Asia-Pacific countries; Cambodians apply online directly to the Obama Foundation.",
+   "deadline_note": "Applications for the 2026-2027 cohort opened November 2025 and are now closed; the 2027-2028 call is expected to open around November 2026.",
+   "open_month": 11,
+   "close_month": 1,
+   "next_deadline": "",
+   "language_req": "Professional English",
+   "url": "https://www.obama.org/programs/leaders/asia-pacific/"
+  },
+  {
+   "name": "Rotary Peace Fellowship",
+   "provider": "The Rotary Foundation (Rotary International)",
+   "host_country": "Various",
+   "levels": [
+    "master",
+    "short"
+   ],
+   "fields": "Peace, conflict resolution and development studies (master's degree or professional development certificate)",
+   "funding": "full",
+   "covers": [
+    "tuition and fees",
+    "room and board",
+    "round-trip transportation",
+    "internship or field-study expenses",
+    "tuition",
+    "internship / field study expenses"
+   ],
+   "eligibility": "Open to all nationalities. Bachelor's degree, strong academic record, English proficiency; master's track needs about three years of related work experience, certificate track at least five years; at least three years must have passed since the last academic degree; applicants must be endorsed by a Rotary district. Rotarians and their close relatives are ineligible.",
+   "cambodia_note": "Cambodians apply online through My Rotary and must obtain endorsement from a Rotary district (Cambodia's clubs are in District 3350). The 2027-28 application has closed.",
+   "deadline_note": "Opens in February and closes 15 May each year; the 2028-29 application opens February 2027 with deadline 15 May 2027.",
+   "open_month": 2,
+   "close_month": 5,
+   "next_deadline": "2027-05-15",
+   "language_req": "English proficiency (university-specific TOEFL/IELTS)",
+   "url": "https://www.rotary.org/en/our-programs/peace-fellowships"
+  },
+  {
+   "name": "KOICA Fellowship Program (CIAT) - Capacity Improvement and Advancement for Tomorrow",
+   "provider": "Korea International Cooperation Agency (KOICA), Government of Korea",
+   "host_country": "South Korea",
+   "levels": [
+    "short"
+   ],
+   "fields": "Public administration, economic development, climate change, health, agriculture, education, digital/ICT and other development sectors",
+   "funding": "full",
+   "covers": [
+    "international airfare",
+    "accommodation",
+    "daily allowance",
+    "training fees",
+    "insurance"
+   ],
+   "eligibility": "Public-sector officials and professionals from KOICA partner countries nominated by their government, generally with relevant field experience and working English; short-term country-focused and multi-country training courses in Korea (weeks). KOICA also runs 17-month master's scholarships under the same scheme.",
+   "cambodia_note": "Cambodia is a KOICA partner country; candidates are nominated by Cambodian ministries and submitted through the KOICA Cambodia Office in Phnom Penh (koica.go.kr/sites/khm_en). Individual applications must go via the relevant ministry.",
+   "deadline_note": "Courses are announced throughout the year by the KOICA Cambodia Office to line ministries; the master's scholarship track usually closes around July.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English",
+   "url": "https://www.koica.go.kr/koica_en/3441/subview.do"
+  },
+  {
+   "name": "JICA Knowledge Co-Creation Program (KCCP)",
+   "provider": "Japan International Cooperation Agency (JICA), Government of Japan ODA",
+   "host_country": "Japan",
+   "levels": [
+    "short"
+   ],
+   "fields": "Development sectors: tourism, policing, public administration, health, agriculture, infrastructure, environment, education, disaster management and others",
+   "funding": "full",
+   "covers": [
+    "international airfare",
+    "accommodation",
+    "living allowance",
+    "training fees",
+    "insurance"
+   ],
+   "eligibility": "Officials and professionals from Cambodian government agencies or institutions in the target field of each course, usually with a few years of relevant experience, an age limit set per course, and sufficient English; courses last two weeks to a few months in Japan.",
+   "cambodia_note": "Cambodia is named as a target country in 2026 courses (e.g., Tourism Marketing and Promotion, Community Policing). Cambodian participants are nominated by their ministry and submitted through the JICA Cambodia Office; individuals cannot apply directly.",
+   "deadline_note": "Course-by-course deadlines set in each General Information sheet; calls circulate to Cambodian ministries throughout the Japanese fiscal year.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English",
+   "url": "https://www.jica.go.jp/english/activities/schemes/tr_japan/summary/lineup.html"
+  }
+ ]
+}

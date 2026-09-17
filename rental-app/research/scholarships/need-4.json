@@ -1,0 +1,549 @@
+{
+ "entries": [
+  {
+   "name": "Asian Development Bank - Japan Scholarship Program (ADB-JSP)",
+   "provider": "Asian Development Bank, funded by the Government of Japan",
+   "host_country": "Various",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "Economics, management, science and technology and other development-related fields at designated institutions in Japan, Australia, New Zealand, Singapore, Thailand, Hong Kong, India, Pakistan, Philippines, USA (Hawaii)",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "monthly subsistence and housing allowance",
+    "books and instructional materials",
+    "medical insurance",
+    "travel expenses",
+    "research/thesis allowance",
+    "full tuition",
+    "research/thesis preparation allowance (where applicable)"
+   ],
+   "eligibility": "National of an ADB borrowing member country eligible for Japanese ODA (Cambodia qualifies); bachelor's degree with excellent record; at least 2 years full-time professional experience after the degree; under 35 years old; proficient in English; not living/working outside home country; no dual citizenship of a developed country; must return home after study.",
+   "cambodia_note": "Cambodians apply directly to one of the roughly 25 designated institutions (e.g. AIT Thailand, University of Tokyo, Hitotsubashi, Kyoto, Nagoya, Tsukuba, IUJ, Ritsumeikan APU, East-West Center, NUS, Melbourne, ANU, Auckland etc.) and indicate they wish to be considered for ADB-JSP; the institution endorses candidates to ADB. Living in Cambodia at time of application is required.",
+   "deadline_note": "Deadlines set by each designated institution, typically about six months before the academic term (many fall between December and May); no direct application to ADB.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English proficiency required by the host university (typically IELTS 6.5 / TOEFL 80+)",
+   "url": "https://www.adb.org/work-with-us/careers/japan-scholarship-program"
+  },
+  {
+   "name": "Joint Japan/World Bank Graduate Scholarship Program (JJ/WBGSP)",
+   "provider": "World Bank, funded by the Government of Japan",
+   "host_country": "Various",
+   "levels": [
+    "master"
+   ],
+   "fields": "Development-related master's programs at participating universities (preferred programs in the US, Europe, Japan, Australia, Africa and Asia; and partner programs in Japan)",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "monthly living stipend",
+    "round-trip airfare",
+    "health insurance",
+    "travel allowance"
+   ],
+   "eligibility": "National of a World Bank member developing country (Cambodia is eligible); bachelor's degree earned at least 3 years before the application deadline; at least 3 years of paid development-related work experience; currently employed in paid development work; not a dual citizen of a developed country; not a World Bank Group staff member or relative; admitted unconditionally to a participating master's program",
+   "cambodia_note": "Cambodians apply directly online during the two application windows after securing admission to a participating program; Cambodia is on the eligible developing-country list",
+   "deadline_note": "Two windows each year: window 1 opens in January and closes late February; window 2 opens in March and closes about mid-May; partner-program (Japan) applications go through the universities",
+   "open_month": 1,
+   "close_month": 5,
+   "next_deadline": "",
+   "language_req": "English proficiency required by the host university",
+   "url": "https://www.worldbank.org/en/programs/scholarships"
+  },
+  {
+   "name": "Japan-IMF Scholarship Program for Asia (JISPA)",
+   "provider": "International Monetary Fund, funded by the Government of Japan",
+   "host_country": "Japan",
+   "levels": [
+    "master"
+   ],
+   "fields": "Macroeconomics, public finance, economics, public policy and related fields at partner universities (GRIPS, Hitotsubashi, University of Tokyo, International University of Japan)",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "monthly stipend",
+    "flights",
+    "medical insurance",
+    "books",
+    "settling-in allowance"
+   ],
+   "eligibility": "Citizen of an eligible Asian country including Cambodia; government official (central bank, ministry of finance, planning, statistics or similar) with strong potential for a policy-making career; bachelor's degree with strong academic record; under 40 preferred; strong English; must return to government service after study",
+   "cambodia_note": "Cambodia is on the JISPA eligible country list; candidates are typically nominated through their government employer (e.g. National Bank of Cambodia, Ministry of Economy and Finance) and apply online to the IMF for the partnership track",
+   "deadline_note": "Partnership-track applications usually open in October and close in early December each year for study starting the following October",
+   "open_month": 10,
+   "close_month": 12,
+   "next_deadline": "",
+   "language_req": "TOEFL iBT or IELTS as required by partner universities",
+   "url": "https://www.imf.org/en/Capacity-Development/jispa"
+  },
+  {
+   "name": "Obama Foundation Scholars Program",
+   "provider": "Obama Foundation with Columbia University and the University of Chicago",
+   "host_country": "United States",
+   "levels": [
+    "master",
+    "short"
+   ],
+   "fields": "Columbia track: one-year non-degree leadership program at Columbia University; University of Chicago track: scholarship for final-year master's students at Harris (public policy), Crown Family School (social work) or Booth (business)",
+   "funding": "full",
+   "covers": [
+    "tuition or program fees",
+    "living stipend",
+    "housing",
+    "travel",
+    "health insurance",
+    "leadership curriculum"
+   ],
+   "eligibility": "Emerging leaders from any country with several years (typically 3-10) of demonstrated impact in civic or public work; commitment to return home to advance their work; for Chicago track, must have been admitted to and be in the final year of a qualifying UChicago master's program",
+   "cambodia_note": "Cambodians may apply directly online; the Chicago track requires separate admission to a University of Chicago master's program",
+   "deadline_note": "Columbia track usually opens around December and closes in January/February; Chicago track applications close in spring; 2026-27 cohorts have been selected, so next cycle is for 2027-28",
+   "open_month": 12,
+   "close_month": 2,
+   "next_deadline": "",
+   "language_req": "English proficiency (TOEFL/IELTS for non-native speakers)",
+   "url": "https://www.obama.org/programs/scholars/"
+  },
+  {
+   "name": "Maurice R. Greenberg World Fellows Program (Yale World Fellows)",
+   "provider": "Yale University (Jackson School of Global Affairs)",
+   "host_country": "United States",
+   "levels": [
+    "short"
+   ],
+   "fields": "Four-month mid-career global leadership fellowship (non-degree)",
+   "funding": "full",
+   "covers": [
+    "stipend for living expenses",
+    "housing",
+    "travel to and from New Haven",
+    "health insurance"
+   ],
+   "eligibility": "Mid-career professionals (typically 5-20 years of experience, usually aged early 30s to early 40s) with a record of leadership in any sector; fluent in English; citizens of any country outside the US (US citizens eligible only in limited cases); must be available for the full residential period (August to December)",
+   "cambodia_note": "Open to Cambodian leaders; apply directly online to Yale, no nomination needed",
+   "deadline_note": "Applications usually open in September/October and close in early December each year for the following August-December cohort",
+   "open_month": 9,
+   "close_month": 12,
+   "next_deadline": "",
+   "language_req": "Fluent English (no formal test)",
+   "url": "https://worldfellows.yale.edu/"
+  },
+  {
+   "name": "East-West Center Graduate Degree Fellowship",
+   "provider": "East-West Center (US Congress-funded institution, Honolulu)",
+   "host_country": "United States",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "Any master's or doctoral field offered by the University of Hawai'i at Manoa, with emphasis on Asia-Pacific issues",
+   "funding": "partial",
+   "covers": [
+    "housing at the East-West Center",
+    "tuition and fees (partial or full depending on funding)",
+    "health insurance",
+    "monthly stipend",
+    "academic and leadership programming"
+   ],
+   "eligibility": "Citizens of Asia-Pacific countries (including Cambodia) and the US; must apply for and be admitted to a graduate program at the University of Hawai'i at Manoa; strong academic record; commitment to community building and Asia-Pacific engagement",
+   "cambodia_note": "Cambodians are in the Asia-Pacific eligible group; apply online to the East-West Center and separately to the University of Hawai'i",
+   "deadline_note": "Application opens in August and closes 1 December each year for study starting the following August",
+   "open_month": 8,
+   "close_month": 12,
+   "next_deadline": "2026-12-01",
+   "language_req": "TOEFL/IELTS as required by the University of Hawai'i",
+   "url": "https://www.eastwestcenter.org/education/graduate-degree-fellowship"
+  },
+  {
+   "name": "JICA Scholarship Program – SDGs Global Leader Program (Cambodia)",
+   "provider": "Japan International Cooperation Agency (JICA)",
+   "host_country": "Japan",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "Development-related fields at Japanese universities including engineering, ICT, agriculture, health, environment, urban development, economics and public policy",
+   "funding": "full",
+   "covers": [
+    "tuition and entrance fees",
+    "monthly living allowance",
+    "round-trip airfare",
+    "accommodation support",
+    "outfit/arrival allowance",
+    "medical coverage"
+   ],
+   "eligibility": "Cambodian national, usually under 40 (some cycles under 45), bachelor's degree, employed in a Cambodian government agency, public institution, university or private/civil organization relevant to development, with employer endorsement and commitment to return after graduation",
+   "cambodia_note": "Announced and screened by the JICA Cambodia Office in Phnom Penh; candidates are shortlisted by JICA and must separately obtain admission from a partner Japanese university.",
+   "deadline_note": "Call usually issued once a year (recent cycles around July–October) for enrolment in Japan the following autumn or spring; check the JICA Cambodia office announcement for the current cycle.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English (university may require TOEFL/IELTS); Japanese not required for English-taught programs",
+   "url": "https://www.jica.go.jp/english/activities/schemes/tr_japan/jica_kaihatsu/index.html"
+  },
+  {
+   "name": "Ajinomoto Scholarship for ASEAN+ONE",
+   "provider": "The Ajinomoto Foundation / Ajinomoto Co., Inc.",
+   "host_country": "Japan",
+   "levels": [
+    "research",
+    "master"
+   ],
+   "fields": "Food science, nutrition, biosciences, agricultural and life sciences and related fields at designated Japanese universities (University of Tokyo, Kyoto, Nagoya, Ochanomizu, Kagawa Nutrition and others)",
+   "funding": "full",
+   "covers": [
+    "monthly stipend (approx. JPY 150,000 as research student, JPY 180,000 as master's student)",
+    "entrance examination, admission and tuition fees",
+    "one-way airfare to Japan"
+   ],
+   "eligibility": "National of one of the eligible ASEAN countries listed by the foundation (Cambodia has been listed in recent cycles; verify); under 35; bachelor's degree with strong grades; intends to enrol as a research student and then a master's course at a designated university; able to attend interview in home country; not already receiving another scholarship",
+   "cambodia_note": "Application goes to the Ajinomoto Foundation / Ajinomoto Cambodia country contact and to the chosen Japanese university; typically one award per country per year.",
+   "deadline_note": "Applications usually accepted in the first quarter of the year (roughly January–March) for enrolment the following year; confirm the current cycle on the foundation page.",
+   "open_month": 1,
+   "close_month": 3,
+   "next_deadline": "",
+   "language_req": "English (TOEFL/IELTS or equivalent) or Japanese depending on the host laboratory",
+   "url": "https://www.ajinomoto.co.jp/company/en/activity/scholarship/"
+  },
+  {
+   "name": "Rotary Yoneyama Scholarship for Overseas Applicants",
+   "provider": "Rotary Yoneyama Memorial Foundation (Japan)",
+   "host_country": "Japan",
+   "levels": [
+    "bachelor",
+    "master",
+    "phd"
+   ],
+   "fields": "any",
+   "funding": "partial",
+   "covers": [
+    "monthly stipend (approx. JPY 100,000 undergraduate; JPY 140,000 master's/doctoral)",
+    "one-time relocation/arrival support (varies by year)"
+   ],
+   "eligibility": "Non-Japanese national living outside Japan who has been accepted (or is applying) to a degree program at a Japanese university that participates in the overseas-applicant scheme; age limits generally under 45; good academic record; interest in Rotary exchange; cannot hold another major scholarship concurrently",
+   "cambodia_note": "Cambodians apply through the participating Japanese university's international office (the university recommends candidates to the foundation); there is no embassy step in Phnom Penh.",
+   "deadline_note": "Universities collect applications in autumn (around September–November) for April enrolment and in spring for October enrolment; exact dates vary by university.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "Japanese or English as required by the host university",
+   "url": "https://www.rotary-yoneyama.or.jp/english/"
+  },
+  {
+   "name": "Honjo International Scholarship Foundation – Scholarship for Foreign Students in Japan",
+   "provider": "Honjo International Scholarship Foundation",
+   "host_country": "Japan",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "any (STEM, business and social sciences all eligible)",
+   "funding": "partial",
+   "covers": [
+    "monthly stipend of about JPY 150,000–200,000 depending on program length",
+    "foundation events and alumni network"
+   ],
+   "eligibility": "Non-Japanese national planning to enrol full-time in a master's or doctoral program at a Japanese graduate school (or already enrolled); age under about 30 for master's and under 35 for doctoral at enrolment; not receiving another scholarship of comparable value; intends to contribute to home country",
+   "cambodia_note": "Applied for online directly with the foundation from Cambodia or from Japan; no embassy or ministry nomination required.",
+   "deadline_note": "Main application window is typically September to October each year for enrolment the following April; a smaller spring round has existed for October enrolment. Verify current cycle.",
+   "open_month": 9,
+   "close_month": 10,
+   "next_deadline": "",
+   "language_req": "Japanese or English as required by the host graduate school",
+   "url": "https://www.hisf.or.jp/english/sch-f/"
+  },
+  {
+   "name": "Otsuka Toshimi Scholarship",
+   "provider": "Otsuka Toshimi Scholarship Foundation",
+   "host_country": "Japan",
+   "levels": [
+    "bachelor",
+    "master",
+    "phd"
+   ],
+   "fields": "Medicine, pharmacy, nutrition/food science, physical education and business administration at Japanese universities",
+   "funding": "partial",
+   "covers": [
+    "annual scholarship of about JPY 1.4–2.0 million (paid monthly)"
+   ],
+   "eligibility": "Privately financed international student of any nationality already enrolled (or accepted) at a Japanese university or graduate school in an eligible field; good academic record; financial need; not receiving other major scholarships",
+   "cambodia_note": "Cambodian students apply through the international student office of their Japanese university, which forwards the application to the foundation.",
+   "deadline_note": "Applications usually collected by universities between February and mid-April each year for the academic year starting in April.",
+   "open_month": 2,
+   "close_month": 4,
+   "next_deadline": "",
+   "language_req": "Japanese or English as required by the host university",
+   "url": "https://www.otsukafoundation.org/english/"
+  },
+  {
+   "name": "JASSO Monbukagakusho Honors Scholarship for Privately-Financed International Students",
+   "provider": "Japan Student Services Organization (JASSO), Government of Japan",
+   "host_country": "Japan",
+   "levels": [
+    "vocational",
+    "bachelor",
+    "master",
+    "phd"
+   ],
+   "fields": "any",
+   "funding": "partial",
+   "covers": [
+    "monthly stipend (approx. JPY 48,000 for university/graduate students; JPY 30,000–40,000 for Japanese-language and preparatory courses)"
+   ],
+   "eligibility": "Privately financed international student of any nationality enrolled full-time at a Japanese university, graduate school, junior college, college of technology, specialized training college or Japanese-language institution; good academic performance; not receiving another scholarship above a set amount; also a reservation scheme for high scorers in the EJU exam",
+   "cambodia_note": "Cambodians cannot apply directly: the Japanese school nominates enrolled students to JASSO. Candidates sitting the EJU (Examination for Japanese University Admission) can also apply for the reservation program through the exam.",
+   "deadline_note": "Schools collect applications around April–May for the academic year; reservation program applies at EJU registration (June and November sittings).",
+   "open_month": 4,
+   "close_month": 5,
+   "next_deadline": "",
+   "language_req": "none beyond the school's own admission requirements",
+   "url": "https://www.jasso.go.jp/en/ryugaku/scholarship_j/shoreihi/index.html"
+  },
+  {
+   "name": "Hitachi Global Foundation Scholarship (Hitachi Scholarship)",
+   "provider": "The Hitachi Global Foundation",
+   "host_country": "Japan",
+   "levels": [
+    "phd",
+    "research"
+   ],
+   "fields": "Science and engineering fields (including environment, energy, ICT, materials, life sciences) for doctoral study or research at Japanese universities",
+   "funding": "full",
+   "covers": [
+    "tuition and fees",
+    "monthly living allowance",
+    "round-trip airfare",
+    "research and thesis allowance",
+    "insurance"
+   ],
+   "eligibility": "Young full-time faculty members or researchers at universities in the foundation's designated Southeast Asian countries (Cambodia has been listed in recent calls; verify), under about 35, master's degree, nominated by their home university, planning doctoral study or short research stay in Japan and return afterwards",
+   "cambodia_note": "Nomination comes from the Cambodian home university (e.g. RUPP, ITC) to the foundation; individuals cannot apply without institutional endorsement.",
+   "deadline_note": "Annual call usually opens in autumn with a deadline around November–December for study starting the following autumn.",
+   "open_month": 9,
+   "close_month": 12,
+   "next_deadline": "",
+   "language_req": "English (TOEFL/IELTS) or Japanese as required by the host laboratory",
+   "url": "https://www.hitachi-zaidan.org/global/scholarship/index.html"
+  },
+  {
+   "name": "Huawei Seeds for the Future – Cambodia",
+   "provider": "Huawei Technologies (Cambodia) Co., Ltd. with the Ministry of Post and Telecommunications",
+   "host_country": "China",
+   "levels": [
+    "short"
+   ],
+   "fields": "ICT: 5G, cloud, AI, cybersecurity, digital economy, plus leadership and cultural modules",
+   "funding": "full",
+   "covers": [
+    "all program costs including travel and accommodation for the on-site component (when held in China)",
+    "online training modules and certificates",
+    "competition prizes (Tech4Good)"
+   ],
+   "eligibility": "Cambodian citizen enrolled as an undergraduate (usually 2nd year or above) or master's student in ICT-related majors at a Cambodian university, generally aged 18–30, good academic standing and English; selected by written test and interview",
+   "cambodia_note": "Applications are run locally by Huawei Cambodia together with the Ministry of Post and Telecommunications and partner universities; announcements appear on the Huawei Cambodia and MPTC Facebook pages.",
+   "deadline_note": "Held once a year; Cambodian recruitment usually runs around May–August with the program in the second half of the year. Verify current cycle.",
+   "open_month": 5,
+   "close_month": 8,
+   "next_deadline": "",
+   "language_req": "English (working proficiency; no fixed test score)",
+   "url": "https://www.huawei.com/minisite/seeds-for-the-future/index.html"
+  },
+  {
+   "name": "GitHub Student Developer Pack",
+   "provider": "GitHub Education (Microsoft)",
+   "host_country": "Cambodia",
+   "levels": [
+    "highschool",
+    "vocational",
+    "bachelor",
+    "master",
+    "phd"
+   ],
+   "fields": "Software development and computing (tools, cloud credits, courses)",
+   "funding": "partial",
+   "covers": [
+    "free GitHub Pro and Copilot",
+    "cloud and hosting credits from partner companies",
+    "free courses and certifications from partners",
+    "developer tools"
+   ],
+   "eligibility": "Student aged 13+ enrolled in a degree- or diploma-granting course at an accredited institution anywhere in the world; must verify with school email, student ID or enrolment document",
+   "cambodia_note": "Cambodian students verify directly on the GitHub Education site; a school-issued document is accepted if the university has no student email domain.",
+   "deadline_note": "Rolling; apply any time and renew verification annually.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "https://education.github.com/pack"
+  },
+  {
+   "name": "Coursera Financial Aid",
+   "provider": "Coursera",
+   "host_country": "Cambodia",
+   "levels": [
+    "short"
+   ],
+   "fields": "any (individual courses, specializations and professional certificates from partner universities and companies)",
+   "funding": "varies",
+   "covers": [
+    "waived or reduced course fee for the specific course applied for",
+    "access to graded assignments and certificate"
+   ],
+   "eligibility": "Any learner worldwide who cannot afford the fee; separate application per course with income statement and short essays; not available for degrees or some MasterTrack programs",
+   "cambodia_note": "Cambodians apply from the course page ('Financial aid available'); no local partner needed.",
+   "deadline_note": "Rolling; decisions usually take up to 15 days after applying.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "https://learner.coursera.help/hc/en-us/articles/209819033"
+  },
+  {
+   "name": "edX Financial Assistance",
+   "provider": "edX (2U)",
+   "host_country": "Cambodia",
+   "levels": [
+    "short"
+   ],
+   "fields": "any (verified-track courses from partner universities)",
+   "funding": "partial",
+   "covers": [
+    "up to 90% discount on the verified certificate fee for eligible courses"
+   ],
+   "eligibility": "Learners of any country who demonstrate financial need; per-course application with a short statement; excludes some programs (e.g. MicroMasters, professional certificates, degrees) and learners in sanctioned countries",
+   "cambodia_note": "Cambodians apply online through the edX learner dashboard for each course; no local step.",
+   "deadline_note": "Rolling; apply before the course's upgrade deadline.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "none",
+   "url": "https://support.edx.org/hc/en-us/articles/215167857"
+  },
+  {
+   "name": "Harvard College Need-Based Financial Aid (need-blind for international students)",
+   "provider": "Harvard College (Harvard University)",
+   "host_country": "United States",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "housing",
+    "food",
+    "travel allowance",
+    "books and personal expenses (need-based, grant only, no loans)"
+   ],
+   "eligibility": "Admitted first-year undergraduates of any nationality; aid is 100% need-based (no merit). Families earning under USD 100,000 pay nothing; families up to USD 200,000 get at least full tuition covered. Admission is need-blind for foreign citizens.",
+   "cambodia_note": "Cambodian applicants apply directly online through the Common Application/Coalition; financial aid is awarded on exactly the same basis as for US students. No embassy or ministry involvement; submit CSS Profile (Harvard code 3434) plus translated parent income documents.",
+   "deadline_note": "Applications open in August; Restrictive Early Action deadline 1 November, Regular Decision deadline early January each year; CSS Profile due at the same time as the admission application.",
+   "open_month": 8,
+   "close_month": 1,
+   "next_deadline": "",
+   "language_req": "English; TOEFL/IELTS/Duolingo not required but may be submitted",
+   "url": "https://college.harvard.edu/financial-aid/applying-aid/international-students"
+  },
+  {
+   "name": "MIT Need-Based Financial Aid for International Undergraduates (need-blind, full need)",
+   "provider": "Massachusetts Institute of Technology",
+   "host_country": "United States",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any (MIT undergraduate programs, STEM-focused)",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "housing",
+    "food",
+    "books and personal expenses (need-based MIT Scholarship)"
+   ],
+   "eligibility": "Admitted undergraduates of any citizenship; MIT is need-blind and meets 100% of demonstrated financial need for all four years. Aid amount depends on family finances via CSS Profile and parental income documents.",
+   "cambodia_note": "Cambodian nationals apply directly through the MIT online application; international students use the same aid process as domestic students (CSS Profile plus parent income documentation). No government nomination.",
+   "deadline_note": "Application opens in August; Early Action deadline 1 November, Regular Action deadline early January; CSS Profile due mid-February for aid.",
+   "open_month": 8,
+   "close_month": 1,
+   "next_deadline": "",
+   "language_req": "English; TOEFL/IELTS/Duolingo/Cambridge optional but recommended for non-native speakers",
+   "url": "https://sfs.mit.edu/undergraduate-students/apply-for-aid/international/"
+  },
+  {
+   "name": "Yale College Need-Based Financial Aid for International Students (need-blind)",
+   "provider": "Yale University",
+   "host_country": "United States",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "housing",
+    "meals",
+    "travel to and from campus twice a year",
+    "books and personal expenses (grant-based, no loans)"
+   ],
+   "eligibility": "Admitted Yale College students of any citizenship; awards are 100% need-based and meet full demonstrated need without loans. Awards account for the economic difference between the US and the student's home country.",
+   "cambodia_note": "Cambodian students apply directly online (Common App/Coalition/QuestBridge) and submit the CSS Profile; financial need does not affect admission for any applicant anywhere in the world.",
+   "deadline_note": "Applications open in August; Single-Choice Early Action deadline 1 November, Regular Decision deadline early January each year.",
+   "open_month": 8,
+   "close_month": 1,
+   "next_deadline": "",
+   "language_req": "English; TOEFL/IELTS/Duolingo recommended if English is not the language of instruction",
+   "url": "https://admissions.yale.edu/international"
+  },
+  {
+   "name": "Princeton University Need-Based Financial Aid for International Students (need-blind)",
+   "provider": "Princeton University",
+   "host_country": "United States",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "housing",
+    "food",
+    "books and personal expenses (100% grant, no loans)"
+   ],
+   "eligibility": "Admitted undergraduates of any nationality; Princeton is need-blind for all applicants including international students and meets 100% of demonstrated need with grants. Entirely need-based, no academic or athletic merit scholarships.",
+   "cambodia_note": "Cambodian applicants apply directly online; the same aid application (Princeton Financial Aid Application) and full-need policy apply to international students. No embassy or ministry process.",
+   "deadline_note": "Applications open in August; Single-Choice Early Action deadline 1 November, Regular Decision deadline 1 January each year.",
+   "open_month": 8,
+   "close_month": 1,
+   "next_deadline": "",
+   "language_req": "English; TOEFL/IELTS/PTE required unless English is the primary language of instruction",
+   "url": "https://admission.princeton.edu/apply/international-students"
+  },
+  {
+   "name": "Amherst College Need-Based Financial Aid for International Students (need-blind)",
+   "provider": "Amherst College",
+   "host_country": "United States",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any (liberal arts)",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "housing",
+    "meals",
+    "books",
+    "travel allowance (scholarships and grants; no loans packaged)"
+   ],
+   "eligibility": "Admitted international students who apply for need-based aid; Amherst is need-blind for international applicants and meets 100% of calculated need. Need is met first with a work-study expectation and the rest by scholarship.",
+   "cambodia_note": "Cambodian nationals apply directly via the Common Application and submit the CSS Profile with parent income documents; treated identically to domestic applicants for aid.",
+   "deadline_note": "Applications open in August; Early Decision deadline 1 November (ED II around 1 January), Regular Decision deadline early January each year.",
+   "open_month": 8,
+   "close_month": 1,
+   "next_deadline": "",
+   "language_req": "English; TOEFL/IELTS/Duolingo expected for non-native English speakers",
+   "url": "https://www.amherst.edu/offices/financialaid/international_students"
+  }
+ ]
+}

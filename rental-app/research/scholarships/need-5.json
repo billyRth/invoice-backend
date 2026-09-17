@@ -1,0 +1,469 @@
+{
+ "entries": [
+  {
+   "name": "Dartmouth College Universal Need-Blind Financial Aid for International Students",
+   "provider": "Dartmouth College",
+   "host_country": "United States",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "housing",
+    "meals",
+    "books and personal expenses (full-tuition scholarship without loans for family income under USD 125,000; zero parent contribution under USD 65,000)"
+   ],
+   "eligibility": "Admitted undergraduates of any citizenship; need-blind admission for all international applicants since the Class of 2026 and 100% of demonstrated need met. Aid is need-based only.",
+   "cambodia_note": "Cambodian students apply directly through the Common Application and submit the CSS Profile and income documents; no nomination or embassy step.",
+   "deadline_note": "Applications open in August; Early Decision deadline 1 November, Regular Decision deadline early January each year.",
+   "open_month": 8,
+   "close_month": 1,
+   "next_deadline": "",
+   "language_req": "English; TOEFL/IELTS/Duolingo recommended for non-native speakers",
+   "url": "https://financialaid.dartmouth.edu/apply-aid/international-students"
+  },
+  {
+   "name": "Bowdoin College Need-Blind Admission and Full-Need Aid for International Students",
+   "provider": "Bowdoin College",
+   "host_country": "United States",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any (liberal arts)",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "housing",
+    "meals",
+    "books and personal expenses (grants only, no loans)"
+   ],
+   "eligibility": "First-year applicants of any citizenship; need-blind admission and 100% of calculated need met without loans. Not available to international transfer students.",
+   "cambodia_note": "Cambodian applicants apply directly via the Common Application and file the CSS Profile; family ability to pay is not considered in admission.",
+   "deadline_note": "Applications open in August; Early Decision I deadline 15 November, Early Decision II and Regular Decision deadline early January each year.",
+   "open_month": 8,
+   "close_month": 1,
+   "next_deadline": "",
+   "language_req": "English; TOEFL/IELTS/Duolingo recommended for non-native speakers",
+   "url": "https://www.bowdoin.edu/admissions/apply/international-students/index.html"
+  },
+  {
+   "name": "Brown University Need-Blind Financial Aid for International Undergraduates",
+   "provider": "Brown University",
+   "host_country": "United States",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "housing",
+    "meals",
+    "books and personal expenses (100% of demonstrated need met, no loans)"
+   ],
+   "eligibility": "First-year international applicants (need-blind from the Class of 2029, entering fall 2025, onward); aid is need-based and meets 100% of demonstrated need for all admitted students.",
+   "cambodia_note": "Cambodian students apply directly via the Common Application and submit the CSS Profile with parental income documents; no nomination required.",
+   "deadline_note": "Applications open in August; Early Decision deadline 1 November, Regular Decision deadline early January each year.",
+   "open_month": 8,
+   "close_month": 1,
+   "next_deadline": "",
+   "language_req": "English; TOEFL/IELTS/Duolingo recommended for non-native speakers",
+   "url": "https://admission.brown.edu/international/financial-aid"
+  },
+  {
+   "name": "APU Tuition Reduction Scholarship for International Students",
+   "provider": "Ritsumeikan Asia Pacific University (with MEXT and corporate/individual donors)",
+   "host_country": "Japan",
+   "levels": [
+    "bachelor",
+    "master"
+   ],
+   "fields": "any APU program (Asia Pacific Studies, International Management, Sustainability and Tourism; graduate programs)",
+   "funding": "varies",
+   "covers": [
+    "tuition reduction of 30%, 50%, 65%, 80% or 100% for the standard period until graduation"
+   ],
+   "eligibility": "International applicants who will hold a Japanese 'Student' residence status before enrolling; assessed on financial need, application documents, online assessment and recorded video interview. Applying earlier in each enrollment period improves chances.",
+   "cambodia_note": "Cambodian nationals apply directly through the APU online application and tick the scholarship request in the same application; no embassy or ministry step. APU has a large Southeast Asian student body.",
+   "deadline_note": "Several application periods each year for April and September enrollment (2027 enrollment applications running through 2026-27); scholarship is requested at the time of the admission application and early applicants have a greater chance.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English-basis: TOEFL iBT/IELTS or equivalent; Japanese-basis: JLPT N2 or higher",
+   "url": "https://admissions.apu.ac.jp/costs_scholarships/before_enrollment/"
+  },
+  {
+   "name": "KAIST International Undergraduate Scholarship (KAIST Scholarship)",
+   "provider": "Korea Advanced Institute of Science and Technology (KAIST)",
+   "host_country": "South Korea",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "STEM (all KAIST undergraduate majors; non-declared major system in first year)",
+   "funding": "full",
+   "covers": [
+    "full tuition for up to 8 semesters",
+    "monthly living allowance KRW 350,000",
+    "medical health insurance"
+   ],
+   "eligibility": "International high-school graduates (or expected graduates) who are not Korean citizens and hold no Korean dual citizenship; strong mathematics and science record; scholarship selected during admission review when 'KAIST Scholarship' is ticked on the Statement of Financial Resources.",
+   "cambodia_note": "Cambodian students apply online directly to KAIST (apply.kaist.ac.kr) for the Fall intake only; no government nomination. Scholarship results are announced with admission results.",
+   "deadline_note": "Fall 2027 intake: Early Admissions closes 22 October 2026 (recommendations by 29 October); Regular Admissions opens 10 November 2026 and closes 14 January 2027 (recommendations by 21 January 2027).",
+   "open_month": 9,
+   "close_month": 1,
+   "next_deadline": "2026-10-22",
+   "language_req": "English proficiency (TOEFL/IELTS/TOEIC etc.) recommended; instruction in English",
+   "url": "https://admission.kaist.ac.kr/intl-undergraduate"
+  },
+  {
+   "name": "Yonsei University Underwood International College (UIC) Admissions Scholarship",
+   "provider": "Yonsei University, Underwood International College",
+   "host_country": "South Korea",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any UIC major (humanities, social sciences, sciences, engineering, techno-art; taught in English)",
+   "funding": "varies",
+   "covers": [
+    "full tuition for 4 years (admissions scholarship); need-based full, half or one-third tuition awards for enrolled students"
+   ],
+   "eligibility": "Newly admitted international students at UIC are automatically considered; selection based on admission evaluation. Need-based and merit-based awards continue for enrolled students based on GPA and financial circumstances.",
+   "cambodia_note": "Cambodian nationals apply through the Yonsei international admissions portal for UIC; scholarship consideration is automatic with the admission application.",
+   "deadline_note": "Two international admission rounds each year: applications for Spring entry close around September-October and for Fall entry around March-May; check UIC admissions page for exact dates.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English (TOEFL/IELTS/Duolingo or English-medium schooling)",
+   "url": "https://uic.yonsei.ac.kr/main/admission.php?mid=m04_03_02"
+  },
+  {
+   "name": "Korea University International Admission Scholarships (Global Leader Scholarship A/B)",
+   "provider": "Korea University, Office of International Affairs",
+   "host_country": "South Korea",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any Korea University undergraduate major",
+   "funding": "varies",
+   "covers": [
+    "partial to full tuition waiver based on admission evaluation"
+   ],
+   "eligibility": "International undergraduate applicants (both parents non-Korean) admitted through the international admission track; scholarships are awarded from the application documents, no separate application. Results announced with admission results.",
+   "cambodia_note": "Cambodian nationals apply online via the Korea University OIA international admission portal; no nomination required.",
+   "deadline_note": "Freshman admissions for Fall intake usually accept applications around February-April and for Spring intake around September-October; see the current Application Guide.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English (TOEFL/IELTS) or Korean (TOPIK) depending on program",
+   "url": "https://oia.korea.ac.kr/oia/under/Scholarships.do"
+  },
+  {
+   "name": "SMU ASEAN Undergraduate Scholarship",
+   "provider": "Singapore Management University",
+   "host_country": "Singapore",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any SMU undergraduate degree (business, economics, accountancy, law, computing, social sciences)",
+   "funding": "partial",
+   "covers": [
+    "100% of subsidised tuition fees after MOE Tuition Grant"
+   ],
+   "eligibility": "Citizens of ASEAN member countries excluding Singapore (Cambodia is explicitly listed); awarded on merit; recipients must accept the MOE Tuition Grant with 3-year work bond in Singapore; cannot hold other scholarships concurrently without approval.",
+   "cambodia_note": "Cambodia is named among eligible countries; Cambodian applicants apply for SMU admission online and are considered for the scholarship on the strength of their application.",
+   "deadline_note": "SMU international applications typically open in October and close around February-March for the August intake.",
+   "open_month": 10,
+   "close_month": 3,
+   "next_deadline": "",
+   "language_req": "English (IELTS/TOEFL or English-medium qualification)",
+   "url": "https://admissions.smu.edu.sg/financial-aid/asean-undergraduate-scholarship"
+  },
+  {
+   "name": "HKU Entrance Scholarships for International Students",
+   "provider": "The University of Hong Kong",
+   "host_country": "Hong Kong",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any HKU full-time undergraduate program",
+   "funding": "varies",
+   "covers": [
+    "up to full tuition fees",
+    "accommodation and general living allowance (top awards)",
+    "one-off merit payments"
+   ],
+   "eligibility": "Outstanding non-local applicants with international qualifications (IB, A-levels, SAT/AP, national exams) admitted to full-time undergraduate degrees; merit-based; automatically considered on submission of the admission application, no separate scholarship application.",
+   "cambodia_note": "Cambodian students apply directly through HKU's online international admissions; scholarship results are announced with the admission offer.",
+   "deadline_note": "International applications open in September; main round deadline typically in early-mid January for September entry, with later rounds accepted until the summer.",
+   "open_month": 9,
+   "close_month": 1,
+   "next_deadline": "",
+   "language_req": "English (IELTS 6.5 / TOEFL iBT 93 or equivalent)",
+   "url": "https://admissions.hku.hk/fees-and-scholarships/scholarships"
+  },
+  {
+   "name": "HKUST Academic Admissions Scholarships and Global Learners Scholarship",
+   "provider": "The Hong Kong University of Science and Technology",
+   "host_country": "Hong Kong",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any HKUST undergraduate program",
+   "funding": "varies",
+   "covers": [
+    "partial to full tuition waiver",
+    "up to HKD 60,000 allowance per year (top awards), renewable"
+   ],
+   "eligibility": "All undergraduate applicants with international qualifications are automatically considered on academic merit and non-academic achievements; the Global Learners Scholarship targets applicants from underrepresented nationalities. No separate application.",
+   "cambodia_note": "Cambodian applicants apply online through HKUST Undergraduate Admissions; as an underrepresented nationality they are automatically considered for the Global Learners Scholarship as well as academic scholarships.",
+   "deadline_note": "Applications open in September; early round deadline around mid-November and main round around early January for September entry.",
+   "open_month": 9,
+   "close_month": 1,
+   "next_deadline": "",
+   "language_req": "English (IELTS 6.0-6.5 / TOEFL iBT 80 or equivalent)",
+   "url": "https://join.hkust.edu.hk/intlscholarships"
+  },
+  {
+   "name": "CUHK Admission Scholarships for International Students",
+   "provider": "The Chinese University of Hong Kong",
+   "host_country": "Hong Kong",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any CUHK full-time undergraduate program",
+   "funding": "varies",
+   "covers": [
+    "HKD 5,000 up to full tuition",
+    "allowance up to HKD 66,000 per year (selected awards), renewable",
+    "one-off awards HKD 50,000-214,000 for non-academic excellence"
+   ],
+   "eligibility": "Local and non-local new undergraduates with excellent academic or non-academic performance; no application needed, CUHK identifies qualified admitted students automatically.",
+   "cambodia_note": "Cambodian students apply through CUHK international undergraduate admissions online and are automatically considered for admission scholarships.",
+   "deadline_note": "International applications open in September/October; early round deadline typically early January, with later rounds through the spring for September entry.",
+   "open_month": 9,
+   "close_month": 1,
+   "next_deadline": "",
+   "language_req": "English (IELTS 6.0 / TOEFL iBT 80 or equivalent)",
+   "url": "https://admission.cuhk.edu.hk/fees-financing-your-studies/scholarships/admission-scholarships-for-undergraduates-only/"
+  },
+  {
+   "name": "Mahidol Postgraduate Scholarships for International Students",
+   "provider": "Mahidol University, Faculty of Graduate Studies",
+   "host_country": "Thailand",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "any master's or doctoral program at Mahidol (some medical programs excluded)",
+   "funding": "varies",
+   "covers": [
+    "tuition fees",
+    "additional expenses/allowance as specified in the annual announcement"
+   ],
+   "eligibility": "International students eligible for enrollment in a Mahidol master's or doctoral program in the relevant academic year; selection by academic merit; must meet program English requirements.",
+   "cambodia_note": "Cambodian students apply for admission to a Mahidol graduate program and submit the scholarship application through the Faculty of Graduate Studies; Cambodian nationals are also specifically eligible for the CMB Foundation Mekong Region postgraduate scholarship at Mahidol.",
+   "deadline_note": "Announced annually (2026 round published for academic year 2026); applications typically accepted in the first half of the year for August entry.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English (TOEFL/IELTS or MU-ELT per program)",
+   "url": "https://graduate.mahidol.ac.th/inter/alumni/?p=scholarship&scholarship=mahidol-postgraduate-scholarships-international-2026"
+  },
+  {
+   "name": "CMB Foundation Mahidol Postgraduate Scholarship for Mekong Region Scholars",
+   "provider": "China Medical Board (CMB) Foundation and Mahidol University",
+   "host_country": "Thailand",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "postgraduate programs at Mahidol University (health and related fields)",
+   "funding": "full",
+   "covers": [
+    "tuition fees",
+    "living expenses and stipend",
+    "one return economy airfare"
+   ],
+   "eligibility": "Nationals of Cambodia, Lao PDR, Myanmar and Vietnam admitted to a Mahidol postgraduate program; academic merit and commitment to return to contribute in home country.",
+   "cambodia_note": "Cambodia is explicitly named as an eligible country; apply for admission to Mahidol and then for the CMB Mekong Region scholarship through the Faculty of Graduate Studies.",
+   "deadline_note": "Announced through the Faculty of Graduate Studies each year; typically applications in the first half of the year for August entry.",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English (TOEFL/IELTS or MU-ELT per program)",
+   "url": "https://graduate.mahidol.ac.th/Mekong-Region/"
+  },
+  {
+   "name": "Asian University for Women Need-Based Scholarships",
+   "provider": "Asian University for Women (AUW), Chattogram",
+   "host_country": "Bangladesh",
+   "levels": [
+    "bachelor",
+    "short"
+   ],
+   "fields": "liberal arts and sciences (undergraduate; plus pre-undergraduate Pathways/Access programs)",
+   "funding": "varies",
+   "covers": [
+    "tuition",
+    "room and board",
+    "course supplies",
+    "primary healthcare",
+    "international travel (full scholarship); partial scholarships also offered"
+   ],
+   "eligibility": "Women from Asia (primarily South, Southeast, West Asia and Middle East) who have completed 10+2 secondary education with roughly 60% average including English and mathematics; need-blind admission; demonstrated leadership and commitment to social change; aid based on demonstrated financial need.",
+   "cambodia_note": "Cambodian women apply online directly to AUW; Cambodia is within the Southeast Asia recruitment region and AUW has enrolled Cambodian students. Scholarship application is part of the admission process.",
+   "deadline_note": "Applications for the following academic year generally open around October-November and close around March-May; rolling review.",
+   "open_month": 10,
+   "close_month": 5,
+   "next_deadline": "",
+   "language_req": "English (minimum 60% in English exam; AUW's own assessment; no IELTS required)",
+   "url": "https://asian-university.org/admissions/scholarships-financial-aid/"
+  },
+  {
+   "name": "KAUST Fellowship",
+   "provider": "King Abdullah University of Science and Technology (KAUST)",
+   "host_country": "Saudi Arabia",
+   "levels": [
+    "master",
+    "phd"
+   ],
+   "fields": "STEM (17 disciplines across engineering, physical, biological, computer and environmental sciences)",
+   "funding": "full",
+   "covers": [
+    "full tuition",
+    "monthly living allowance (USD 20,000-30,000 per year)",
+    "on-campus housing",
+    "medical insurance",
+    "relocation support"
+   ],
+   "eligibility": "Bachelor's degree (for MS) or relevant master's (for PhD) in a STEM field with strong GPA; GRE optional; English proficiency (TOEFL iBT 79 / IELTS 6.5) unless exempt; all admitted students automatically receive the fellowship (no separate application).",
+   "cambodia_note": "Cambodian nationals apply directly through the KAUST online application; no nomination or embassy process; the fellowship is automatic on admission.",
+   "deadline_note": "Applications for 2027 entry open mid-August 2026; Spring 2027 (PhD only) and Fall 2027 (MS, MS/PhD, PhD) deadlines are published on the admission timeline (Fall deadlines usually fall between January and March).",
+   "open_month": 8,
+   "close_month": 3,
+   "next_deadline": "",
+   "language_req": "TOEFL iBT 79 or IELTS 6.5 (waived for graduates of English-medium universities in listed countries)",
+   "url": "https://admissions.kaust.edu.sa/study"
+  },
+  {
+   "name": "Lester B. Pearson International Student Scholarship",
+   "provider": "University of Toronto",
+   "host_country": "Canada",
+   "levels": [
+    "bachelor"
+   ],
+   "fields": "any U of T undergraduate program",
+   "funding": "full",
+   "covers": [
+    "tuition",
+    "books",
+    "incidental fees",
+    "full residence support for four years"
+   ],
+   "eligibility": "International students (non-Canadian, requiring a study permit) in their final year of secondary school or graduated no earlier than June 2026; must be nominated by their school; must begin U of T studies in September 2027; about 37 awards per year based on academic excellence, creativity and leadership.",
+   "cambodia_note": "Cambodian students must be nominated by their Cambodian (or international) secondary school, which registers with U of T; then apply for admission and complete the Pearson application. No embassy process.",
+   "deadline_note": "Nomination portal opens 6 July 2026; school nomination deadline 9 October 2026; U of T admission application deadline 16 October 2026; Pearson scholarship application deadline 6 November 2026.",
+   "open_month": 7,
+   "close_month": 11,
+   "next_deadline": "2026-11-06",
+   "language_req": "English (IELTS 6.5 / TOEFL iBT 100 or U of T-recognised English-medium schooling)",
+   "url": "https://future.utoronto.ca/pearson-scholarships"
+  },
+  {
+   "name": "Bocconi4Access to Education Need-Based Scholarships and Tuition Waivers for International Students",
+   "provider": "Bocconi University (Università Bocconi), Milan",
+   "host_country": "Italy",
+   "levels": [
+    "bachelor",
+    "master"
+   ],
+   "fields": "economics, management, finance, data science, political science, law",
+   "funding": "varies",
+   "covers": [
+    "full or partial tuition waiver based on family economic need",
+    "some awards include accommodation and a living allowance (Bocconi Scholarship for International Students)",
+    "merit-based partial tuition waivers (20-40%)"
+   ],
+   "eligibility": "International candidates admitted to the first year of a Bachelor/Law or Master of Science program for a.y. 2027-28 who submit the Bocconi4Access to Education application with family income and asset documentation; merit is assessed from the admission application.",
+   "cambodia_note": "Cambodian applicants apply online for Bocconi admission and submit the Bocconi4Access application in the same portal; no embassy involvement.",
+   "deadline_note": "Bachelor: early session applications close in the autumn and further sessions run until early spring 2027, with the funding request submitted alongside the admission application; Master: four selection rounds between September 2026 and April 2027, most scholarships allocated in earlier rounds.",
+   "open_month": 9,
+   "close_month": 4,
+   "next_deadline": "",
+   "language_req": "English (IELTS/TOEFL/Cambridge; SAT/ACT or Bocconi test for bachelor)",
+   "url": "https://www.unibocconi.it/en/applying-bocconi/bachelor-and-law-programs/funding"
+  },
+  {
+   "name": "University of Bologna International Talents Scholarship and Unibo Action 2 Study Grants",
+   "provider": "Alma Mater Studiorum - Università di Bologna",
+   "host_country": "Italy",
+   "levels": [
+    "bachelor",
+    "master"
+   ],
+   "fields": "any (calls specify eligible degree programmes; International Talents targets second-cycle master's)",
+   "funding": "partial",
+   "covers": [
+    "study grant (EUR 6,500 per year for 2 years for International Talents; EUR 11,000 gross under Unibo Action 2)",
+    "full tuition fee waiver"
+   ],
+   "eligibility": "International students (admission qualification obtained outside the Italian system) matriculating in an eligible Bologna degree programme; merit-based on admission test scores or academic record; must not already hold an Italian degree.",
+   "cambodia_note": "Cambodian students apply through the annual call on bandi.unibo.it while applying for admission; no embassy step. Contact internationaldesk@unibo.it for the current call.",
+   "deadline_note": "Calls are usually published around January-February with deadlines around March-May for enrolment the following September.",
+   "open_month": 1,
+   "close_month": 5,
+   "next_deadline": "",
+   "language_req": "English B2 (IELTS 6.0 or equivalent) for English-taught programmes; Italian B2 for Italian-taught programmes",
+   "url": "https://www.unibo.it/en/study/study-grants-and-subsidies"
+  },
+  {
+   "name": "ANU Chancellor's International Scholarship",
+   "provider": "The Australian National University",
+   "host_country": "Australia",
+   "levels": [
+    "bachelor",
+    "master"
+   ],
+   "fields": "any ANU undergraduate or postgraduate coursework program",
+   "funding": "partial",
+   "covers": [
+    "25% or 50% tuition fee reduction for the duration of the program"
+   ],
+   "eligibility": "International students applying for admission to ANU; automatically assessed across 9 citizenship-based categories (at least one open to students from anywhere in the world); awarded on academic merit; no separate application.",
+   "cambodia_note": "Cambodian applicants apply online for ANU admission and are automatically assessed for the highest-value category they are eligible for.",
+   "deadline_note": "Automatic with admission; ANU accepts international applications year-round for February and July intakes (apply several months before the intake).",
+   "open_month": 0,
+   "close_month": 0,
+   "next_deadline": "",
+   "language_req": "English (IELTS 6.5 / TOEFL iBT 80 or equivalent)",
+   "url": "https://study.anu.edu.au/scholarships/find-scholarship/anu-chancellors-international-scholarship"
+  },
+  {
+   "name": "Melbourne Research Scholarship (Graduate Research Scholarships)",
+   "provider": "The University of Melbourne",
+   "host_country": "Australia",
+   "levels": [
+    "research",
+    "phd"
+   ],
+   "fields": "any graduate research (Masters by Research or PhD)",
+   "funding": "full",
+   "covers": [
+    "full tuition fee offset (2 years MRes / 4 years PhD)",
+    "living allowance AUD 39,500 per year (2026 rate)",
+    "relocation grant AUD 3,000 for overseas students",
+    "Overseas Student Health Cover"
+   ],
+   "eligibility": "International applicants to a Masters by Research or doctoral degree with excellent academic results and research potential; automatically considered when applying for admission; over 300 awards per year to international candidates.",
+   "cambodia_note": "Cambodian applicants submit a graduate research application online (with supervisor agreement) and are automatically considered; no separate scholarship form.",
+   "deadline_note": "Applications accepted year-round; international candidates should apply by 31 October for the following year's main scholarship round (later rounds in the first half of the year).",
+   "open_month": 0,
+   "close_month": 10,
+   "next_deadline": "",
+   "language_req": "English (IELTS 6.5 with no band below 6.0 or TOEFL iBT 79, program-dependent)",
+   "url": "https://scholarships.unimelb.edu.au/awards/melbourne-research-scholarship"
+  }
+ ]
+}

@@ -1,0 +1,380 @@
+{
+ "names:coined": {
+  "candidates": [
+   {
+    "khmer": "បង",
+    "latin": "Bong",
+    "pronounced": "BAWNG (rhymes with 'song'; one syllable, soft final ng)",
+    "meaning": "Older sibling; the universal friendly address for anyone slightly older: 'bro', 'sis', the landlord, the senior student, the shop owner.",
+    "why": "Every Cambodian says it dozens of times a day, so it is instantly warm and unmistakably Khmer. Positions the app as the helpful older sibling who knows where the rooms, scholarships and jobs are. Four letters, one spelling, huge round B for an icon.",
+    "risks": "English 'bong' = cannabis pipe, awkward with foreign investors and app-store reviewers. Extremely crowded namespace in Cambodia: BongThom.com (classifieds/jobs), BongPheak (job platform), Bong Srey and many 'Bong X' brands, so it is generic and the .com/.app domains are almost certainly gone. Bong/Oun pairing can read as romantic. NOTE: live web/app-store check could not be run this session (search budget exhausted, proxy blocked all sites); BongThom and BongPheak are known from memory, verify before use."
+   },
+   {
+    "khmer": "ក្មេង",
+    "latin": "Kmeng",
+    "pronounced": "k-MENG (quick 'k' then 'meng' like 'meng' in 'Mengistu'; one syllable to Khmer ears)",
+    "meaning": "Kid, young person, youth. Gen Z uses it self-referentially ('kmeng jomnan thmey' = the new generation).",
+    "why": "Names the audience itself; playful and self-aware the way Gen Z talks on Telegram and TikTok. Sharp K plus short shape gives a strong logo mark. Easy to type in Latin chat script where 'kmeng' is already the common romanization.",
+    "risks": "To parents and older users it means 'child', which can sound diminutive or immature ('kmeng-kmeng' = childish). Spelling competition with 'khmeng'. Initial 'km' cluster is hard for foreigners (they say 'kuh-meng'). Likely small YouTube/TikTok pages named Kmeng Khmer. NOTE: brand check not completed (web blocked this session); verify."
+   },
+   {
+    "khmer": "និស្សិត",
+    "latin": "Nisit",
+    "pronounced": "ni-SET (Khmer: 'nih-suht'; Latin readers will say 'NEE-sit', which is acceptable)",
+    "meaning": "University student (the formal, Pali-derived word used on every student ID and in every university notice).",
+    "why": "Says exactly who it is for: the moment a Cambodian hears 'Nisit' they think 'university'. Serious enough for scholarship credibility, five clean letters, one obvious spelling, looks good in a wordmark.",
+    "risks": "Same word in Thai (nisit at Chulalongkorn, Kasetsart), so Thai apps/domains may already use it. Feels institutional and textbook rather than fun; excludes high-school students (sisa). Latin pronunciation drifts from Khmer. NOTE: brand check not completed (web blocked this session); verify Thai and Cambodian conflicts."
+   },
+   {
+    "khmer": "ស្រុក",
+    "latin": "Srok",
+    "pronounced": "SROHK (one syllable; 'sr' run together, short 'o')",
+    "meaning": "Homeland, home district, country; 'srok Khmer' = Cambodia, 'chol srok' = go back home to the province.",
+    "why": "Carries belonging and roots. Most Phnom Penh students come from the provinces and miss their srok, so an app that gives them a srok in the city is emotionally on point. Four letters, punchy, distinctive S-R start.",
+    "risks": "Also connotes rural/provincial ('srok srae' = the countryside), so it can sound like 'country bumpkin' to some urban youth. 'sr' cluster is hard for foreigners ('suh-rock'). 'Srok Khmer' is used by countless news and Facebook pages, so it is generic and hard to own. NOTE: brand check not completed (web blocked this session); verify."
+   },
+   {
+    "khmer": "ភូមិ",
+    "latin": "Phum",
+    "pronounced": "POOM (aspirated p, not 'f'; rhymes with 'room')",
+    "meaning": "Village, neighborhood, community; the smallest administrative unit and the word for 'where I belong'.",
+    "why": "Turns the app into the student's village in the city: rooms, neighbors, campus life. Very short, one syllable, and the meaning is understood by everyone from grandparents to Gen Z. The word already appears in place names so it feels native, not invented.",
+    "risks": "Foreigners read 'Ph' as 'f' ('fum'). Association with Phum Baitang (luxury resort, Siem Reap) and the popular drama-streaming site PhumiKhmer. Slightly rural, old-fashioned flavour unless the design is modern. NOTE: brand check not completed (web blocked this session); verify."
+   },
+   {
+    "khmer": "ស្រួល",
+    "latin": "Srual",
+    "pronounced": "SROO-ul (close to one syllable 'srual'; 'ua' as in 'dual')",
+    "meaning": "Easy, comfortable, convenient, hassle-free. 'Srual nas!' = 'so easy/comfy!'",
+    "why": "A pure benefit word: the promise that finding a room, a scholarship or a job is srual. Cambodians hear it and smile because it is what you say when life is comfortable. Also literally describes a comfortable room.",
+    "risks": "No single accepted romanization (srual, sruol, srol, sroul, srourl), which hurts URL recall and search. 'sr' cluster hard for foreigners. Adjective rather than noun, so it needs the logo to carry the identity. NOTE: brand check not completed (web blocked this session); verify."
+   },
+   {
+    "khmer": "សំបុក",
+    "latin": "Sambok",
+    "pronounced": "som-BOK (first syllable like 'sum', second like 'book' with a short o)",
+    "meaning": "Nest: the place you are sheltered, grow up, and fly out from.",
+    "why": "Covers both today's rentals (a nest to live in) and the growth story (scholarships, jobs = leaving the nest). Warm and easy for a foreigner to say, six letters with one natural spelling, and a nest is an obvious, friendly app icon.",
+    "risks": "Also means beehive/wasp nest ('sambok kmum'), and nest-related brands (honey, eco-tourism, guesthouses) are plausible. 'Sam Bok' can look like a person's name. Six letters, slightly longer than the ideal. NOTE: brand check not completed (web blocked this session); verify."
+   },
+   {
+    "khmer": "ទៅណា",
+    "latin": "Tovna",
+    "pronounced": "tow-NAH (first syllable like 'tow' the rope; stress on 'na')",
+    "meaning": "'Where to? / Where are you going?' The everyday Khmer greeting shouted across the street and typed in every chat.",
+    "why": "Every Cambodian recognizes it instantly and it is playful, not formal. A question-shaped name fits a discovery app (where will you live, study, work next?). Fusing two words makes it a coined brand that is easy to own, easy to say, and clean in Latin.",
+    "risks": "Fused spelling could be read as a foreign (Slavic or Hebrew-sounding) name by non-Khmer users. Alternate romanizations (Tov Na, Tou Na, Teuv Na) may split search traffic. Could be mistaken for a travel or ride-hailing app. NOTE: brand check not completed (web blocked this session); verify."
+   },
+   {
+    "khmer": "ស្នាក់",
+    "latin": "Snak",
+    "pronounced": "SNAHK (one syllable; 'a' as in 'father')",
+    "meaning": "To lodge, stay over, put up somewhere; 'snak nov' = accommodation, the exact word used for student boarding.",
+    "why": "It is the real Khmer word for student lodging, so it keeps the Pteas heritage while sounding modern. Four letters, one spelling, strong S-N shape, easy for anyone to pronounce.",
+    "risks": "Non-Khmer speakers will hear 'snack' (food) and possibly 'snake'. Tied to lodging, so it stretches less naturally to scholarships and jobs. 'Snak' as a snack-food brand name exists internationally. NOTE: brand check not completed (web blocked this session); verify."
+   },
+   {
+    "khmer": "ផ្លូវ",
+    "latin": "Phlov",
+    "pronounced": "PLOW (aspirated p + l, rhymes with 'now'; Khmer speakers say 'plouv')",
+    "meaning": "Road, path, way; also 'the way to do something' and 'the way forward'.",
+    "why": "A path is the natural metaphor for the roadmap the app is becoming: a room, then a scholarship, then a job. Poetic but everyday; five letters; the P-H-L shape is distinctive in a logo.",
+    "risks": "Foreigners read 'Phlov' as 'flov'. Competing romanizations (plov, phlauv, phlouv). 'Plov' is a Central Asian rice dish, which surfaces in international search. NOTE: brand check not completed (web blocked this session); verify."
+   },
+   {
+    "khmer": "ស្រស់",
+    "latin": "Sros",
+    "pronounced": "SROHS (one syllable; 'sr' run together, ends in a soft s)",
+    "meaning": "Fresh, bright, lively, blooming; 'sros' is also the word for a fresh, beautiful person or thing.",
+    "why": "Reads as young, clean and full of energy, which is how a student brand should feel. Cambodians associate it with beauty and freshness, so it is instantly likeable and gives the visual identity a bright direction. Four letters, easy to type.",
+    "risks": "Also used for fresh produce, so it could read as a grocery brand. Strong feminine/beauty connotation ('srey sros') may skew perception. 'sr' cluster hard for foreigners ('suh-ross'). NOTE: brand check not completed (web blocked this session); verify."
+   },
+   {
+    "khmer": "ស្លុយ",
+    "latin": "Sloy",
+    "pronounced": "SLOY (rhymes with 'toy'; one syllable)",
+    "meaning": "Gen Z slang for 'wild, off the hook, all out' from 'baek sloy' (to go wild / have a blast); the dictionary sense is 'frayed, dishevelled'.",
+    "why": "Pure youth slang straight from TikTok and Telegram captions, so under-25s hear it and grin. Four letters, one spelling, trivially easy for foreigners, and it gives a bold, energetic icon vibe.",
+    "risks": "Literal meaning is torn, messy, shabby, which parents and older landlords will hear. Party connotation undercuts the seriousness needed for scholarships and jobs. Slang dates quickly, and 'sloy' resembles English 'sly'. NOTE: brand check not completed (web blocked this session); verify."
+   }
+  ]
+ },
+ "names:everyday": {
+  "candidates": [
+   {
+    "khmer": "និស្សិត",
+    "latin": "Nisset",
+    "pronounced": "ni-SET (nee-set), stress on the second syllable; second syllable like English 'set'",
+    "meaning": "University / college student. The standard everyday word every Cambodian undergraduate uses for themselves (as opposed to សិស្ស for school pupils).",
+    "why": "It names the audience outright: a Cambodian hears 'Nisset' and knows in one second the app is for them, the way 'Student' would work in English but with Khmer ownership. It is the word used in every campus notice, scholarship poster and Telegram group ('និស្សិតឆ្នាំទី១'). Clean two-syllable Latin form, no diacritics, one obvious spelling in the logo, and an icon writes itself (mortarboard or the two-leaf 'student ID' glyph). Works for every future vertical: nisset rentals, nisset scholarships, nisset jobs. URL: nisset.app / nisset.com.kh.",
+    "risks": "Romanization is not fully settled (Niset, Nisit, Nisseth all appear), so ads must teach the spelling. Sounds a little like 'Nissan' to foreigners. Slightly formal and university-only: high-school students chasing BacII scholarships call themselves សិស្ស, not និស្សិត, so it may read as 'not for me' to under-18s. Small Cambodian student projects already use the word (e.g. 'Nisset Coffee', 'NissetSkills' on GitHub), so expect crowding on social handles; no major registered brand found, but live web search was unavailable in this run (GitHub-only check), so verify .com.kh and Facebook handles before committing."
+   },
+   {
+    "khmer": "ចេះ",
+    "latin": "Cheh",
+    "pronounced": "CHEH, one syllable, like 'chess' without the final s and ending in a soft breath (IPA cɛh)",
+    "meaning": "To know how, to be able, to be capable/knowledgeable. The word in ចេះទេ? ('Can you? Do you know how?'), ចេះហើយ ('Got it!') and the praise ចេះណាស់ ('So capable!').",
+    "why": "Shortest, punchiest word in the whole register. It is what parents and teachers say to praise a child, so it carries warmth and pride, not textbook formality. Four Latin letters, trivially typed, fits a square icon at any size (a bold ចេះ or a lightbulb). A tagline builds itself: 'ចេះរកផ្ទះ ចេះរកអាហារូបករណ៍' (knows how to find a room, knows how to find a scholarship), so the name stretches from rentals to jobs without changing.",
+    "risks": "Non-Khmer readers do not know what to do with the final h (may say 'chay' or 'che' like Che Guevara); Chinese speakers read 'che' as car. Romanization varies (ches, chess, jeh) so search traffic will split. ចេះ alone says nothing about housing or students, so early ads must carry the explanation. ចេះតែ… ('keeps on…') gives the word a mildly sarcastic secondary use. Very short handles (cheh) are likely already taken on Facebook, Telegram and .com; no Cambodian brand of that name found on GitHub, but live web search was unavailable in this run so verify."
+   },
+   {
+    "khmer": "ចេះដឹង",
+    "latin": "Chehdoeng",
+    "pronounced": "cheh-DƏNG: 'cheh' as above, then 'dəng' rhyming with English 'sung' (IPA cɛh dəŋ)",
+    "meaning": "Knowledgeable, well-informed, 'in the know'. A real lexical compound (ចេះ know-how + ដឹង know) used in ordinary speech: មនុស្សចេះដឹង = a person who knows things.",
+    "why": "Two of the most everyday verbs in the list fused into one familiar word that describes exactly what the app promises: the friend who already knows where the cheap room is, which scholarship closes Friday, who is hiring. Cambodians instantly parse it and it sounds like an honest compliment rather than a slogan. Both halves are the founder's own register, so the name feels grown from Khmer, not translated. Icon: two speech bubbles or an open book with a lit dot.",
+    "risks": "Nine Latin letters and two syllable breaks, so it is the hardest of these to type in a URL; users will write chehdung, chesdeng, chehdoung. The second half is pronounced like English 'dung', which foreign partners will notice. Slightly earnest or 'teacherly' tone; can sound like an encyclopedia app rather than a student life app. No existing brand found (GitHub search returned nothing), but live web search was unavailable in this run so verify handles and .com.kh."
+   },
+   {
+    "khmer": "ពន្លឺ",
+    "latin": "Ponleu",
+    "pronounced": "pon-LEU (pawn-luh); the second vowel is like French 'deux' / the 'e' in 'the', not 'oo' (IPA pɔn.ləː)",
+    "meaning": "Light, brightness, illumination. Used literally (ពន្លឺថ្ងៃ daylight) and figuratively for knowledge and hope (ពន្លឺនៃចំណេះដឹង).",
+    "why": "The most beloved education metaphor in Khmer: schools, scholarship funds and NGOs reach for it because everyone likes it and no one finds it childish. It promises 'a way out of the dark' for a provincial student arriving in Phnom Penh, which is the app's emotional core. Six letters, pleasant to say, and the icon is obvious (a sun, lamp or ray over a house). Pairs well with the old name: ផ្ទះ + ពន្លឺ = a house with the light on.",
+    "risks": "Heavily crowded. Ponleu is one of the most common Cambodian given names (dozens of GitHub users are simply 'Ponleu') and it is strongly associated with Phare Ponleu Selpak, the famous Battambang arts and circus NGO, plus many 'Ponleu Khmer' and 'Ponleu ...' schools and charities; trademark and social handles will be contested. Spelling variants (Ponlue, Ponleur, Ponlu) split search. Foreigners mispronounce the 'eu'. Not verified live in this run (web search unavailable); assume the bare word is unregisterable and plan a compound if kept."
+   },
+   {
+    "khmer": "ពន្លក",
+    "latin": "Ponlok",
+    "pronounced": "pon-LOK (pawn-lawk), 'lok' with a long o as in 'law' + k (IPA pɔn.lɔːk)",
+    "meaning": "Sprout, seedling, young shoot; the first shoot that breaks the ground. Figuratively, a young talent or a new beginning.",
+    "why": "A student is a seedling: the word says growth without saying 'school', so it covers rentals, scholarships, jobs and campus life equally. It is a soft, everyday agricultural word every Cambodian grew up with, positive and never sarcastic. Six letters, one natural spelling, easy for foreigners to say, and it gives the strongest app icon in this list: a two-leaf sprout in a rounded square, green on white. Sounds fresh and young next to older Khmer brands.",
+    "risks": "Ponlok is also a personal name and 'Ponlok Khmer' is (from memory) an existing rural-development NGO, so check the trademark registry and .com.kh; live web search was unavailable in this run and GitHub only shows individuals named Ponlok. Sits one letter from Ponleu, so the two could be confused in speech. Agriculture flavour may feel less urban or techy than the founder wants. English readers may see 'pun-lock'."
+   },
+   {
+    "khmer": "ស្ពាន",
+    "latin": "Spean",
+    "pronounced": "SPEE-un said as one syllable, a glide from 'spee' to 'un' (IPA spiən), like 'spin' stretched",
+    "meaning": "Bridge. Also the word in Cambodia's famous heritage bridges (Spean Praptos, Spean Thma at Angkor).",
+    "why": "Says the product strategy in one everyday word: the app is the bridge from a provincial student to a room in Phnom Penh, from Phnom Penh to a scholarship abroad, from campus to a first job. Every Cambodian knows the ancient naga bridges, so it carries pride and permanence without sounding old-fashioned. Standard romanization already exists on road signs and maps (Spean), so there is one obvious spelling; five letters, no diacritics, and the icon is a simple arch or naga-bridge silhouette over water.",
+    "risks": "Foreigners will read it 'spee-an' or confuse it with Spain/spleen; Spean Bridge is a village in Scotland, so global search results are noisy. The word is functional and a little cold; it lacks the warmth of ចេះ or បង. Common in construction-company names in Cambodia, so check the trademark register; no Cambodian app named Spean surfaced on GitHub, but live web search was unavailable in this run. As a metaphor it needs a tagline to connect to students."
+   },
+   {
+    "khmer": "ផ្លូវ",
+    "latin": "Phlov",
+    "pronounced": "PLOU: 'pl' plus the vowel of 'low', ending in a soft w (IPA pʰləw); the h just marks a breathy p",
+    "meaning": "Road, street, path, way. Also the everyday metaphor for a way forward: ផ្លូវអនាគត (path to the future), ដឹងផ្លូវ (know the way), បើកផ្លូវ (open a path).",
+    "why": "Works on every layer of the app: a literal street address for a rental, a route to a scholarship abroad, a career path. ផ្លូវ is said dozens of times a day by every Cambodian and carries the exact 'a way forward' feeling the founder wants. Short in the logo, strong icon (a road vanishing into a sunrise, or a map pin on a road). Combines naturally with the old name in a tagline: ផ្ទះ ផ្លូវ ផែនការ (house, path, plan).",
+    "risks": "Romanization is a mess: Phlov, Plov, Phlauv, Plauv, Phlou all circulate, so Cambodians will type it several ways and URL traffic splits. 'Plov' is a well-known Central Asian rice dish and the 'phl' cluster looks unpronounceable to English readers. Very generic (every 'Phlov Meas' school and street), hard to trademark, and 'Search-Phlov-Meas' style projects already exist. Consider only as part of a compound (e.g. ផ្លូវសិស្ស) if kept. Live brand check unavailable in this run."
+   },
+   {
+    "khmer": "ពូកែ",
+    "latin": "Pukae",
+    "pronounced": "poo-KAE, second syllable like 'kite' with the t dropped (ka-eh) (IPA puː.kae)",
+    "meaning": "Skilled, clever, good at something; the everyday praise word. ពូកែណាស់! = 'Well done! You are great at this.'",
+    "why": "It is the single most motivating word a Cambodian student hears from parents and teachers, so the brand feels like encouragement every time the icon is tapped. Energetic, youthful, never bureaucratic, and it scales from housing (ពូកែរកផ្ទះ) to scholarships (ពូកែរៀន) to jobs (ពូកែធ្វើការ). Icon: a star or a raised thumb in a rounded square. Fast to say and to shout in a TikTok ad.",
+    "risks": "Fatal in English: any Latin spelling reads as 'puke' (Pukae, Puke, Pouke), which foreign investors, app-store reviewers and overseas Cambodians will mock; the app's 'scholarships abroad' vertical makes this worse. Romanization is unsettled (pouke, pukè, pou kae). ពូ also means 'uncle', so the split 'Pu Kae' can look like a person's name. Cambodians already use the word in shop and tutoring names, so distinctiveness is low. No brand collision found on GitHub; live web check unavailable in this run."
+   },
+   {
+    "khmer": "សំណាង",
+    "latin": "Samnang",
+    "pronounced": "som-NANG (sum-nahng), stress on the second syllable (IPA sɑm.naːŋ)",
+    "meaning": "Luck, good fortune. សំណាងល្អ = 'good luck', the phrase every student hears before an exam or a scholarship interview.",
+    "why": "Warm, auspicious and universally liked; Cambodians attach luck to housing, exams and job hunting alike, so it spans all planned verticals. Sounds like a kind wish rather than a company. Seven letters, one dominant spelling, easy for foreigners. Icon options are friendly (a four-leaf clover in Khmer green, a lucky knot, a smiling sun).",
+    "risks": "One of the most common Cambodian given names for both men and women, so it reads as a person, not a product, and there are already countless Samnang shops, guesthouses and Facebook pages; trademark protection will be weak and search results hopelessly noisy. Luck slightly undercuts merit: a scholarship app that says 'you got lucky' can feel wrong to hard-working students and to donors. Brand-collision check limited to GitHub (many individual Samnangs, no single big brand); live web search unavailable in this run."
+   },
+   {
+    "khmer": "បងចេះ",
+    "latin": "Bongcheh",
+    "pronounced": "BONG CHEH: 'bong' rhymes with 'song', then 'cheh' as in 'chess' without the s (IPA bɔːŋ cɛh)",
+    "meaning": "Literally 'older sibling who knows' or 'Bong knows'. បង is how every student addresses a slightly older person or senior; ចេះ = knows how. Together it is the helpful senior you message when you do not know where to start.",
+    "why": "Taps directly into the បង-ប្អូន culture on Cambodian campuses: freshmen find rooms, scholarships and part-time jobs by asking a senior. Naming the app after that person makes it feel like a friend, not a portal. It is the only candidate that sounds like someone you would DM on Telegram ('ask Bong Cheh'). Two short familiar words; fun in voice ads; icon can be a friendly face or a waving hand.",
+    "risks": "'Bong' is a cannabis pipe in English, so international investors and app-store copy will draw jokes, and 'Bong Cheh' can be misheard as 'bong chess'. The Bong- prefix is extremely crowded in Cambodian brands (BongThom, a major classifieds site with rental listings and a direct competitor; BongSrey; Bong Pheak; Bong Preab), so distinctiveness and trademark are weak. Can sound like a know-it-all if the tone is off. Two-word name gives two URL forms (bongcheh vs bong-cheh). Not web-verified in this run; GitHub shows no app of this name."
+   },
+   {
+    "khmer": "សាលា",
+    "latin": "Sala",
+    "pronounced": "sa-LAA (sah-lah), both vowels long, light stress on the second syllable",
+    "meaning": "School; also hall or pavilion (សាលារៀន = school, សាលាបឋមសិក្សា = primary school). ទៅសាលា = 'go to school' is said by every child in Cambodia.",
+    "why": "Instantly student-coded: anyone hearing 'Sala' knows it lives in the world of learning. It is the simplest Latin form in this list (four letters, one spelling, every keyboard, every accent) and it looks great as an icon: a Khmer sala roofline in a rounded square. Extends easily to sub-brands (Sala Pteah for rooms, Sala Jobs), and feels like an institution students can trust rather than a startup.",
+    "risks": "Very generic globally: 'sala' means room or hall in Spanish, Italian and Portuguese and pavilion in Thai, so sala.com and most handles are gone; you would need salakh or sala.app. In Khmer the word also means court (សាលាដំបូង) and city hall (សាលាក្រុង), which gives it a faintly bureaucratic flavour. It says 'school' for an app that is explicitly about life outside the classroom, and it is hard to trademark on its own. No Cambodian app named Sala surfaced on GitHub; live web search unavailable in this run."
+   },
+   {
+    "khmer": "រៀន",
+    "latin": "Rean",
+    "pronounced": "REE-un said as one syllable, a glide from 'ree' to 'un' (IPA riən)",
+    "meaning": "To learn, to study. The verb every student says every day: ទៅរៀន (go to class), រៀនពូកែ (study well).",
+    "why": "The most obvious student word in Khmer and a superb four-letter Latin name: short, soft, clean icon. Included so the founder has the comparison point and knows its status; on pure marketability it would rank near the top.",
+    "risks": "ALREADY TAKEN in exactly this market: REAN (រៀន) is a live Cambodian educational platform for students, schools and tutors incubated by the CamboVerse Center at the National University of Management, open-sourced on GitHub (camboversecenter/Rean, 2026) and deployed at rean.camboverse.world; several 'Rean Khmer' learning apps also exist. Spelling splits between Rean, Rien and Rearn; 'rien' means 'nothing' in French; foreigners read it as 'Ryan' or 'Ren'. Do not use unless the founder is willing to fight an established local edtech brand. This collision was verified directly on GitHub in this run."
+   }
+  ]
+ },
+ "names:hybrid": {
+  "candidates": [
+   {
+    "khmer": "និស្សិត",
+    "latin": "Nisit",
+    "pronounced": "ni-SUT (ni-sət); two short syllables, second one clipped. Khmer speakers often romanize it Niset/Nisset.",
+    "meaning": "University student. The everyday word every Cambodian undergrad uses for themselves (nisit RUPP, nisit ITC, nisit khmer).",
+    "why": "Says 'this is for students' in one word with zero explanation; the audience literally calls themselves this. Five letters, one clean Latin spelling, works as nisit.app / nisit.kh. Fits every future vertical (nisit housing, nisit scholarships, nisit jobs). Reads well in a rounded wordmark and the Khmer script is compact enough for an icon.",
+    "risks": "Same word in Thai (นิสิต): NisitKU is Kasetsart University's official student app and NISIT is a Thai skincare brand, so App Store search will show Thai results and international trademark checks are needed. Register is slightly formal/academic rather than playful. Latin spelling drops the doubled ស, so people may search 'nisset' or 'niset' instead. Not usable for high-schoolers (they are 'ses', not 'nisit'). A Facebook page 'Niset Pet' (medical students) exists but is not a competing brand."
+   },
+   {
+    "khmer": "ក្មេង",
+    "latin": "Kmeng",
+    "pronounced": "KMAENG (one syllable, km- cluster, vowel like 'bang' but longer).",
+    "meaning": "Young person / kid. In youth speech 'kmeng' is what young Cambodians call themselves and each other ('kmeng Khmer', 'kmeng srok', 'kmeng jumnoan tmey' = new generation).",
+    "why": "Very warm and very Gen-Z; feels like an in-group word rather than a ministry word. Five letters, easy to type, no diacritics. Says 'youth' and 'for us' instantly, so it can hold rentals, scholarships, jobs and campus life without being tied to one.",
+    "risks": "Kmeng Khmer is a well-known Baramey Productions pop-rap duo (Spotify, YouTube, SoundCloud), so 'Kmeng' + anything Khmer-flavored will be read as the band. Primary sense is 'child', so a landlord or scholarship provider may find it juvenile, and parents may think it is for kids. The initial 'km' cluster is unpronounceable for foreigners (fine for the local market, awkward for foreign scholarship partners). Some romanize it 'khmeng'."
+   },
+   {
+    "khmer": "យុវ",
+    "latin": "Yuva",
+    "pronounced": "yu-VEA (yŭ-vĕə), as in the first half of 'yuvachun' (youth).",
+    "meaning": "Youth / young (the Sanskrit-derived prefix in យុវជន yuvachun 'youth' and យុវសិស្ស yuvases 'young students').",
+    "why": "Every Cambodian recognises it from yuvachun and from youth programmes; it sounds aspirational and respectable, so scholarship providers, universities and ministries take it seriously. Four letters, easy URL, symmetrical wordmark. Says 'youth' without saying 'child'.",
+    "risks": "Formal/institutional register: strongly associated with the Union of Youth Federations of Cambodia (UYFC has its own app) and government youth programmes, so it can feel official rather than fun. 'Yuva' is a crowded name in India (Mission Yuva, Yuva Sathi, CM Yuva, Yuva by Young Indians), which will dominate app-store and Google results. On its own it is a prefix, so some Khmer speakers will feel it is 'unfinished' without -chun."
+   },
+   {
+    "khmer": "ឱកាស",
+    "latin": "Okas",
+    "pronounced": "ao-KAH (ʔao-kaːh); the final ស is a breathy h, not an s. Some Cambodians would spell it Aokas or Okah.",
+    "meaning": "Opportunity / chance. Used constantly in scholarship, job and study-abroad talk ('okas ahaharupakar' = scholarship opportunity, 'okas ka-ngea' = job opportunity).",
+    "why": "It is the exact word every scholarship post and job post in Cambodia already uses, so the name pre-explains the product's growth path (housing today, opportunities tomorrow). Short, positive, no rude homophones. Pairs naturally with slogans like 'Okas somrab nisit' (opportunities for students).",
+    "risks": "OAKAS already exists in Cambodia: a government-backed (MOSVY / Australian-funded) inclusive employment app for people with disabilities, so a jobs feature under 'Okas' would collide with it in search and in trademark. Latin 'Okas' does not match the spoken form (people say 'ao-kah'), so voice search and word-of-mouth spelling will be inconsistent (Okas / Aokas / Okah). Generic enough that it is hard to own as a brand."
+   },
+   {
+    "khmer": "ចាប់ឱកាស",
+    "latin": "ChabOkas",
+    "pronounced": "chap ao-KAH (caːp ʔao-kaːh).",
+    "meaning": "'Grab the opportunity' / 'seize the chance'. A common motivational phrase in Khmer scholarship and career posts.",
+    "why": "It is a verb phrase, which makes it feel like an action and a call to action at once; young Cambodians already type it on Facebook. Very memorable in Khmer, and it hints at the app's job: you catch the room, the scholarship, the job here. Nothing found using it as a brand in Cambodia.",
+    "risks": "Nine letters and two words, so weaker as an app icon and harder to type as a URL (chabokas.com is fine, but people will try chapokas / chaboukas). 'Chab' reads as 'chub' to English speakers. Still contains 'Okas', so it inherits some overlap with the OAKAS employment app. Slogan-like names age faster than noun names."
+   },
+   {
+    "khmer": "អនាគត",
+    "latin": "Anakot",
+    "pronounced": "a-na-KOT (ʔa-naː-kʊət), final t unreleased.",
+    "meaning": "Future.",
+    "why": "Universally understood, optimistic, and the natural word in every 'build your future' scholarship message; parents like it as much as students do. Six letters, easy to type, strong closed-syllable ending for a logo.",
+    "risks": "Effectively taken in Cambodia: there is already an 'Anakot' app on the App Store, Anakut.com (a Cambodian culture/commerce/community platform with several apps), Anakut Digital (Phnom Penh, 2018), Anakot POS and Anakot Translation & Consulting. Two competing romanizations (Anakot / Anakut) split search traffic. Included so the founder can rule it out rather than rediscover the collision."
+   },
+   {
+    "khmer": "ឡើង",
+    "latin": "Loeng",
+    "pronounced": "LAENG (ləːŋ), like 'lung' with the vowel of 'learn'.",
+    "meaning": "Up / rise / go up. In youth speech it means levelling up ('loeng level', 'loeng thnak' = move up a grade, 'loeng chhnuol' = rent goes up).",
+    "why": "Says 'future / moving up' in the most casual Khmer possible, and it is the word students use for getting a better grade, a better room, a better level. Punchy one-syllable name, good icon potential (an upward arrow that is also a roof). Nothing found using it as a Cambodian tech brand.",
+    "risks": "Romanization is unstable: Loeng, Laeng, Leung, Leong all appear, so people will misspell the URL. 'Leung/Leong' is a common Chinese surname, so search results get polluted. 'Loeng' is also used for prices rising, which a rental app may not want top of mind. Foreigners cannot pronounce it, which matters only for overseas scholarship partners."
+   },
+   {
+    "khmer": "សំណាង",
+    "latin": "Somnang",
+    "pronounced": "som-NAHNG (sɑm-naːŋ).",
+    "meaning": "Luck / good fortune. Also a very common given name.",
+    "why": "One of the warmest words in Khmer; 'somnang la-or' (good luck) is what people wish a friend before an exam or a scholarship interview. Feels friendly and human because so many people are named Somnang. Easy to say and type, seven letters, no rude readings.",
+    "risks": "Strongly tied to lottery in Cambodia: Moha Somnang / KTV Lottery (Khmer Moha Somnang Co., Ltd) is a big lottery brand with its own apps, so 'Somnang' + 'get a scholarship' can read as 'win a lottery', which undermines a merit-based scholarship product. Being a common personal name makes trademarking harder and SEO noisy. Suggests luck rather than effort or reliability, a weak frame for landlords and employers."
+   },
+   {
+    "khmer": "រក",
+    "latin": "Rok",
+    "pronounced": "ROHK (rɔːk), long open o, closer to 'rawk' than 'rock'.",
+    "meaning": "To look for / to find. 'Rok pteas' = find a house, 'rok ahaharupakar' = look for a scholarship, 'rok ka-ngea' = look for a job.",
+    "why": "It is the verb behind every future vertical, so the name never outgrows the product ('Rok' + anything). Three letters, the shortest typeable Khmer word that works in a URL (rok.app, rokkh.com), and it keeps a link to the current 'Pteas' brand ('Rok Pteas'). Sounds like 'rock', which youth read as cool.",
+    "risks": "Written the same in Latin as រោគ (rook, 'disease') and close to រក in 'rok si' (to earn a living), so an accent mark or Khmer script must sit next to the logo. ROK is the standard abbreviation for the Republic of Korea, which floods search. Three-letter domains are usually taken (rok.com etc.), so it needs a suffix. No Cambodian app called Rok was found, but the word is too generic to trademark alone."
+   },
+   {
+    "khmer": "សំបុក",
+    "latin": "Sombok",
+    "pronounced": "som-BOK (sɑm-bok).",
+    "meaning": "Nest. Used affectionately for a small home, a bird's nest, and figuratively a place where young things grow.",
+    "why": "Carries the housing origin (a room is your nest) and the growth story (a nest is where you grow before you fly to a scholarship abroad) in one warm image. Very drawable icon. Six letters, unambiguous spelling, sounds soft and safe, which matters for parents letting a child move to Phnom Penh.",
+    "risks": "SombokIT (Sambok IT Store) is an active Phnom Penh electronics retailer with iOS and Android apps, and there is a Sombok Digital page and a Sombok Restaurant, so the plain word is already crowded locally. Stays close to 'house' semantics, so it does not itself say student or opportunity. 'Sombok' can also mean a wasp/bee nest and is used in slang for a shady hangout ('sombok l'baeng' = gambling den), so the wrong pairing sounds seedy."
+   },
+   {
+    "khmer": "បងដឹង",
+    "latin": "BongDeng",
+    "pronounced": "bong DUNG (bɑːŋ dəŋ), 'deng' with a short schwa.",
+    "meaning": "'Bong knows' / 'big sibling knows'. Bong is the universal friendly address for anyone slightly older; 'bong deng' is what a senior says when helping a first-year.",
+    "why": "Personifies the app as the helpful senior student every freshman wants: the one who knows where to rent, which scholarship is real, where the jobs are. Youth already mix 'bong' into English speech, and it appears in local brands (BongThom, Bong's Design), so it feels native and modern. Great voice for notifications ('Bong deng! new room near RUPP'). No brand found using 'Bong Deng'.",
+    "risks": "BongThom.com is a large Cambodian classifieds site (with apps) that also lists rentals, so any 'Bong' + word will be compared to it. 'Bong' means a cannabis pipe in English, which foreign scholarship partners and app reviewers will notice. ដឹង has no standard romanization (Deng / Doeng / Dung), and 'Dung' is an unfortunate English reading. Two-word names are harder as icons; a monogram 'BD' is needed."
+   },
+   {
+    "khmer": "ចូល",
+    "latin": "Chol",
+    "pronounced": "CHOHL (coːl), long o, rhymes with 'hole'.",
+    "meaning": "To enter / go in / join. 'Chol pteas' = move into a house, 'chol rean' = start school, 'chol tver ka' = start a job, 'chol chet' = to like.",
+    "why": "One verb that covers all three roadmap stages (move in, enrol, start work) plus the slang for 'like', so the brand grows with the product. Four letters, easy URL (chol.app, cholkh.com), and the Khmer script is a single compact glyph pair that looks good as an icon. Youth use it constantly ('chol tov!' = come in, let's go).",
+    "risks": "English readers will say 'coal' or 'chole', and 'Chol' is also a surname and a South Sudanese/Korean name, so global search is noisy. Without context the word is too generic in Khmer to be a noun-brand; it needs a visual (a door/roof) or a suffix to feel like a product. Close in sound to 'chorl' (ជល, water) in some accents, harmless but confusing. No Cambodian app or startup called Chol was found."
+   }
+  ]
+ },
+ "judge": {
+  "shortlist": [
+   {
+    "khmer": "ពន្លក",
+    "latin": "Ponlok",
+    "pronounced": "pon-LOK (pawn-lawk), long open o in the second syllable",
+    "meaning": "Sprout, seedling, young shoot; figuratively a new talent or a fresh start.",
+    "score": 8.2,
+    "why": "Best balance across all five tests: young Cambodians hear growth rather than school or ministry, so it covers rooms, scholarships, jobs and campus life as one company; one natural Latin spelling that a friend can type after hearing it once; no rude or unlucky reading; and it gives the strongest icon in the field (a two-leaf sprout). Slight risk that it feels agricultural rather than techy, and it sits one letter from Ponleu in speech.",
+    "conflicts": "GitHub: only personal accounts (PonlokTTR, Ponlok-chanphalin, PonlokHOM), no app or company. From memory: 'Ponlok Khmer' is a rural-development NGO in Preah Vihear and Ponlok is a common given name. Live web search was unavailable in this run (search budget exhausted, search engines blocked by proxy), so check .com.kh, the trademark register and Facebook before committing."
+   },
+   {
+    "khmer": "ស្ពាន",
+    "latin": "Spean",
+    "pronounced": "SPEE-un as one syllable (IPA spiən)",
+    "meaning": "Bridge; also the word in the Angkor-era bridges Spean Praptos and Spean Thma.",
+    "score": 8,
+    "why": "States the company strategy in one word: the bridge from province to a room in Phnom Penh, from campus to a scholarship or a first job. Standard romanization already sits on road signs, so there is exactly one spelling; five letters, no diacritics, clean arch icon. Loses points on warmth (a bridge is functional) and on foreign readers saying 'Spain', and it needs a tagline to connect it to students.",
+    "conflicts": "GitHub: hangsiahong/spean (a Cambodian developer's Rust reverse-tunnel side project, 2026) and a few unrelated repos; no Cambodian app or consumer brand. Construction companies commonly use 'Spean' in their names (from memory). Not web-verified in this run; check .com.kh and Facebook."
+   },
+   {
+    "khmer": "ចេះ",
+    "latin": "Cheh",
+    "pronounced": "CHEH, one syllable, 'chess' without the s, soft breathy ending (IPA cɛh)",
+    "meaning": "To know how, to be able; the praise word ចេះណាស់ ('so capable!') and the everyday ចេះហើយ ('got it').",
+    "score": 7.8,
+    "why": "The freshest, warmest sound in the list and the shortest to type; an 18-25 year old hears praise from a teacher or parent, not a portal. Stretches from rentals to jobs through a natural tagline (ចេះរកផ្ទះ, ចេះរកអាហារូបករណ៍). Marked down because the Latin spelling is not settled (cheh / ches / jes / chess), it says nothing about students on its own, and ចេះតែ gives a mildly sarcastic secondary reading.",
+    "conflicts": "GitHub: nothing Cambodian named Cheh (only Hindi 'chehra' projects). 'Cheh' is also a Hokkien surname and 'che' reads as 'car' to Chinese speakers. Live web search unavailable in this run; a four-letter handle like @cheh is very likely taken on Facebook, Telegram and .com, so plan on cheh.app or chehkh."
+   },
+   {
+    "khmer": "និស្សិត",
+    "latin": "Nisit",
+    "pronounced": "ni-SET / ni-sət, stress on the second syllable; Latin readers say NEE-sit",
+    "meaning": "University student; the word every Cambodian undergraduate uses for themselves.",
+    "score": 7.6,
+    "why": "Scores highest on 'gets that it is for students' (it literally is the word) and on scaling to nisit housing / nisit scholarships / nisit jobs. Loses on spelling (Nisit, Nisset, Niset all circulate), on freshness (slightly formal, Pali register) and on excluding high-school scholarship hunters who call themselves សិស្ស.",
+    "conflicts": "Real crowding, mostly Thai: GitHub shows 177 'nisit' repos, dominated by Thai university projects (KU-NisitID-Checksum, NisitRunner, NisitComSci); NisitKU is Kasetsart University's official student app and NISIT is a Thai skincare brand (from memory). Cambodian side: 'Nisset Coffee', 'NissetSkills' on GitHub and a 'Niset Pet' medical-student Facebook page, none a competing app. Live web search unavailable in this run; verify nisit.com.kh and the Facebook page name."
+   },
+   {
+    "khmer": "ទៅណា",
+    "latin": "Tovna",
+    "pronounced": "tow-NAH, stress on 'na'",
+    "meaning": "'Where to? / Where are you going?', the everyday Khmer greeting.",
+    "score": 7.5,
+    "why": "Youngest-feeling name in the set: a question every Cambodian shouts across the street, fused into a coined brand that is easy to own and easy to type. A question fits a discovery app (where will you live, study, work next) and holds housing and jobs equally. Marked down because Cambodians already associate the phrase with travel (see conflicts) and may type Tov Na or Teuv Na.",
+    "conflicts": "GitHub: H-thaksin/TovNA, a 'Smart Travel Planning & Booking Platform' created Sept 2026 (looks like a Cambodian student project), plus 'tovnasabay' repos tied to Tov Na Sabay, a well-known Cambodian lifestyle and travel site. So the word is already travel-coded locally. Live web search unavailable in this run; check tovna.com/.com.kh and Facebook."
+   },
+   {
+    "khmer": "បងចេះ",
+    "latin": "Bongcheh",
+    "pronounced": "BONG CHEH (IPA bɔːŋ cɛh)",
+    "meaning": "'Bong knows': the helpful senior you message when you do not know where to start.",
+    "score": 7.4,
+    "why": "Most likeable to an 18-25 year old because it names the exact person freshmen already ask for rooms, scholarships and part-time jobs; sounds like someone you DM on Telegram, not a company. Fine for housing and jobs. Loses on spelling (bongcheh vs bong cheh vs bong ches), on English 'bong', and on the crowded Bong- namespace next to BongThom, a direct rental-classifieds competitor.",
+    "conflicts": "GitHub: nothing named Bongcheh or Bong Deng. From memory: BongThom.com (classifieds with rentals and jobs), BongPheak (jobs), BongSrey and many other 'Bong X' brands in Cambodia, so distinctiveness and trademark are weak. Not web-verified in this run."
+   },
+   {
+    "khmer": "ក្មេង",
+    "latin": "Kmeng",
+    "pronounced": "KMAENG, one syllable with the km- cluster",
+    "meaning": "Young person, kid; what young Cambodians call themselves ('kmeng jumnoan tmey').",
+    "score": 7,
+    "why": "Pure Gen-Z in-group word with a strong K logo and a settled chat-script spelling. Loses points because to landlords, employers and scholarship donors it reads as 'child', which hurts the company-that-does-housing-and-jobs test, and because it is already strongly attached to a pop-rap act.",
+    "conflicts": "GitHub: KmengAI, KmengToj and other small Cambodian student projects using the word. From memory: Kmeng Khmer, the Baramey Productions pop-rap duo, dominates the name on YouTube, Spotify and Facebook. Not web-verified in this run."
+   },
+   {
+    "khmer": "ចូល",
+    "latin": "Chol",
+    "pronounced": "CHOHL, long o, rhymes with 'hole'",
+    "meaning": "To enter, move in, join, start; also slang for 'like' (chol chet).",
+    "score": 7,
+    "why": "One everyday verb that covers move in, enrol and start work, so the brand never outgrows the roadmap; four letters, compact Khmer glyph for an icon. Loses on likeability and distinctiveness (too generic on its own to feel like a product without a roof or door icon) and on English readers saying 'coal'.",
+    "conflicts": "GitHub: nothing Cambodian named Chol (results are Cholesky/cholera libraries). 'Chol' is a common surname and South Sudanese/Korean name, so global search is noisy; no Cambodian app or startup known by this name. Not web-verified in this run."
+   }
+  ],
+  "on_pteas": "Pteas (ផ្ទះ, 'house') is a good product name and a weak company name. For the rentals feature it is perfect: instantly understood, warm, and the Latin form 'Pteas' is one Cambodians actually use (GitHub shows PteasDecor, PteasChasCoffee, PteasKanteayPOS, so the spelling is native even though Pteah/Phteah are more common, which means URL and search traffic will split). The problem is scope: once scholarships, jobs and campus life arrive, 'House' on a scholarship push notification or a job listing will feel like a category error, and every ad will have to explain why a house app is sending you to study in Japan. It also has near-zero distinctiveness for trademark (dozens of 'Pteas X' shops and pages) and will be typed three ways by users. Honest recommendation: keep Pteas as the rentals product or tab ('Pteas by <umbrella name>'), and pick an umbrella name from the list above for the company and app store listing; do not rename the rentals feature itself.",
+  "advice": "Say the top three names out loud to five friends aged 18-25 without showing them the spelling, ask them to type it into Telegram and to guess what the app does, and keep only the names they spell one way and place near 'students'. Before announcing anything, check the .com and .com.kh, the Facebook page name, the Telegram handle and the Ministry of Commerce trademark register yourself, because live web verification could not be completed in this run and the conflicts listed here come from GitHub plus memory only."
+ }
+}

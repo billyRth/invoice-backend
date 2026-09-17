@@ -1,0 +1,220 @@
+{
+ "sources": [
+  {
+   "name": "MoEYS scholarships page (ក្រសួងអប់រំ យុវជន និងកីឡា – អាហារូបករណ៍)",
+   "url": "https://www.moeys.gov.kh/index.php/en/scholarships.html",
+   "what": "Ministry of Education, Youth and Sport listing of government-to-government scholarship announcements (Hungary, China, Korea, Japan, Russia, Azerbaijan, Turkey, etc.) as PDF/Khmer notices; the Department of Scholarships under the Directorate General of Higher Education publishes here. Site is slow and often unindexed; the Facebook page carries the same notices faster.",
+   "language": "Khmer (some English)",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "MoEYS Cambodia Facebook page",
+   "url": "https://www.facebook.com/moeys.gov.kh/",
+   "what": "Official ministry page (~4.2M likes). Posts every scholarship announcement as image/PDF of the Khmer សេចក្តីជូនដំណឹង letter: ASEAN Scholarship, Stipendium Hungaricum, China-ASEAN Digital Academy, MEXT, GKS, Russian and Azerbaijani offers, and the domestic 100%-tuition bachelor scholarships (10,554 places for 2026-27). This is the single most-followed source for G2G scholarships.",
+   "language": "Khmer",
+   "official": true,
+   "channel": "facebook"
+  },
+  {
+   "name": "MoEYS News Telegram (ព័ត៌មានអប់រំ យុវជន និងកីឡា)",
+   "url": "https://t.me/moeysnews",
+   "what": "Official MoEYS Telegram channel that mirrors ministry notices including scholarship announcements.",
+   "language": "Khmer",
+   "official": true,
+   "channel": "telegram"
+  },
+  {
+   "name": "ប្រព័ន្ធអាហារូបករណ៍ឧត្តមសិក្សា – DGHE higher-education scholarship system",
+   "url": "https://scholarship.dghekh.com/",
+   "what": "Directorate General of Higher Education online portal for the domestic MoEYS scholarships (bachelor/master/PhD places at public HEIs) that students apply to after Bac II results.",
+   "language": "Khmer",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Australia Awards Cambodia – Scholarships",
+   "url": "https://www.australiaawardscambodia.org/scholarships/",
+   "what": "Official DFAT-managed programme site: intake brochure, eligibility (IELTS 6.0 for master's coursework), priority fields, OASIS application link. 2027 intake opened 1 Feb 2026 and closed 30 Apr 2026 at 14:00 AEST.",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "EducationUSA Advising Center – U.S. Embassy in Cambodia",
+   "url": "https://kh.usembassy.gov/educationusa-advising-center/",
+   "what": "Free advising on U.S. study and scholarships. Centers at Exchange Square Mall Phnom Penh (Floor 1, No. 19-20 St 106, +855 10 502 121, PhnomPenh@educationusa.org) and Siem Reap; Opportunity Funds programme for high-achieving low-income students; annual EducationUSA Fair each October.",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Fulbright Foreign Student Program – U.S. Embassy in Cambodia",
+   "url": "https://kh.usembassy.gov/fulbright-foreign-student-program/",
+   "what": "Annual call for Cambodian master's/PhD candidates. 2027-28 cycle: application at apply.iie.org/ffsp2027, deadline 30 April 2026 23:59 ET, later extended to 5 June 2026. IELTS 7.0 typical.",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Embassy of Japan in Cambodia – Scholarship section",
+   "url": "https://www.kh.emb-japan.go.jp/itpr_en/c_000078.html",
+   "what": "Index of MEXT (Japanese Government) scholarship pages: general info, Research, Undergraduate, KOSEN, Specialized Training College, Teacher Training, past exam papers. Scholarship Advisor: scholarship.jpn@pp.mofa.go.jp, Tel 023-217-161~4, office hours 13:30-17:15.",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Embassy of the Republic of Korea in Cambodia – Announcements",
+   "url": "https://overseas.mofa.go.kr/kh-en/brd/m_25856/list.do",
+   "what": "Announcement board where GKS Embassy Track calls are posted: GKS-U (undergraduate) each Sept (2026 cycle 15-30 Sept 2025, offline submission required, 3 Cambodia slots), GKS-G (graduate) each Feb (2026 cycle 12-25 Feb, 12 Cambodia slots), AKS Korean Studies track, TOPIK schedule at CKCC.",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Study in Korea – GKS notices and online application",
+   "url": "https://www.studyinkorea.go.kr",
+   "what": "NIIED portal where GKS guidelines and the university list are published and where GKS-U online applications are submitted.",
+   "language": "English/Korean",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Embassy of the People's Republic of China in Cambodia",
+   "url": "https://kh.china-embassy.gov.cn/eng/",
+   "what": "Official embassy site; Chinese Government Scholarship (CSC Type A, embassy channel) notices for the 2026/27 year required online application at campuschina.org plus documents to the embassy by mid-February 2026 (8-14 Feb). Contact chinaemb_kh@mfa.gov.cn. Cambodia gets roughly 30-50 embassy-channel slots plus ASEAN and China-ASEAN Digital Academy places announced via MoEYS.",
+   "language": "English/Chinese",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Campus China – CSC online application",
+   "url": "https://www.campuschina.org",
+   "what": "China Scholarship Council portal where all Chinese Government Scholarship applications (Type A embassy and Type B university) are created; window normally December to April.",
+   "language": "English/Chinese",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Campus France Cambodge – Obtenir une bourse",
+   "url": "https://www.cambodge.campusfrance.org/fr/obtenir-une-bourse",
+   "what": "Official French study office in Phnom Penh: France Excellence (ex-BGF) master's/PhD scholarships managed by the French Embassy, Eiffel programme, Campus Bourses search. 2025-26 campaign opened 16 Dec 2024 with deadline 26 Jan 2025 18:00; applications to campusfrance@ifcambodge.com.",
+   "language": "French/English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "DAAD in Cambodia (DAAD Regional Office Hanoi)",
+   "url": "https://www.daad-vietnam.org/en/about-us/daad-in-cambodia/",
+   "what": "DAAD has no office in Phnom Penh; the Hanoi regional office covers Cambodia, and a DAAD long-term lecturer at RUPP's Department of Media and Communication is the on-the-ground contact for DAAD scholarship questions (EPOS, research grants).",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Chevening – Cambodia",
+   "url": "https://www.chevening.org/scholarship/cambodia/",
+   "what": "Official Chevening country page. 2027-28 cycle opened 4 Aug 2026, closes 6 Oct 2026 11:00 UTC; requires 2 years (2,400 hours) work experience; British Embassy Phnom Penh shortlists and interviews; unconditional UK offer due 8 July 2027.",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "EU Delegation to Cambodia – Travel & Study (Erasmus+)",
+   "url": "https://www.eeas.europa.eu/cambodia/travel-study_en",
+   "what": "EU Delegation page on Erasmus+ / Erasmus Mundus opportunities for Cambodians; the Delegation runs the annual European Scholarship Fair in Phnom Penh with 'Team Europe' embassies and info sessions at provincial universities.",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Stipendium Hungaricum – Cambodia",
+   "url": "https://stipendiumhungaricum.hu/country/cambodia/",
+   "what": "Hungarian government programme page for Cambodia; MoEYS is the sending partner that publishes the local call and nominates. Application at apply.stipendiumhungaricum.hu, deadline 15 January (14:00 CET); nominations by end of February.",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "ASEAN Scholarships for Cambodia – Singapore MOE",
+   "url": "https://www.moe.gov.sg/financial-matters/awards-scholarships/asean-scholarships/cambodia",
+   "what": "Singapore Ministry of Education secondary/pre-university scholarship (Secondary 3 to Pre-U 2, GCE A-Level). Cambodian applications open around 1 April and close end of May (2023: 5 Apr-31 May); selection test and interview in Phnom Penh; MoEYS Facebook also posts the call.",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "UWC Cambodia national committee",
+   "url": "https://cambodia.uwc.org/",
+   "what": "Selects Cambodian students in grades 11-12 for UWC two-year IB scholarships. Application deadline 15 November 2026; multi-stage selection (tests, group tasks, interview). Contact selection@kh.uwc.org or fb.me/uwc.cambodia.",
+   "language": "English",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "New Zealand Scholarships – Cambodia Facebook",
+   "url": "https://www.facebook.com/NZScholarships/",
+   "what": "Page used for Manaaki New Zealand Scholarship calls in Cambodia.",
+   "language": "English",
+   "official": true,
+   "channel": "facebook"
+  },
+  {
+   "name": "RUPP scholarship announcements",
+   "url": "https://www.rupp.edu.kh/scholarship/",
+   "what": "Running list of scholarship and exchange announcements posted by RUPP.",
+   "language": "English/Khmer",
+   "official": true,
+   "channel": "website"
+  },
+  {
+   "name": "Cambodia Academy of Digital Technology (CADT) Telegram",
+   "url": "https://t.me/cadt_official",
+   "what": "Official CADT channel; posts digital-technology scholarships (e.g. the 500+ MoEYS digital scholarships, China-ASEAN Digital Academy).",
+   "language": "Khmer/English",
+   "official": true,
+   "channel": "telegram"
+  },
+  {
+   "name": "Scholarship for Cambodia (Facebook)",
+   "url": "https://www.facebook.com/ScholarshipCambodia/",
+   "what": "Largest community scholarship page (~167K followers); reposts embassy, MoEYS, university and NGO scholarships with Khmer summaries and links.",
+   "language": "Khmer/English",
+   "official": false,
+   "channel": "facebook"
+  },
+  {
+   "name": "WEduShare",
+   "url": "https://www.wedushare.com",
+   "what": "Cambodia's largest online opportunity platform (founded 2016; ~233K Facebook fans, 10K newsletter subscribers): scholarship listings with deadlines, how-to articles, Khmer explainers such as 'fully funded scholarships for Cambodian students', plus Facebook, Instagram and Telegram channels.",
+   "language": "English/Khmer",
+   "official": false,
+   "channel": "website"
+  },
+  {
+   "name": "Ahladang – អាឡាដាំង (Facebook)",
+   "url": "https://www.facebook.com/ahladangkh",
+   "what": "Education page (~147K likes) started 2015; scholarship information, free online mentoring for rural students, English lessons and application tips.",
+   "language": "Khmer",
+   "official": false,
+   "channel": "facebook"
+  },
+  {
+   "name": "Study Abroad Center មជ្ឈមណ្ឌលអាហារូបករណ៍សិក្សាក្រៅប្រទេស",
+   "url": "https://www.facebook.com/studyabroadcenterforcambodia/",
+   "what": "Khmer-language page (~146K likes) reposting scholarships with tips; linked to a study-abroad consultancy.",
+   "language": "Khmer",
+   "official": false,
+   "channel": "facebook"
+  },
+  {
+   "name": "Federation of Cambodian Students Abroad – CamStudent (Telegram)",
+   "url": "https://t.me/camstudentcambodia",
+   "what": "Channel (~5K subscribers) of the federation of Cambodian student associations overseas; shares scholarship calls and first-hand advice from students already abroad.",
+   "language": "Khmer/English",
+   "official": false,
+   "channel": "telegram"
+  }
+ ]
+}
