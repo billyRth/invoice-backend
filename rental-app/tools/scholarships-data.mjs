@@ -79,7 +79,7 @@ const key = (s) => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 
 /* ---- Khmer copy, matched back on by name ---- */
 const km = new Map();
-for (const f of readdirSync(research).filter((f) => /^km-\d+\.json$/.test(f)).sort()) {
+for (const f of readdirSync(research).filter((f) => /^km-\d+[ab]?\.json$/.test(f)).sort()) {
   let j;
   try { j = JSON.parse(readFileSync(join(research, f), "utf8")); }
   catch (e) { console.error(`skipped ${f}: ${e.message}`); continue; }
