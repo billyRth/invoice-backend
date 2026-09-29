@@ -211,7 +211,6 @@ input, select { font: inherit; }
 @supports not (backdrop-filter: blur(1px)) { .topbar { background: var(--bg); } }
 
 .topbar-in {
-  max-width: 1440px; margin: 0 auto;
   display: grid; gap: 9px 10px; align-items: center;
   grid-template-columns: auto auto;
   grid-template-areas: "brand tools" "search search";
@@ -275,22 +274,27 @@ input, select { font: inherit; }
 
 /* the three-pane frame */
 .app {
-  flex: 1; width: 100%; max-width: 1440px; margin: 0 auto;
+  flex: 1; width: 100%;
   display: grid; grid-template-columns: 1fr; min-height: 0;
 }
 @media (min-width: 900px) {
-  .app { grid-template-columns: 236px minmax(380px, 1fr) 1.15fr; gap: 0; align-items: start; }
+  /* A desktop app fills the display and never scrolls as a whole: the
+     header is fixed furniture and each pane carries its own scrollbar, so
+     reading a room cannot lose your place in the list. */
+  .shell { height: 100dvh; overflow: hidden; }
+  .app {
+    grid-template-columns: 236px minmax(360px, 1fr) 1.2fr;
+    align-items: stretch; min-height: 0; overflow: hidden;
+  }
 }
-@media (min-width: 1240px) {
-  .app { grid-template-columns: 260px minmax(420px, 1fr) 1.25fr; }
-}
+@media (min-width: 1240px) { .app { grid-template-columns: 264px minmax(400px, 1fr) 1.25fr; } }
+@media (min-width: 1700px) { .app { grid-template-columns: 300px minmax(460px, 1fr) 1.3fr; } }
 
 /* ------------------------------------------------------------ filters */
 .rail { display: none; }
 @media (min-width: 900px) {
   .rail {
-    display: block; position: sticky; top: calc(var(--topbar-h) + 14px);
-    max-height: calc(100dvh - var(--topbar-h) - 28px); overflow-y: auto;
+    display: block; min-height: 0; height: 100%; overflow-y: auto; overscroll-behavior: contain;
     padding: 20px 18px 28px; border-right: 1px solid var(--line);
   }
 }
@@ -324,7 +328,20 @@ html[lang="km"] .fgroup > h3 { letter-spacing: 0; font-size: 12.5px; }
 
 /* ------------------------------------------------------------ results */
 .results { min-width: 0; display: flex; flex-direction: column; }
-@media (min-width: 900px) { .results { border-right: 1px solid var(--line); min-height: calc(100dvh - var(--topbar-h)); } }
+@media (min-width: 900px) {
+  .results {
+    border-right: 1px solid var(--line); min-height: 0; height: 100%;
+    overflow-y: auto; overscroll-behavior: contain;
+  }
+  .results .sortbar {
+    position: sticky; top: 0; z-index: 2; flex: none;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+}
+@supports not (backdrop-filter: blur(1px)) {
+  @media (min-width: 900px) { .results .sortbar { background: var(--bg); } }
+}
 
 .sortbar {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -351,7 +368,8 @@ html[lang="km"] .fgroup > h3 { letter-spacing: 0; font-size: 12.5px; }
 @media (min-width: 900px) { .mobfilter { display: none; } }
 
 .rows { padding: 0 10px 28px; display: grid; gap: 2px; }
-@media (min-width: 900px) { .rows { padding-inline: 14px; } }
+@media (min-width: 900px) { .rows { padding-inline: 14px; padding-bottom: 24px; } }
+@media (min-width: 1700px) { .rows { padding-inline: 20px; } }
 
 /* --------------------------------------------------------------- row
    Photo small, facts first. The decision is made on price, area and
@@ -427,8 +445,8 @@ html[lang="km"] .fgroup > h3 { letter-spacing: 0; font-size: 12.5px; }
 .detail[hidden] { display: none; }
 @media (min-width: 900px) {
   .detail {
-    position: sticky; top: var(--topbar-h); inset: auto; z-index: 1;
-    height: calc(100dvh - var(--topbar-h));
+    position: static; inset: auto; z-index: 1;
+    height: 100%; min-height: 0;
     transform: none; transition: none; background: var(--bg);
   }
   .detail[hidden] { display: flex; }     /* the pane is never hidden on desktop */
@@ -451,7 +469,7 @@ html[lang="km"] .fgroup > h3 { letter-spacing: 0; font-size: 12.5px; }
 
 .gallery {
   display: grid; grid-auto-flow: column; grid-auto-columns: 100%;
-  aspect-ratio: 16 / 10; max-height: 46dvh; overflow-x: auto; scroll-snap-type: x mandatory;
+  aspect-ratio: 16 / 10; max-height: 44dvh; overflow-x: auto; scroll-snap-type: x mandatory;
   background: var(--surface-2); scrollbar-width: none; overscroll-behavior-x: contain;
 }
 .gallery::-webkit-scrollbar { display: none; }
@@ -462,7 +480,7 @@ html[lang="km"] .fgroup > h3 { letter-spacing: 0; font-size: 12.5px; }
 .dots i.on { width: 16px; background: #fff; }
 
 .dhead { padding: 18px 18px 0; display: grid; gap: 7px; }
-@media (min-width: 900px) { .dhead { padding-inline: 24px; } }
+@media (min-width: 900px) { .dhead { padding-inline: 24px; } .gallery { max-height: 34dvh; } }
 .dprice { display: flex; align-items: baseline; gap: 9px; }
 .dprice .price { font-size: 30px; font-weight: 600; }
 .dtitle { font-size: 18px; font-weight: 600; line-height: 1.4; letter-spacing: -.01em; text-wrap: pretty; }
@@ -589,6 +607,7 @@ html[lang="km"] .dsec > h3 { letter-spacing: 0; font-size: 12.5px; }
 
 /* ----------------------------------------------------------- states */
 .empty { padding: 56px 28px; text-align: center; display: grid; gap: 8px; justify-items: center; }
+.empty[hidden] { display: none; }
 .empty .ico { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-pill); background: var(--surface-2); color: var(--ink-3); margin-bottom: 4px; }
 .empty h3 { font-size: 15.5px; font-weight: 600; }
 .empty p { font-size: 13.5px; color: var(--ink-2); max-width: 34ch; line-height: 1.55; }

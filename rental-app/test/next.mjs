@@ -72,6 +72,7 @@ for (const [name, width, height, mobile] of WIDTHS) {
 
   const rows = await p.locator(".row").count();
   is(rows === 11, "every sample room is listed", `${rows}`);
+  is(await p.locator("#empty").isHidden(), "and the empty state stays out of the way");
 
   /* the two-pane layout only exists above 900 */
   const twoPane = await p.evaluate(() => getComputedStyle(document.querySelector(".app")).gridTemplateColumns.split(" ").length);
