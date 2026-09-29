@@ -73,53 +73,69 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" media="print" onload="this.media='all'"
-      href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"></noscript>
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Kantumruy+Pro:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Kantumruy+Pro:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"></noscript>
 
 <style>
 /* ================================================================ tokens */
 :root {
-  --brand:        #0E7A5F;
-  --brand-press:  #0A5F4A;
-  --brand-wash:   #E4F3ED;
-  --on-brand:     #FFFFFF;
+  /* One accent, committed. The green of a Cambodian rental sign, taken to
+     ink strength so it can carry structure instead of only decorating. */
+  --brand:        #0B6B52;
+  --brand-press:  #085040;
+  --brand-wash:   #DEEBE4;
+  --on-brand:     #FCFBF7;
 
-  /* one warm highlight, used only for delight moments: the save burst and
-     the "confirmed today" badge. Never for structure. */
-  --pop:          #F2724B;
-  --pop-wash:     #FDECE5;
+  /* The stamp colour. Used on the confirmation seal and nowhere else, so
+     that seeing it always means the same thing: somebody answered today. */
+  --pop:          #C4462A;
+  --pop-wash:     #F6E4DC;
+  --stamp:        #A8301A;   /* 6.5:1 on --surface */
 
-  --bg:           #F7F5F2;
-  --surface:      #FFFDFC;
-  --surface-2:    #F4F2EF;
-  --ink:          #17191C;
-  --ink-2:        #5E6670;
-  --ink-3:        #656C75;   /* AA at 12px; the old #8D949D measured 3.02:1 */
-  --line:         #E9E5E0;
+  /* Warm paper, not cold grey. A phone in Phnom Penh sunlight renders a
+     blue-white ground as glare; an ivory one stays readable. */
+  --bg:           #F2EEE4;
+  --surface:      #FBF8F1;
+  --surface-2:    #E9E3D6;
+  --ink:          #1A1714;
+  --ink-2:        #5C554B;
+  --ink-3:        #635C4F;   /* 5.3:1 on --bg at 12px */
+  --line:         #DCD4C3;
+  --rule:         #C9BFA9;   /* the darker hairline that rules a spec sheet */
 
-  --ok:           #0B7A4B;
-  --ok-wash:      #E4F4EC;
-  --warn:         #9A5B00;
-  --warn-wash:    #FBF0DC;
-  --dead:         #5A616A;   /* was 4.2:1 on its own wash */
-  --dead-wash:    #EEEFF1;
+  --ok:           #0B6B52;
+  --ok-wash:      #DEEBE4;
+  --warn:         #8A5212;
+  --warn-wash:    #F6E7CE;
+  --dead:         #6B6355;
+  --dead-wash:    #E7E1D4;
 
-  --r-sm: 12px;
-  --r-md: 18px;
-  --r-lg: 26px;
+  /* Radius by role, not one value stamped on everything: containers soft,
+     inner blocks tight, pills only where the thing is an action. */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
   --r-full: 999px;
 
-  --sh-1: 0 1px 2px rgba(32,24,16,.05), 0 2px 10px -4px rgba(32,24,16,.07), 0 0 0 1px rgba(32,24,16,.035);
-  --sh-2: 0 10px 26px -10px rgba(32,24,16,.22), 0 0 0 1px rgba(32,24,16,.04);
-  --sh-3: 0 -10px 40px -10px rgba(32,24,16,.26);
+  /* Shadows carry the hue of the paper rather than generic black, and only
+     three things are ever allowed to float: the sheet, the tab bar, and a
+     control sitting on top of a photo. */
+  --sh-1: 0 1px 2px rgba(58,44,24,.06), 0 2px 8px -4px rgba(58,44,24,.08);
+  --sh-2: 0 10px 26px -12px rgba(58,44,24,.26), 0 2px 6px -2px rgba(58,44,24,.10);
+  --sh-3: 0 -12px 44px -14px rgba(58,44,24,.30);
 
   --ease:     cubic-bezier(.22, 1, .36, 1);
   --ease-in:  cubic-bezier(.4, 0, 1, 1);
   --spring:   linear(0,.42 7.2%,.74 14.6%,.955 22.4%,1.032,1.07 32%,1.075,1.066 41%,1.026 54%,1.006 66%,1);
 
-  /* Clearance for the notch on the desktop frame, and for the real safe area
-     on a handset. Every sticky header uses this, and no state may shrink it:
-     the condensed header saves space by collapsing its title row instead. */
+  /* Type. Bricolage carries the numbers and the titles because it has a
+     face; Outfit's geometry sits beside Khmer's round bowls without
+     fighting them; Kantumruy Pro stays, being the one Khmer UI face that
+     holds its shape at 13px on a cheap screen. */
+  --f-display: "Bricolage Grotesque", "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --f-ui:      "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --f-km:      "Kantumruy Pro", "Outfit", sans-serif;
+
   --safe-top: 52px;
 
   --tab-h: 68px;
@@ -127,69 +143,80 @@
   --tab-pad-top: 9px;
 }
 
+
 /* A chosen theme always wins over the system preference, so the media query
    only applies while no choice has been made. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --brand:       #52C9A6;
-    --brand-press: #74DCBC;
-    --brand-wash:  #123028;
-    --on-brand:    #06231C;
+    --brand:       #4FC49E;
+    --brand-press: #6FD9B6;
+    --brand-wash:  #11302A;
+    --on-brand:    #07231D;
 
-    --pop:         #FF8C63;
-    --pop-wash:    #35211A;
+    --pop:         #E8734E;
+    --pop-wash:    #35201A;
+    --stamp:       #F09070;   /* 7.4:1 on --surface */
 
-    --bg:          #0E0F11;
-    --surface:     #17191C;
-    --surface-2:   #1D2023;
-    --ink:         #ECEFF1;
-    --ink-2:       #A2ABB5;
-    --ink-3:       #78828D;
-    --line:        #262B2F;
+    /* Warm charcoal, not blue-black: the dark theme is the same paper with
+       the lamp off, so the hue stays where the light theme left it. */
+    --bg:          #14120F;
+    --surface:     #1D1A16;
+    --surface-2:   #262220;
+    --ink:         #F0EBE1;
+    --ink-2:       #ADA396;
+    --ink-3:       #9B9284;
+    --line:        #2E2A25;
+    --rule:        #3B352E;
 
     --ok:          #5CCB8F;
-    --ok-wash:     #10301F;
+    --ok-wash:     #12301F;
     --warn:        #E0B060;
     --warn-wash:   #33280F;
-    --dead:        #8A929B;
-    --dead-wash:   #22262A;
+    --dead:        #9B9284;   /* 5.1:1 on --dead-wash */
+    --dead-wash:   #262220;
 
-    --sh-1: 0 1px 2px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.05);
-    --sh-2: 0 6px 16px -6px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05);
-    --sh-3: 0 -8px 32px -8px rgba(0,0,0,.7);
+    --sh-1: 0 1px 2px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.045);
+    --sh-2: 0 10px 24px -10px rgba(0,0,0,.66), 0 0 0 1px rgba(255,255,255,.05);
+    --sh-3: 0 -12px 40px -12px rgba(0,0,0,.72);
   }
+
 }
 
 /* Chosen explicitly. Dark repeats the block above rather than sharing it,
    because a media query and an attribute cannot be combined in one selector. */
 :root[data-theme="dark"] {
-  --brand:       #52C9A6;
-  --brand-press: #74DCBC;
-  --brand-wash:  #123028;
-  --on-brand:    #06231C;
+  --brand:       #4FC49E;
+  --brand-press: #6FD9B6;
+  --brand-wash:  #11302A;
+  --on-brand:    #07231D;
 
-  --pop:         #FF8C63;
-  --pop-wash:    #35211A;
+  --pop:         #E8734E;
+  --pop-wash:    #35201A;
+  --stamp:       #F09070;   /* 7.4:1 on --surface */
 
-  --bg:          #0E0F11;
-  --surface:     #17191C;
-  --surface-2:   #1D2023;
-  --ink:         #ECEFF1;
-  --ink-2:       #A2ABB5;
-  --ink-3:       #78828D;
-  --line:        #262B2F;
+  /* Warm charcoal, not blue-black: the dark theme is the same paper with
+     the lamp off, so the hue stays where the light theme left it. */
+  --bg:          #14120F;
+  --surface:     #1D1A16;
+  --surface-2:   #262220;
+  --ink:         #F0EBE1;
+  --ink-2:       #ADA396;
+  --ink-3:       #9B9284;
+  --line:        #2E2A25;
+  --rule:        #3B352E;
 
   --ok:          #5CCB8F;
-  --ok-wash:     #10301F;
+  --ok-wash:     #12301F;
   --warn:        #E0B060;
   --warn-wash:   #33280F;
-  --dead:        #8A929B;
-  --dead-wash:   #22262A;
+  --dead:        #9B9284;   /* 5.1:1 on --dead-wash */
+  --dead-wash:   #262220;
 
-  --sh-1: 0 1px 2px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.05);
-  --sh-2: 0 6px 16px -6px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05);
-  --sh-3: 0 -8px 32px -8px rgba(0,0,0,.7);
+  --sh-1: 0 1px 2px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.045);
+  --sh-2: 0 10px 24px -10px rgba(0,0,0,.66), 0 0 0 1px rgba(255,255,255,.05);
+  --sh-3: 0 -12px 40px -12px rgba(0,0,0,.72);
 }
+
 
 /* Khmer. Silk crimson on ivory card stock, the palette of a printed Khmer
    card rather than of a software product. Gold appears only as the delight
@@ -203,6 +230,7 @@
 
   --pop:         #C08A2E;
   --pop-wash:    #F8EEDA;
+  --stamp:       #8E1626;   /* 9:1 on --surface */
 
   --bg:          #FBF6EE;
   --surface:     #FFFDF8;
@@ -211,6 +239,7 @@
   --ink-2:       #6E5A50;
   --ink-3:       #726257;   /* AA at 12px; the old #9A867B measured 3.4:1 */
   --line:        #E8DBC9;
+  --rule:        #D2BFA2;
 
   --ok:          #2F6E4A;
   --ok-wash:     #E3F0E6;
@@ -229,13 +258,13 @@
 html, body { height: 100%; }
 body {
   margin: 0;
-  background: #1A1D1F;
-  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  background: #14120F;
+  font-family: var(--f-ui);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
 }
-html[lang="km"] body { font-family: "Kantumruy Pro", "Plus Jakarta Sans", sans-serif; }
+html[lang="km"] body { font-family: var(--f-km); }
 
 img { display: block; max-width: 100%; }
 button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
@@ -250,7 +279,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   place-items: center;
   padding: 24px;
   background:
-    radial-gradient(900px 500px at 50% -10%, #24282B, #131517 70%);
+    radial-gradient(900px 500px at 50% -10%, #2A2620, #14120F 70%);
 }
 .phone {
   position: relative;
@@ -264,6 +293,21 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   display: flex;
   flex-direction: column;
 }
+
+/* Paper grain. A flat digital ground is the thing that reads as a template;
+   a little tooth under the ink is what a printed listing slip has. It sits
+   above everything and takes no pointer events, so nothing below changes. */
+.phone::after {
+  content: ""; position: absolute; inset: 0; z-index: 90;
+  pointer-events: none; opacity: .5; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.34'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .phone::after { opacity: .3; mix-blend-mode: screen; }
+}
+:root[data-theme="dark"] .phone::after { opacity: .3; mix-blend-mode: screen; }
+@media (prefers-reduced-transparency: reduce) { .phone::after { display: none; } }
+
 .notch {
   position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
   width: 122px; height: 30px; background: #0A0C0D; border-radius: var(--r-full); z-index: 60;
@@ -294,8 +338,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 /* Push and pop. Two named animations rather than one reversed, because a
    pop should feel lighter than a push: the user is going back to something
    they have already seen. */
-.js .screen.is-pushing  { animation: push-in 300ms var(--ease) both; }
-.js .screen.is-popping  { animation: pop-out 240ms var(--ease-in) both; z-index: 5; }
+.js .screen.is-pushing  { animation: push-in 320ms var(--ease) both; }
+.js .screen.is-popping  { animation: pop-out 220ms var(--ease-in) both; z-index: 5; }
 .js .screen.is-behind   { animation: settle-back 300ms var(--ease) both; }
 
 @keyframes push-in     { from { transform: translateX(100%); }             to { transform: none; } }
@@ -323,7 +367,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 .brandline { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .wordmark { display: flex; align-items: baseline; gap: 7px; min-width: 0; flex: 1; }
-.wordmark b { font-size: 21px; font-weight: 700; letter-spacing: -.02em; flex: none; }
+.wordmark b { font-family: var(--f-display); font-size: 22px; font-weight: 800; letter-spacing: -.02em; flex: none; }
 /* The tagline is the first thing allowed to lose the fight for space: Khmer
    runs longer than English and must never push the language toggle around. */
 .wordmark span {
@@ -336,7 +380,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   flex: none;
   display: flex; align-items: center; gap: 2px;
   background: var(--surface); border-radius: var(--r-full);
-  padding: 3px; box-shadow: var(--sh-1);
+  padding: 3px; box-shadow: inset 0 0 0 1px var(--line);
 }
 .lang button {
   position: relative;
@@ -354,14 +398,20 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 .datanote {
   margin: 0 0 8px; padding: 7px 11px; border-radius: 10px;
-  background: #FFF4D6; color: #4A3706;
+  background: var(--warn-wash); color: var(--warn);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--warn) 22%, transparent);
   font-size: 12px; line-height: 1.35;
 }
+/* A field, not a pill. The pill-shaped search bar is the single most
+   copied component on the web; squaring it off and ruling it costs nothing
+   and stops the header reading as a template. */
 .searchbar {
   display: flex; align-items: center; gap: 10px;
-  background: var(--surface); border-radius: var(--r-full);
-  padding: 12px 16px; box-shadow: var(--sh-1);
+  background: var(--surface); border-radius: var(--r-md);
+  padding: 12px 16px; box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow 160ms var(--ease);
 }
+.searchbar:focus-within { box-shadow: inset 0 0 0 1.5px var(--brand); }
 .searchbar input { flex: 1; border: 0; background: none; font: inherit; font-size: 16px; color: var(--ink); min-width: 0; }  /* under 16px, iOS zooms on focus */
 .searchbar input::placeholder { color: var(--ink-3); }
 .icon.tiny { width: 13px; height: 13px; margin-right: 4px; vertical-align: -2px; }
@@ -387,12 +437,14 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .chip {
   flex: none; min-height: 44px; padding: 8px 16px; border-radius: var(--r-full);
   display: inline-flex; align-items: center;
-  background: var(--surface); box-shadow: var(--sh-1);
+  background: transparent; box-shadow: inset 0 0 0 1px var(--rule);
   font-size: 13px; font-weight: 500; color: var(--ink-2);
-  transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 120ms var(--ease);
+  transition: background-color 160ms var(--ease), color 160ms var(--ease),
+              box-shadow 160ms var(--ease), transform 120ms var(--ease);
 }
 .chip:active { transform: scale(.96); }
 .chip[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); box-shadow: none; }
+.chip[aria-pressed="true"] .icon { color: inherit; }
 
 .resultline { padding: 16px 18px 4px; font-size: 13px; color: var(--ink-2); display: flex; justify-content: space-between; align-items: baseline; }
 .resultline b { color: var(--ink); font-weight: 600; }
@@ -403,17 +455,21 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
    has to be stated here or the attribute does nothing. */
 .feed[hidden] { display: none; }
 
+/* A listing slip, not a floating card. Elevation is spent only on things
+   that genuinely float - the sheet, the tab bar, a control over a photo -
+   so the feed separates by paper tone and a hairline instead. Uniform
+   shadow on every block is what flattens a hierarchy into a template. */
 .card {
   background: var(--surface);
   border-radius: var(--r-lg);
-  box-shadow: var(--sh-1);
+  box-shadow: inset 0 0 0 1px var(--line);
   overflow: hidden;
   text-align: left;
   width: 100%;
   display: block;
   transition: transform 140ms var(--ease), box-shadow 200ms var(--ease);
 }
-.card:active { transform: scale(.985); box-shadow: var(--sh-2); }
+.card:active { transform: scale(.985); box-shadow: inset 0 0 0 1px var(--rule), var(--sh-2); }
 .card.is-stale { opacity: .72; }
 
 .card-media { position: relative; aspect-ratio: 4 / 3; background: var(--surface-2); }
@@ -455,16 +511,42 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 .badge .icon { width: 13px; height: 13px; stroke-width: 2.2; }
 .badge-ok   { background: var(--ok-wash);   color: var(--ok); }
+
+/* The confirmation seal. This app exists because nobody takes a listing
+   down when the room is gone, so "the landlord answered today" is the whole
+   promise - it gets the one loud element in the design and the one use of
+   the stamp colour. Rotated because a hand-pressed stamp never lands square.
+   Khmer is never letter-spaced or upper-cased: the script has no case, and
+   tracking breaks the clusters, so that treatment is scoped to English. */
+.badge-stamp {
+  background: var(--surface);
+  color: var(--stamp);
+  border-radius: 4px;
+  padding: 0 11px; min-height: 30px;
+  font-weight: 800;
+  transform: rotate(-3deg);
+  box-shadow: inset 0 0 0 1.5px currentColor,
+              inset 0 0 0 3.5px var(--surface),
+              inset 0 0 0 5px currentColor;
+}
+html[lang="en"] .badge-stamp { letter-spacing: .09em; text-transform: uppercase; }
+.badge-stamp .icon { stroke-width: 2.8; }
 .badge-warn { background: var(--warn-wash); color: var(--warn); }
 .badge-dead { background: var(--dead-wash); color: var(--dead); }
-.badge-solid{ background: rgba(255,255,255,.94); color: #14171A; }
+.badge-solid{ background: var(--surface); color: var(--ink); }
 
-.card-body { padding: 16px; }
-.price { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
-.price b { font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+/* The rule under the photo is the fold in the slip: it says the picture and
+   the facts are two parts of one document, which a gap alone does not. */
+.card-body { padding: 15px 16px 16px; border-top: 1px solid var(--line); }
+.price { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; }
+.price b {
+  font-family: var(--f-display);
+  font-size: 25px; font-weight: 800; letter-spacing: -.03em; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
 .price span { font-size: 12px; color: var(--ink-3); }
 
-.card-title { font-size: 14.5px; font-weight: 600; line-height: 1.35; margin: 0 0 4px; }
+.card-title { font-size: 14.5px; font-weight: 600; line-height: 1.45; margin: 0 0 4px; text-wrap: pretty; }
 .card-where { font-size: 13px; color: var(--ink-2); margin: 0 0 12px; }
 
 .facts { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -474,11 +556,12 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   font-size: 12px; font-weight: 500; line-height: 1; color: var(--ink-2);
   background: var(--surface-2); border-radius: var(--r-sm);
   padding: 0 10px;
+  font-variant-numeric: tabular-nums;
 }
 .fact.deposit { color: var(--brand); background: var(--brand-wash); font-weight: 600; }
 
 /* skeletons */
-.sk { background: var(--surface); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-1); }
+.sk { background: var(--surface); border-radius: var(--r-lg); overflow: hidden; box-shadow: inset 0 0 0 1px var(--line); }
 .sk-media { aspect-ratio: 4 / 3; }
 .sk-line { height: 12px; border-radius: 6px; margin: 12px 15px; }
 .sk-media, .sk-line { background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 37%, var(--surface-2) 63%); background-size: 400% 100%; }
@@ -525,12 +608,25 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .d-title { font-size: 17px; font-weight: 600; line-height: 1.35; margin: 8px 0 4px; }
 .d-where { font-size: 14px; color: var(--ink-2); margin: 0 0 16px; }
 
-.panel { background: var(--surface); border-radius: var(--r-md); box-shadow: var(--sh-1); padding: 16px; margin-bottom: 12px; }
-.panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3); margin: 0 0 12px; font-weight: 600; }
+/* A spec sheet, not a stack of cards. The detail screen is a list of facts
+   about one room, and ruling it the way a printed sheet is ruled reads as
+   more trustworthy than four identical floating boxes - which is the point
+   of the screen. The label rides the rule rather than sitting in a box. */
+.panel {
+  background: none; box-shadow: none; border-radius: 0;
+  padding: 16px 0 18px; margin-bottom: 0;
+  border-top: 1px solid var(--rule);
+}
+.panel h3 {
+  font-size: 11px; letter-spacing: .12em; color: var(--ink-3);
+  margin: 0 0 12px; font-weight: 700;
+}
+html[lang="en"] .panel h3 { text-transform: uppercase; }
+html[lang="km"] .panel h3 { letter-spacing: 0; font-size: 12px; }
 
 .kv { display: grid; grid-template-columns: 1fr auto; gap: 10px 16px; font-size: 14px; line-height: 1.4; }
 .kv dt { color: var(--ink-2); margin: 0; }
-.kv dd { margin: 0; font-weight: 600; text-align: right; }
+.kv dd { margin: 0; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
 
 .who { display: flex; align-items: center; gap: 12px; }
 .avatar { width: 42px; height: 42px; border-radius: var(--r-full); background: var(--brand-wash); color: var(--brand); display: grid; place-items: center; font-weight: 700; font-size: 15px; flex: none; }
@@ -568,9 +664,14 @@ a.btn[aria-disabled="true"] { opacity: .5; pointer-events: none; }
   border: 0; font-weight: 600;
 }
 .btn-quiet:hover { color: var(--ink-1); }
-.btn-primary { background: var(--brand); color: var(--on-brand); }
-.btn-primary:active { background: var(--brand-press); }
-.btn-ghost { flex: none; width: 50px; background: var(--surface); box-shadow: var(--sh-1); }
+.btn-primary {
+  background: var(--brand); color: var(--on-brand);
+  box-shadow: 0 1px 0 var(--brand-press), 0 6px 16px -8px color-mix(in srgb, var(--brand) 70%, transparent);
+}
+/* Pressed, not just recoloured: the button drops onto its own bottom edge,
+   which is the whole physical metaphor a tap is borrowing. */
+.btn-primary:active { background: var(--brand-press); box-shadow: 0 0 0 var(--brand-press); transform: translateY(1px) scale(.985); }
+.btn-ghost { flex: none; width: 50px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
 
 /* The bar is part of the layout, not floating over it. It is opaque, so
    content running underneath would simply be hidden. .screens takes the
@@ -649,7 +750,7 @@ a.btn[aria-disabled="true"] { opacity: .5; pointer-events: none; }
 .grabber, .sheet > h2, .sheet > .sub { touch-action: none; }
 .grabber { position: relative; }
 .grabber::before { content: ""; position: absolute; inset: -14px -40px; }   /* a thumb-sized hit area */
-.sheet h2 { font-size: 17px; margin: 0 0 4px; }
+.sheet h2 { font-family: var(--f-display); font-weight: 700; font-size: 18px; letter-spacing: -.015em; margin: 0 0 4px; }
 .sheet .sub { font-size: 13px; color: var(--ink-2); margin: 0 0 18px; }
 
 .field { margin-bottom: 20px; }
@@ -837,7 +938,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   border-radius: var(--r-md);
   overflow: hidden;
   background: var(--surface-2);
-  box-shadow: var(--sh-1);
+  box-shadow: inset 0 0 0 1px var(--line);
 }
 .maperror {
   margin: 10px 18px 0; padding: 12px 14px;
@@ -859,7 +960,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   background: var(--surface); color: var(--ink);
   border: 1px solid var(--line);
   box-shadow: var(--sh-2);
-  font: 600 12.5px/1 "Plus Jakarta Sans", sans-serif;
+  font: 600 12.5px/1 var(--f-ui);
   white-space: nowrap;
 }
 .pricepin.is-stale { opacity: .6; }
@@ -876,7 +977,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 .gate-inner { width: 100%; }
 .gate-note {
   margin: 18px 0 0; padding: 9px 11px; border-radius: 10px;
-  background: #FFF4D6; color: #4A3706; font-size: 12px; line-height: 1.4;
+  background: var(--warn-wash); color: var(--warn);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--warn) 22%, transparent); font-size: 12px; line-height: 1.4;
 }
 .gate-h { font-size: 22px; margin: 0 0 6px; }
 .gate-p { font-size: 14px; color: var(--ink-2); margin: 0 0 22px; }
@@ -884,7 +986,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 .rolecard {
   display: grid; gap: 3px; width: 100%; text-align: left;
   padding: 18px; margin-bottom: 12px; min-height: 44px;
-  border-radius: var(--r-md); background: var(--surface); box-shadow: var(--sh-1);
+  border-radius: var(--r-md); background: var(--surface); box-shadow: inset 0 0 0 1px var(--line);
   transition: transform 120ms var(--ease), box-shadow 200ms var(--ease);
 }
 .rolecard:active { transform: scale(.985); box-shadow: var(--sh-2); }
@@ -916,8 +1018,8 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   animation-delay: calc(min(var(--i, 0), 6) * 45ms);
 }
 @keyframes cardIn {
-  from { opacity: 0; transform: translateY(14px) scale(.985); }
-  to   { opacity: 1; transform: none; }
+  from { opacity: 0; transform: translateY(14px) scale(.985); filter: blur(4px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
 }
 
 /* Parallax inside the card photo. Scroll driven, so the browser runs it off
@@ -935,6 +1037,17 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
       to   { transform: scale(1.08) translateY(2.5%); }
     }
   }
+}
+
+/* ------------------------------------------------------- stamp landing
+   Pressed, not faded: it overshoots a little and settles, the way a rubber
+   stamp does. It fires once per card render and never repeats, because a
+   looping badge is an attention grab rather than information. */
+.js .badge-stamp { animation: stampDown 420ms var(--spring) both; animation-delay: 180ms; }
+@keyframes stampDown {
+  from { opacity: 0; transform: rotate(-3deg) scale(1.5); }
+  60%  { opacity: 1; }
+  to   { opacity: 1; transform: rotate(-3deg) scale(1); }
 }
 
 /* ---------------------------------------------------------- save burst */
@@ -1017,6 +1130,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
   .js .card { animation: none; }
   .js .roll.is-rolling { animation: none; }
   .chip[aria-pressed="true"] { animation: none; }
+  .js .badge-stamp { animation: none; }
   .burst { display: none; }
   .tab-pill { transition: none; }
   .top, .top .brandline { transition: none; }
@@ -2971,7 +3085,7 @@ input[type="range"] { width: 100%; accent-color: var(--brand); }
 
   function shortFresh(l) {
     if (l.lastConfirmed > STALE_DAYS) return { cls:"badge-dead", icon:"i-clock", text:l.lastConfirmed + t("dayShort") };
-    if (l.lastConfirmed === 0)  return { cls:"badge-ok",   icon:"i-check", text:lang === "km" ? "ថ្ងៃនេះ" : "today" };
+    if (l.lastConfirmed === 0)  return { cls:"badge-ok badge-stamp", icon:"i-check", text:lang === "km" ? "ថ្ងៃនេះ" : "today" };
     return { cls: l.lastConfirmed > 7 ? "badge-warn" : "badge-ok", icon:"i-clock", text:l.lastConfirmed + t("dayShort") };
   }
 
