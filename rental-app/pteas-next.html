@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="km" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<!-- viewport-fit=cover is what lets env(safe-area-inset-*) return real
+     numbers on an iPhone. Without it the notch and the home indicator both
+     report 0 and the layout runs underneath them. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A7D4F" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F0F0F" media="(prefers-color-scheme: dark)">
+<title>Pteas · រកបន្ទប់ជួល ភ្នំពេញ</title>
+<meta name="description" content="រកបន្ទប់ និងផ្ទះជួលក្នុងភ្នំពេញ។ ឃើញភ្លាមថាម្ចាស់ផ្ទះបញ្ជាក់ចុងក្រោយថ្ងៃណា មុនពេលអ្នកហៅទូរស័ព្ទ។">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pteas">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&family=Kantumruy+Pro:wght@400;500;600;700&display=swap">
+
+<!--
+  PTEAS · rebuilt front end
+  ========================
+
+  This is a demo, not the shipping app. It runs entirely on the eleven
+  sample rooms below with no network and no Supabase, so it can be opened
+  from a file, put on a phone, and argued with before any of the real data
+  layer is moved across.
+
+  What is different from the old front end, and why:
+
+  * It is a website, not a phone mock. The old file drew a 390px handset
+    with a fake notch and centred it in a dark void, which is a prototype
+    shell - on a laptop you got a phone-shaped column and 70% empty screen.
+    Here the same markup is a single-column app on a handset and a real
+    two-pane layout from 900px up: filters always visible, results in the
+    middle, the room you are reading on the right. That is the layout every
+    rental site converges on because choosing between rooms means comparing
+    them, and comparing means not losing your place in the list.
+
+  * The list is dense on purpose. The old feed gave each room a 4:3
+    photograph, so one room filled a phone screen. But the job here is not
+    browsing for inspiration - it is scanning twenty rooms for the three
+    worth calling. Rows put the photo at 92px and the decision facts
+    (price, area, how fresh) on one line, so five rooms fit where one did.
+
+  * Freshness is the spine, not a badge. The whole reason this app exists
+    is that nobody takes a listing down when the room is gone. So "when did
+    the landlord last confirm this" is the default sort, it is stated in
+    words on every row, and it is a filter of its own.
+-->
+<style>
+/* ============================================================== tokens
+   One accent, locked to the whole page. Neutral greys, not warm paper:
+   the warm-cream-and-brass palette is the one every generated "craft"
+   interface reaches for, and it makes a utility look precious. A room
+   listing wants to look fast and legible, not hand-thrown.
+   Every pair below was measured; the ratios are in the comments. */
+:root {
+  color-scheme: light;
+
+  --bg:          #F6F6F5;
+  --surface:     #FFFFFF;
+  --surface-2:   #ECECEA;
+  --ink:         #141414;   /* 17.0:1 on --bg */
+  --ink-2:       #565958;   /*  6.5:1 on --bg */
+  --ink-3:       #5E615F;   /*  5.6:1 on --bg */
+  --line:        #E3E3E1;
+  --line-2:      #D2D2CF;
+
+  --accent:      #0A7D4F;   /*  5.2:1 on white, and white is 5.2:1 on it */
+  --accent-press:#076039;
+  --accent-wash: #E2F3EA;
+  --accent-on-wash: #097046; /* 5.3:1 on --accent-wash */
+  --on-accent:   #FFFFFF;
+
+  --warn:        #8A5212;   /*  5.6:1 on --warn-wash */
+  --warn-wash:   #FBF0DC;
+  --danger:      #A3261B;
+  --danger-wash: #F9E4E1;
+
+  /* Shape rule, applied everywhere with no exceptions:
+     surfaces 12px · controls and inputs 10px · chips and toggles pill. */
+  --r-surface: 12px;
+  --r-control: 10px;
+  --r-pill:    999px;
+
+  /* Shadows are tinted to the ground and spent only on things that float
+     above the page: the mobile detail sheet, the filter sheet, the tab bar. */
+  --sh-pop:  0 1px 2px rgba(20,22,21,.06), 0 8px 24px -12px rgba(20,22,21,.24);
+  --sh-lift: 0 -8px 40px -12px rgba(20,22,21,.28);
+
+  --ease:   cubic-bezier(.22, 1, .36, 1);
+  --ease-in:cubic-bezier(.4, 0, 1, 1);
+
+  --f-ui:   "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --f-num:  "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --f-km:   "Kantumruy Pro", "Geist", sans-serif;
+
+  --topbar-h: 60px;
+  --tabbar-h: 56px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg:          #0F0F0F;
+    --surface:     #191919;
+    --surface-2:   #242424;
+    --ink:         #F2F2F1;   /* 15.7:1 on --surface */
+    --ink-2:       #A8ABAA;   /*  7.6:1 on --surface */
+    --ink-3:       #949796;   /*  6.0:1 on --surface */
+    --line:        #2C2C2C;
+    --line-2:      #3A3A3A;
+    --accent:      #2ED598;   /*  9.3:1 on --surface */
+    --accent-press:#57E0AF;
+    --accent-wash: #10281F;
+    --accent-on-wash: #2ED598;
+    --on-accent:   #06231A;
+    --warn:        #E5B569;
+    --warn-wash:   #2E2413;
+    --danger:      #F0897C;
+    --danger-wash: #2E1815;
+    --sh-pop:  0 1px 2px rgba(0,0,0,.5), 0 10px 28px -14px rgba(0,0,0,.7);
+    --sh-lift: 0 -10px 44px -14px rgba(0,0,0,.72);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:          #0F0F0F;
+  --surface:     #191919;
+  --surface-2:   #242424;
+  --ink:         #F2F2F1;
+  --ink-2:       #A8ABAA;
+  --ink-3:       #949796;
+  --line:        #2C2C2C;
+  --line-2:      #3A3A3A;
+  --accent:      #2ED598;
+  --accent-press:#57E0AF;
+  --accent-wash: #10281F;
+  --accent-on-wash: #2ED598;
+  --on-accent:   #06231A;
+  --warn:        #E5B569;
+  --warn-wash:   #2E2413;
+  --danger:      #F0897C;
+  --danger-wash: #2E1815;
+  --sh-pop:  0 1px 2px rgba(0,0,0,.5), 0 10px 28px -14px rgba(0,0,0,.7);
+  --sh-lift: 0 -10px 44px -14px rgba(0,0,0,.72);
+}
+
+/* =============================================================== reset */
+*, *::before, *::after { box-sizing: border-box; }
+html {
+  -webkit-text-size-adjust: 100%;   /* iOS enlarges text in landscape without this */
+  height: 100%;
+}
+body {
+  margin: 0;
+  min-height: 100dvh;               /* dvh, not vh: Safari's address bar moves */
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;   /* the grey flash on every iOS tap */
+  overscroll-behavior-y: none;
+  overflow-x: hidden;
+}
+html[lang="km"] body { font-family: var(--f-km); }
+h1, h2, h3, p, figure, ul, ol, dl, dd { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: var(--accent); }
+input, select { font: inherit; }
+:where(a, button, input, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px;
+}
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.skip {
+  position: fixed; top: 8px; left: 8px; z-index: 200;
+  transform: translateY(-200%);
+  background: var(--accent); color: var(--on-accent);
+  min-height: 44px; display: inline-flex; align-items: center;
+  padding: 0 16px; border-radius: var(--r-control); text-decoration: none; font-weight: 600;
+}
+.skip:focus { transform: none; }
+.num { font-family: var(--f-num); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.ic { stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* ============================================================== layout
+   Mobile is one column with a tab bar. From 900px the same markup becomes
+   a real two-pane app: filters pinned left, results in the middle, the
+   room you are reading held open on the right. Nothing is duplicated - the
+   detail pane and the mobile detail sheet are the same element. */
+.shell { display: flex; flex-direction: column; min-height: 100dvh; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 40;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--line);
+  /* The bar keeps its own height and adds the notch on top of it, so the
+     controls never ride under the status bar on an iPhone. */
+  padding: max(10px, env(safe-area-inset-top)) 16px 10px;
+}
+@supports not (backdrop-filter: blur(1px)) { .topbar { background: var(--bg); } }
+
+.topbar-in {
+  max-width: 1440px; margin: 0 auto;
+  display: grid; gap: 9px 10px; align-items: center;
+  grid-template-columns: auto auto;
+  grid-template-areas: "brand tools" "search search";
+}
+.brand { grid-area: brand; }
+.search { grid-area: search; }
+.topbar-tools { grid-area: tools; justify-self: end; }
+/* From 720px the three sit on one line and the field takes the slack. */
+@media (min-width: 720px) {
+  .topbar-in {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "brand search tools";
+    gap: 14px;
+  }
+}
+.brand { display: flex; align-items: baseline; gap: 6px; font-weight: 700; font-size: 18px; letter-spacing: -.02em; min-width: 0; flex: none; }
+.brand .km { font-family: var(--f-km); }
+.brand .lat { font-family: var(--f-ui); }
+.brand-note {
+  display: none; font-size: 12px; color: var(--ink-3); font-weight: 400;
+  padding-left: 10px; margin-left: 2px; border-left: 1px solid var(--line-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30ch;
+}
+@media (min-width: 1180px) { .brand-note { display: inline-block; } }
+
+.search {
+  display: flex; align-items: center; gap: 9px; min-width: 0;
+  background: var(--surface); border: 1px solid var(--line-2);
+  border-radius: var(--r-control); padding: 0 12px; min-height: 42px;
+  transition: border-color 160ms var(--ease), box-shadow 160ms var(--ease);
+}
+.search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-wash); }
+.search input {
+  flex: 1; min-width: 0; border: 0; background: none; color: var(--ink);
+  font-size: 16px;             /* below 16 and iOS zooms the page on focus */
+  padding: 10px 0;
+}
+.search input::placeholder { color: var(--ink-3); }
+.search .clear { display: grid; place-items: center; width: 44px; height: 44px; margin-right: -10px; border-radius: var(--r-pill); color: var(--ink-3); }
+.search .clear[hidden] { display: none; }
+
+.topbar-tools { display: flex; align-items: center; gap: 6px; }
+.iconbtn {
+  display: grid; place-items: center;
+  width: 44px; height: 44px; border-radius: var(--r-control);
+  color: var(--ink-2); border: 1px solid transparent;
+  transition: background-color 150ms var(--ease), color 150ms var(--ease);
+}
+.iconbtn:hover { background: var(--surface-2); color: var(--ink); }
+.iconbtn:active { transform: scale(.94); }
+.seg {
+  display: flex; background: var(--surface-2); border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.seg button {
+  min-height: 44px; padding: 0 13px; border-radius: var(--r-pill);
+  font-size: 12.5px; font-weight: 600; color: var(--ink-3);
+  transition: background-color 160ms var(--ease), color 160ms var(--ease);
+}
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+
+/* the three-pane frame */
+.app {
+  flex: 1; width: 100%; max-width: 1440px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr; min-height: 0;
+}
+@media (min-width: 900px) {
+  .app { grid-template-columns: 236px minmax(380px, 1fr) 1.15fr; gap: 0; align-items: start; }
+}
+@media (min-width: 1240px) {
+  .app { grid-template-columns: 260px minmax(420px, 1fr) 1.25fr; }
+}
+
+/* ------------------------------------------------------------ filters */
+.rail { display: none; }
+@media (min-width: 900px) {
+  .rail {
+    display: block; position: sticky; top: calc(var(--topbar-h) + 14px);
+    max-height: calc(100dvh - var(--topbar-h) - 28px); overflow-y: auto;
+    padding: 20px 18px 28px; border-right: 1px solid var(--line);
+  }
+}
+.fgroup { padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--line); }
+.fgroup:last-child { border-bottom: 0; margin-bottom: 0; }
+.fgroup > h3 {
+  font-size: 11.5px; font-weight: 600; color: var(--ink-3);
+  letter-spacing: .08em; margin-bottom: 11px;
+}
+html[lang="en"] .fgroup > h3 { text-transform: uppercase; }
+html[lang="km"] .fgroup > h3 { letter-spacing: 0; font-size: 12.5px; }
+
+.opts { display: flex; flex-wrap: wrap; gap: 7px; }
+.opt {
+  min-height: 44px; padding: 7px 14px; border-radius: var(--r-pill);
+  border: 1px solid var(--line-2); background: var(--surface);
+  font-size: 13px; font-weight: 500; color: var(--ink-2);
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: border-color 150ms var(--ease), background-color 150ms var(--ease),
+              color 150ms var(--ease), transform 110ms var(--ease);
+}
+.opt:hover { border-color: var(--ink-3); }
+.opt:active { transform: scale(.96); }
+.opt[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.opt .n { font-family: var(--f-num); font-size: 11px; opacity: .7; }
+.opt[aria-pressed="true"] .n { opacity: .85; }
+
+.range { display: grid; gap: 9px; }
+.range output { font-family: var(--f-num); font-size: 13px; font-weight: 600; color: var(--ink); }
+.range input[type="range"] { width: 100%; accent-color: var(--accent); }
+
+/* ------------------------------------------------------------ results */
+.results { min-width: 0; display: flex; flex-direction: column; }
+@media (min-width: 900px) { .results { border-right: 1px solid var(--line); min-height: calc(100dvh - var(--topbar-h)); } }
+
+.sortbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  flex-wrap: wrap; padding: 14px 16px 12px;
+}
+.sortbar .tools { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.sortpick { min-width: 0; }
+.sortpick select { max-width: 100%; text-overflow: ellipsis; }
+@media (min-width: 900px) { .sortbar { padding-inline: 20px; } }
+.count { font-size: 13.5px; color: var(--ink-2); }
+.count b { color: var(--ink); font-weight: 600; font-family: var(--f-num); font-size: 15px; }
+.sortpick { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--ink-2); }
+.sortpick select {
+  border: 1px solid var(--line-2); background: var(--surface); color: var(--ink);
+  border-radius: var(--r-control); padding: 8px 10px; min-height: 44px; font-size: 13px; font-weight: 500;
+}
+.mobfilter { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 0 13px;
+  border: 1px solid var(--line-2); border-radius: var(--r-control); background: var(--surface);
+  font-size: 13px; font-weight: 600; color: var(--ink); }
+.mobfilter .n { display: grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: var(--r-pill); background: var(--accent); color: var(--on-accent);
+  font-family: var(--f-num); font-size: 11px; font-weight: 600; }
+.mobfilter .n[hidden] { display: none; }
+@media (min-width: 900px) { .mobfilter { display: none; } }
+
+.rows { padding: 0 10px 28px; display: grid; gap: 2px; }
+@media (min-width: 900px) { .rows { padding-inline: 14px; } }
+
+/* --------------------------------------------------------------- row
+   Photo small, facts first. The decision is made on price, area and
+   freshness; the photograph confirms it afterwards. */
+.row { position: relative; border-radius: var(--r-surface); }
+.row-hit {
+  display: grid; grid-template-columns: 92px 1fr; gap: 13px; width: 100%;
+  padding: 11px; text-align: left; border-radius: var(--r-surface);
+  transition: background-color 150ms var(--ease);
+}
+@media (min-width: 640px) { .row-hit { grid-template-columns: 116px 1fr; gap: 15px; } }
+.row-hit:hover { background: var(--surface); }
+.row[aria-current="true"] .row-hit { background: var(--surface); box-shadow: inset 0 0 0 1px var(--line-2); }
+.row[aria-current="true"]::before {
+  content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px;
+  border-radius: 0 3px 3px 0; background: var(--accent);
+}
+.row + .row { border-top: 1px solid var(--line); }
+.row:hover + .row, .row[aria-current="true"] + .row { border-top-color: transparent; }
+
+.row-thumb {
+  position: relative; aspect-ratio: 1; border-radius: var(--r-control);
+  overflow: hidden; background: var(--surface-2);
+}
+.row-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.row-main { min-width: 0; display: grid; gap: 3px; align-content: start; }
+.row-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; padding-right: 34px; }
+.price { font-family: var(--f-num); font-size: 19px; font-weight: 600; letter-spacing: -.03em; }
+.per { font-size: 12px; color: var(--ink-3); }
+.row-title {
+  font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--ink);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.row-where { font-size: 12.5px; color: var(--ink-2); }
+.row-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.tag {
+  font-size: 11.5px; color: var(--ink-2); background: var(--surface-2);
+  padding: 3px 8px; border-radius: var(--r-pill); white-space: nowrap;
+}
+.tag .num { font-size: 11px; }
+
+/* freshness: the one thing this app is for */
+.fresh { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+.fresh .pip { width: 7px; height: 7px; border-radius: var(--r-pill); background: currentColor; flex: none; }
+.fresh.now  { color: var(--accent-on-wash); }
+.fresh.week { color: var(--ink-2); }
+.fresh.old  { color: var(--warn); }
+.fresh.cold { color: var(--ink-3); }
+
+.row-save {
+  position: absolute; top: 6px; right: 6px; width: 44px; height: 44px;
+  display: grid; place-items: center; border-radius: var(--r-pill); color: var(--ink-3);
+  transition: color 150ms var(--ease), transform 200ms var(--ease), background-color 150ms var(--ease);
+}
+.row-save:hover { background: var(--surface-2); color: var(--ink); }
+.row-save[aria-pressed="true"] { color: var(--danger); }
+.row-save[aria-pressed="true"] svg { fill: currentColor; }
+.row-save:active { transform: scale(.88); }
+
+/* ------------------------------------------------------------- detail
+   One element, two lives. On a handset it is a full-height sheet that
+   slides up over the list; from 900px it is the right-hand pane and is
+   simply always there. Same DOM, so opening a room never re-renders it. */
+.detail {
+  position: fixed; inset: 0; z-index: 60;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 340ms var(--ease);
+  will-change: transform;
+}
+.detail.is-open { transform: none; }
+.detail[hidden] { display: none; }
+@media (min-width: 900px) {
+  .detail {
+    position: sticky; top: var(--topbar-h); inset: auto; z-index: 1;
+    height: calc(100dvh - var(--topbar-h));
+    transform: none; transition: none; background: var(--bg);
+  }
+  .detail[hidden] { display: flex; }     /* the pane is never hidden on desktop */
+}
+
+.detail-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: max(8px, env(safe-area-inset-top)) 10px 8px;
+  border-bottom: 1px solid var(--line); background: var(--bg);
+  flex: none;
+}
+@media (min-width: 900px) { .detail-bar { padding-top: 10px; } .detail-back { display: none; } }
+.detail-back { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--r-control); color: var(--ink); }
+.detail-back:active { transform: scale(.92); }
+.detail-bar .spacer { flex: 1; }
+
+.detail-scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.detail-in { padding: 0 0 24px; }
+@media (min-width: 900px) { .detail-in { padding-bottom: 28px; } }
+
+.gallery {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 100%;
+  aspect-ratio: 16 / 10; max-height: 46dvh; overflow-x: auto; scroll-snap-type: x mandatory;
+  background: var(--surface-2); scrollbar-width: none; overscroll-behavior-x: contain;
+}
+.gallery::-webkit-scrollbar { display: none; }
+.gallery img { width: 100%; height: 100%; object-fit: cover; scroll-snap-align: center; }
+.gallery-wrap { position: relative; }
+.dots { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: flex; gap: 5px; }
+.dots i { width: 6px; height: 6px; border-radius: var(--r-pill); background: rgba(255,255,255,.6); transition: width 200ms var(--ease), background-color 200ms var(--ease); }
+.dots i.on { width: 16px; background: #fff; }
+
+.dhead { padding: 18px 18px 0; display: grid; gap: 7px; }
+@media (min-width: 900px) { .dhead { padding-inline: 24px; } }
+.dprice { display: flex; align-items: baseline; gap: 9px; }
+.dprice .price { font-size: 30px; font-weight: 600; }
+.dtitle { font-size: 18px; font-weight: 600; line-height: 1.4; letter-spacing: -.01em; text-wrap: pretty; }
+.dwhere { font-size: 13.5px; color: var(--ink-2); }
+
+/* The freshness statement. Not a badge in a corner - a sentence, because
+   it is the single fact the reader is here to check. */
+.dfresh {
+  display: flex; align-items: center; gap: 10px;
+  margin: 14px 18px 0; padding: 12px 14px;
+  border-radius: var(--r-control); font-size: 13.5px; line-height: 1.45;
+}
+@media (min-width: 900px) { .dfresh { margin-inline: 24px; } }
+.dfresh.now  { background: var(--accent-wash); color: var(--accent-on-wash); }
+.dfresh.week { background: var(--surface-2);   color: var(--ink-2); }
+.dfresh.old  { background: var(--warn-wash);   color: var(--warn); }
+.dfresh.cold { background: var(--warn-wash);   color: var(--warn); }
+.dfresh svg { flex: none; }
+.dfresh b { font-weight: 600; }
+
+.dsec { padding: 22px 18px 0; }
+@media (min-width: 900px) { .dsec { padding-inline: 24px; } }
+.dsec > h3 {
+  font-size: 11.5px; font-weight: 600; color: var(--ink-3); letter-spacing: .08em;
+  padding-bottom: 9px; margin-bottom: 12px; border-bottom: 1px solid var(--line);
+}
+html[lang="en"] .dsec > h3 { text-transform: uppercase; }
+html[lang="km"] .dsec > h3 { letter-spacing: 0; font-size: 12.5px; }
+
+/* Costs are the thing people get wrong, so they get a real table with the
+   numbers right-aligned and monospaced: a column of figures you can
+   actually add up beats six pills you cannot. */
+.costs { display: grid; gap: 9px; font-size: 14px; }
+.costs > div { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.costs dt { color: var(--ink-2); }
+.costs dd { font-family: var(--f-num); font-variant-numeric: tabular-nums; font-weight: 600; }
+.costs .total { padding-top: 9px; border-top: 1px solid var(--line); }
+.costs .total dt { color: var(--ink); font-weight: 600; }
+.costs .total dd { font-size: 16px; }
+
+.specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 2px; }
+.spec { background: var(--surface); border-radius: var(--r-control); padding: 11px 12px; display: grid; gap: 2px; }
+.spec dt { font-size: 11.5px; color: var(--ink-3); }
+.spec dd { font-size: 14px; font-weight: 600; }
+.spec dd .num { font-size: 14px; }
+
+.amen { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.who { display: flex; align-items: center; gap: 12px; }
+.who .av {
+  width: 44px; height: 44px; border-radius: var(--r-control); flex: none;
+  display: grid; place-items: center; background: var(--accent-wash); color: var(--accent-on-wash);
+  font-weight: 600; font-size: 16px;
+}
+.who-name { font-size: 14.5px; font-weight: 600; }
+.who-sub { font-size: 12.5px; color: var(--ink-2); }
+
+/* the action bar: always reachable, clears the home indicator */
+.actions {
+  flex: none; display: flex; gap: 9px;
+  padding: 11px 16px calc(11px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line); background: var(--bg);
+}
+@media (min-width: 900px) { .actions { padding-bottom: 14px; } }
+.btn {
+  flex: 1; min-height: 50px; border-radius: var(--r-control);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: 15px; font-weight: 600; text-decoration: none;
+  transition: background-color 150ms var(--ease), transform 110ms var(--ease), box-shadow 150ms var(--ease);
+}
+.btn-primary { background: var(--accent); color: var(--on-accent); box-shadow: 0 1px 0 var(--accent-press); }
+.btn-primary:hover { background: var(--accent-press); }
+.btn-primary:active { transform: translateY(1px); box-shadow: none; }
+.btn-quiet { flex: none; width: 52px; background: var(--surface); border: 1px solid var(--line-2); color: var(--ink-2); }
+.btn-quiet:hover { color: var(--ink); border-color: var(--ink-3); }
+.btn-quiet:active { transform: scale(.96); }
+.btn-quiet[aria-pressed="true"] { color: var(--danger); border-color: var(--danger); }
+.btn-quiet[aria-pressed="true"] svg { fill: currentColor; }
+
+/* ---------------------------------------------------------- tab bar */
+.tabbar {
+  position: sticky; bottom: 0; z-index: 30; flex: none;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom);   /* clears the home indicator */
+}
+@supports not (backdrop-filter: blur(1px)) { .tabbar { background: var(--surface); } }
+@media (min-width: 900px) { .tabbar { display: none; } }
+.tab {
+  min-height: var(--tabbar-h); display: grid; justify-items: center; align-content: center; gap: 3px;
+  font-size: 10.5px; font-weight: 500; color: var(--ink-3);
+  transition: color 150ms var(--ease);
+}
+.tab[aria-selected="true"] { color: var(--accent); }
+.tab .dot { position: absolute; }
+.tab:active svg { transform: scale(.88); }
+.tab svg { transition: transform 180ms var(--ease); }
+
+/* ------------------------------------------------------------ sheet */
+.scrim {
+  position: fixed; inset: 0; z-index: 70; background: rgba(12,14,13,.44);
+  opacity: 0; transition: opacity 240ms var(--ease);
+}
+.scrim.is-open { opacity: 1; }
+.scrim[hidden] { display: none; }
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 71;
+  max-height: 84dvh; display: flex; flex-direction: column;
+  background: var(--surface); border-radius: var(--r-surface) var(--r-surface) 0 0;
+  box-shadow: var(--sh-lift);
+  transform: translateY(100%); transition: transform 360ms var(--ease);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.sheet.is-open { transform: none; }
+.sheet[hidden] { display: none; }
+.grab { width: 40px; height: 4px; border-radius: var(--r-pill); background: var(--line-2); margin: 9px auto 4px; flex: none; touch-action: none; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 18px 12px; flex: none; }
+.sheet-head h2 { font-size: 16px; font-weight: 600; }
+.sheet-body { overflow-y: auto; overscroll-behavior: contain; padding: 0 18px; }
+.sheet-foot { flex: none; display: flex; gap: 9px; padding: 12px 18px 16px; border-top: 1px solid var(--line); }
+
+/* ----------------------------------------------------------- states */
+.empty { padding: 56px 28px; text-align: center; display: grid; gap: 8px; justify-items: center; }
+.empty .ico { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-pill); background: var(--surface-2); color: var(--ink-3); margin-bottom: 4px; }
+.empty h3 { font-size: 15.5px; font-weight: 600; }
+.empty p { font-size: 13.5px; color: var(--ink-2); max-width: 34ch; line-height: 1.55; }
+.empty button { margin-top: 8px; min-height: 44px; padding: 0 18px; border-radius: var(--r-control); background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: 14px; }
+
+.sk-row { display: grid; grid-template-columns: 92px 1fr; gap: 13px; padding: 11px; }
+@media (min-width: 640px) { .sk-row { grid-template-columns: 116px 1fr; gap: 15px; } }
+.sk-row .b { border-radius: var(--r-control); background: var(--surface-2); }
+.sk-row .b.thumb { aspect-ratio: 1; }
+.sk-row .lines { display: grid; gap: 8px; align-content: start; padding-top: 4px; }
+.sk-row .lines .b { height: 12px; border-radius: 6px; }
+.js .sk-row .b {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 37%, var(--surface-2) 63%);
+  background-size: 400% 100%; animation: sheen 1.5s ease-in-out infinite;
+}
+@keyframes sheen { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 14px);
+  transform: translate(-50%, 14px); z-index: 90;
+  background: var(--ink); color: var(--bg);
+  padding: 11px 16px; border-radius: var(--r-pill); font-size: 13.5px; font-weight: 500;
+  opacity: 0; pointer-events: none; box-shadow: var(--sh-pop);
+  transition: opacity 240ms var(--ease), transform 240ms var(--ease);
+  max-width: calc(100vw - 32px);
+}
+@media (min-width: 900px) { .toast { bottom: 22px; } }
+.toast.up { opacity: 1; transform: translate(-50%, 0); }
+
+/* ----------------------------------------------------------- motion
+   Every animation here is feedback or orientation. Rows enter once when
+   the result set changes, because a list that redraws silently gives no
+   sign it responded to the filter you just tapped. Nothing loops. */
+.js .row { animation: rowIn 340ms var(--ease) both; animation-delay: calc(min(var(--i, 0), 8) * 28ms); }
+@keyframes rowIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.js .detail.is-open .dhead > *, .js .detail.is-open .dfresh {
+  animation: liftIn 380ms var(--ease) both;
+}
+.js .detail.is-open .dhead > *:nth-child(2) { animation-delay: 40ms; }
+.js .detail.is-open .dhead > *:nth-child(3) { animation-delay: 70ms; }
+.js .detail.is-open .dfresh { animation-delay: 100ms; }
+@keyframes liftIn { from { opacity: 0; transform: translateY(10px); filter: blur(3px); } to { opacity: 1; transform: none; filter: blur(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important; scroll-behavior: auto !important;
+  }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#results">រំលងទៅលទ្ធផល</a>
+
+<!-- One sprite, one stroke weight (1.75), so the icons read as a set. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.4"/><circle cx="16" cy="17" r="2.4"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.3S4.4 15.5 4.4 10.3A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.6 3.1c0 5.2-7.6 10-7.6 10z"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.3 12.2l2.6 2.6 4.8-5.2"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3.1 2"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.6 4h3l1.5 4-2 1.4a12 12 0 0 0 5.5 5.5L16 13l4 1.5v3a2 2 0 0 1-2.2 2A15.8 15.8 0 0 1 4.5 6.2 2 2 0 0 1 6.6 4z"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M21 4L3 11l7 3 3 7z"/><path d="M10 14l4-4"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+<symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M15.2 8.8l-2 5.4-5.4 2 2-5.4z"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.6L12 4l8 6.6V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.4" r="3.7"/><path d="M4.8 20c1.4-3.5 4.1-5.2 7.2-5.2S17.8 16.5 19.2 20"/></symbol>
+<symbol id="i-theme" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.6v2.2M12 19.2v2.2M4.2 12H2M22 12h-2.2M6.4 6.4L4.9 4.9M19.1 19.1l-1.5-1.5M17.6 6.4l1.5-1.5M4.9 19.1l1.5-1.5"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8v4.6M12 16h.01"/></symbol>
+<symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 18v-5h18v5M3 13V8a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1v5M12 13V8a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v5"/></symbol>
+</defs></svg>
+
+<div class="shell">
+
+  <header class="topbar">
+    <div class="topbar-in">
+      <div class="brand">
+        <span class="km">ផ្ទះ</span><span class="lat">Pteas</span>
+        <span class="brand-note" data-t="tagline"></span>
+      </div>
+      <div class="search">
+        <svg class="ic" width="19" height="19" aria-hidden="true"><use href="#i-search"/></svg>
+        <input id="q" type="search" autocomplete="off" aria-label="ស្វែងរក" data-t-ph="searchPh">
+        <button class="clear" id="q-clear" hidden data-t-aria="clearSearch">
+          <svg class="ic" width="17" height="17" aria-hidden="true"><use href="#i-x"/></svg>
+        </button>
+      </div>
+      <div class="topbar-tools">
+        <div class="seg" role="group" aria-label="Language">
+          <button type="button" data-lang="km" aria-pressed="true">ខ្មែរ</button>
+          <button type="button" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <button class="iconbtn" id="theme-btn" data-t-aria="themeToggle">
+          <svg class="ic" width="19" height="19" aria-hidden="true"><use href="#i-theme"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="app">
+
+    <aside class="rail" aria-label="តម្រង">
+      <div id="rail-filters"></div>
+    </aside>
+
+    <section class="results" id="results" aria-label="លទ្ធផល">
+      <div class="sortbar">
+        <p class="count" id="count"></p>
+        <div class="tools">
+          <button class="mobfilter" id="open-filters">
+            <svg class="ic" width="16" height="16" aria-hidden="true"><use href="#i-sliders"/></svg>
+            <span data-t="filters"></span><span class="n" id="fcount" hidden>0</span>
+          </button>
+          <label class="sortpick">
+            <span class="sr" data-t="sortBy"></span>
+            <select id="sort">
+              <option value="fresh"></option>
+              <option value="cheap"></option>
+              <option value="dear"></option>
+              <option value="big"></option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <ol class="rows" id="rows" aria-live="polite"></ol>
+      <div class="empty" id="empty" hidden>
+        <span class="ico"><svg class="ic" width="22" height="22" aria-hidden="true"><use href="#i-search"/></svg></span>
+        <h3 data-t="emptyH"></h3>
+        <p data-t="emptyP"></p>
+        <button type="button" id="empty-reset" data-t="clearAll"></button>
+      </div>
+    </section>
+
+    <section class="detail" id="detail" aria-label="បន្ទប់" hidden>
+      <div class="detail-bar">
+        <button class="detail-back" id="detail-back" data-t-aria="back">
+          <svg class="ic" width="21" height="21" aria-hidden="true"><use href="#i-back"/></svg>
+        </button>
+        <span class="spacer"></span>
+        <button class="iconbtn" id="d-share" data-t-aria="share">
+          <svg class="ic" width="19" height="19" aria-hidden="true"><use href="#i-send"/></svg>
+        </button>
+      </div>
+      <div class="detail-scroll" id="detail-scroll"><div class="detail-in" id="detail-in"></div></div>
+      <div class="actions" id="detail-actions" hidden>
+        <a class="btn btn-primary" id="d-call" href="#"><svg class="ic" width="19" height="19" aria-hidden="true"><use href="#i-phone"/></svg><span data-t="call"></span></a>
+        <button class="btn btn-quiet" id="d-save" data-t-aria="save">
+          <svg class="ic" width="20" height="20" aria-hidden="true"><use href="#i-heart"/></svg>
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <nav class="tabbar" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" data-tab="browse" aria-selected="true">
+      <svg class="ic" width="22" height="22" aria-hidden="true"><use href="#i-compass"/></svg><span data-t="tabBrowse"></span></button>
+    <button class="tab" role="tab" data-tab="saved" aria-selected="false">
+      <svg class="ic" width="22" height="22" aria-hidden="true"><use href="#i-heart"/></svg><span data-t="tabSaved"></span></button>
+    <button class="tab" role="tab" data-tab="post" aria-selected="false">
+      <svg class="ic" width="22" height="22" aria-hidden="true"><use href="#i-home"/></svg><span data-t="tabPost"></span></button>
+    <button class="tab" role="tab" data-tab="me" aria-selected="false">
+      <svg class="ic" width="22" height="22" aria-hidden="true"><use href="#i-user"/></svg><span data-t="tabMe"></span></button>
+  </nav>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+  <div class="grab" id="grab"></div>
+  <div class="sheet-head"><h2 id="sheet-title" data-t="filters"></h2>
+    <button class="iconbtn" id="sheet-close" data-t-aria="close">
+      <svg class="ic" width="19" height="19" aria-hidden="true"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="sheet-body" id="sheet-filters"></div>
+  <div class="sheet-foot">
+    <button class="btn btn-quiet" style="flex:1;width:auto" id="sheet-reset" data-t="clearAll"></button>
+    <button class="btn btn-primary" id="sheet-apply" data-t="showResults"></button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  root.classList.add("js");
+
+  /* ============================================================== data
+     Eleven real sample rooms, the same ones the shipping app falls back to
+     offline. No network, no database: this file is for judging the design,
+     so it carries its own content. */
+
+  var LISTINGS = [
+    { id:"tk-1", lat:11.5760, lng:104.8905, title:{en:"Bright studio near Toul Kork market", km:"បន្ទប់ស្ទូឌីយោ ជិតផ្សារទួលគោក"},
+      area:{en:"Toul Kork, Phnom Penh", km:"ទួលគោក ភ្នំពេញ"},
+      price:180, beds:0, type:"studio", size:28, floor:2,
+      deposit:1, term:"monthly", minStay:3, availableNow:true,
+      power:1000, water:0, internet:true,
+      parking:{ car:0, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:true, lift:false, washer:false, pets:false, balcony:false, security:true, kitchen:true },
+      reports:0, verified:true, lastConfirmed:1,
+      landlord:{ name:"Chan Sophal", since:2021, listings:3 , phone:"01 509 650", telegram:"@sophal" },
+      photos:["toulkork-studio-a","toulkork-studio-b","toulkork-studio-c"] },
+
+    { id:"bkk3-1", lat:11.5450, lng:104.9185, title:{en:"One bedroom with balcony, BKK3", km:"អាផាតមិន ១បន្ទប់ មានយ៉រ បឹងកេងកង៣"},
+      area:{en:"Boeung Keng Kang 3", km:"បឹងកេងកង៣"},
+      price:320, beds:1, type:"apartment", size:45, floor:4,
+      deposit:2, term:"12", minStay:12, availableNow:true,
+      power:900, water:2500, internet:true,
+      parking:{ car:1, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:true, lift:true, washer:true, pets:false, balcony:true, security:true, kitchen:true },
+      reports:0, verified:true, lastConfirmed:3,
+      landlord:{ name:"Meas Dara", since:2019, listings:8 , phone:"01 622 921", telegram:"@dara" },
+      photos:["bkk3-balcony-a","bkk3-balcony-b","bkk3-balcony-c"] },
+
+    { id:"ss-1", lat:11.5950, lng:104.8720, title:{en:"Two bedroom flat house, Sen Sok", km:"ផ្ទះល្វែង ២បន្ទប់ សែនសុខ"},
+      area:{en:"Sen Sok, Phnom Penh", km:"សែនសុខ ភ្នំពេញ"},
+      price:250, beds:2, type:"flathouse", size:60, floor:0,
+      deposit:1, term:"6", minStay:6, availableNow:true,
+      power:800, water:0, internet:false,
+      parking:{ car:1, moto:true },
+      has:{ aircon:false, furnished:false, privateBath:true, lift:false, washer:false, pets:true, balcony:false, security:false, kitchen:true },
+      reports:0, verified:false, lastConfirmed:2,
+      landlord:{ name:"Ly Sreyneang", since:2023, listings:1 , phone:"02 525 799", telegram:"@sreyneang" },
+      photos:["sensok-flat-a","sensok-flat-b"] },
+
+    { id:"rm-1", lat:11.5430, lng:104.9210, title:{en:"Room above a coffee shop, Russian Market", km:"បន្ទប់ជួល ខាងលើហាងកាហ្វេ ផ្សារទួលទំពូង"},
+      area:{en:"Toul Tom Poung", km:"ទួលទំពូង"},
+      price:140, beds:0, type:"room", size:22, floor:3,
+      deposit:1, term:"monthly", minStay:1, availableNow:true,
+      power:1200, water:3000, internet:true,
+      parking:{ car:0, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:false, lift:false, washer:false, pets:false, balcony:false, security:false, kitchen:false },
+      reports:0, verified:true, lastConfirmed:6,
+      landlord:{ name:"Kim Bunthoeun", since:2022, listings:2 , phone:"01 988 445", telegram:"@bunthoeun" },
+      photos:["russianmarket-room-a","russianmarket-room-b"] },
+
+    { id:"cc-1", lat:11.5880, lng:104.9350, title:{en:"Riverside house, Chroy Changvar", km:"ផ្ទះមាត់ទន្លេ ជ្រោយចង្វារ"},
+      area:{en:"Chroy Changvar", km:"ជ្រោយចង្វារ"},
+      price:450, beds:3, type:"house", size:110, floor:0,
+      deposit:2, term:"12", minStay:12, availableNow:false,
+      power:730, water:2000, internet:false,
+      parking:{ car:2, moto:true },
+      has:{ aircon:false, furnished:false, privateBath:true, lift:false, washer:true, pets:true, balcony:true, security:false, kitchen:true },
+      reports:0, verified:true, lastConfirmed:4,
+      landlord:{ name:"Pen Chanthou", since:2018, listings:5 , phone:"02 663 803", telegram:"@chanthou" },
+      photos:["chroychangvar-house-a","chroychangvar-house-b","chroychangvar-house-c"] },
+
+    { id:"ca-1", lat:11.5300, lng:104.9500, title:{en:"Cheap room, Chbar Ampov", km:"បន្ទប់ជួលថោក ច្បារអំពៅ"},
+      area:{en:"Chbar Ampov", km:"ច្បារអំពៅ"},
+      price:95, beds:0, type:"room", size:18, floor:1,
+      deposit:1, term:"monthly", minStay:1, availableNow:true,
+      power:1500, water:4000, internet:false,
+      parking:{ car:0, moto:true },
+      has:{ aircon:false, furnished:false, privateBath:false, lift:false, washer:false, pets:false, balcony:false, security:false, kitchen:false },
+      reports:0, verified:false, lastConfirmed:19,
+      landlord:{ name:"Sok Vanna", since:2024, listings:1 , phone:"01 638 938", telegram:"@vanna" },
+      photos:["chbarampov-room-a"] },
+
+    { id:"tk-2", lat:11.5795, lng:104.8860, title:{en:"Quiet 2 bed near Institute of Technology", km:"អាផាតមិន ២បន្ទប់ ជិតវិទ្យាស្ថានបច្ចេកវិទ្យា"},
+      area:{en:"Toul Kork, Phnom Penh", km:"ទួលគោក ភ្នំពេញ"},
+      price:280, beds:2, type:"apartment", size:55, floor:5,
+      deposit:1, term:"6", minStay:6, availableNow:true,
+      power:730, water:0, internet:true,
+      parking:{ car:1, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:true, lift:true, washer:true, pets:false, balcony:true, security:true, kitchen:true },
+      reports:0, verified:true, lastConfirmed:0,
+      owner:"me", billing:{ state:"live", daysLeft:23 },
+      landlord:{ name:"Nou Sokhem", since:2020, listings:4 , phone:"02 839 330", telegram:"@sokhem" },
+      photos:["toulkork-2bed-a","toulkork-2bed-b","toulkork-2bed-c"] },
+
+    { id:"bkk1-1", lat:11.5490, lng:104.9230, title:{en:"Serviced one bed, BKK1", km:"អាផាតមិនសេវាកម្ម ១បន្ទប់ បឹងកេងកង១"},
+      area:{en:"Boeung Keng Kang 1", km:"បឹងកេងកង១"},
+      price:520, beds:1, type:"apartment", size:50, floor:8,
+      deposit:2, term:"12", minStay:12, availableNow:true,
+      power:0, water:0, internet:true,
+      parking:{ car:1, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:true, lift:true, washer:true, pets:false, balcony:false, security:true, kitchen:true },
+      reports:0, verified:true, lastConfirmed:8,
+      landlord:{ name:"Tep Marina", since:2017, listings:12 , phone:"02 916 102", telegram:"@marina" },
+      photos:["bkk1-serviced-a","bkk1-serviced-b"] },
+
+    { id:"tp-1", lat:11.6050, lng:104.9020, title:{en:"Shophouse ground floor, Tuol Sangke", km:"ផ្ទះល្វែងជាន់ផ្ទាល់ដី ទួលសង្កែ"},
+      area:{en:"Tuol Sangke, Russey Keo", km:"ទួលសង្កែ ឫស្សីកែវ"},
+      price:210, beds:1, type:"flathouse", size:40, floor:0,
+      deposit:1, term:"monthly", minStay:3, availableNow:true,
+      power:850, water:2500, internet:false,
+      parking:{ car:1, moto:true },
+      has:{ aircon:false, furnished:false, privateBath:true, lift:false, washer:false, pets:true, balcony:false, security:false, kitchen:true },
+      reports:0, verified:false, lastConfirmed:11,
+      owner:"me", billing:{ state:"paused", daysLeft:0 },
+      landlord:{ name:"Hun Sreypov", since:2023, listings:2 , phone:"01 103 065", telegram:"@sreypov" },
+      photos:["tuolsangke-shophouse-a","tuolsangke-shophouse-b"] },
+
+    { id:"ss-2", lat:11.5990, lng:104.8680, title:{en:"Student room with motorbike parking, Sen Sok", km:"បន្ទប់និស្សិត មានចំណតម៉ូតូ សែនសុខ"},
+      area:{en:"Sen Sok, Phnom Penh", km:"សែនសុខ ភ្នំពេញ"},
+      price:120, beds:0, type:"room", size:20, floor:2,
+      deposit:1, term:"monthly", minStay:1, availableNow:true,
+      power:900, water:0, internet:true,
+      parking:{ car:0, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:true, lift:false, washer:false, pets:false, balcony:false, security:true, kitchen:false },
+      reports:0, verified:true, lastConfirmed:2,
+      owner:"me", billing:{ state:"trial", daysLeft:9 },
+      landlord:{ name:"Chea Vichea", since:2022, listings:6 , phone:"01 479 442", telegram:"@vichea" },
+      photos:["sensok-student-a","sensok-student-b"] },
+
+    { id:"bkk2-1", lat:11.5470, lng:104.9160, title:{en:"Villa with garden, BKK2", km:"វីឡា មានសួន បឹងកេងកង២"},
+      area:{en:"Boeung Keng Kang 2", km:"បឹងកេងកង២"},
+      price:900, beds:4, type:"house", size:180, floor:0,
+      deposit:2, term:"12", minStay:12, availableNow:false,
+      power:730, water:2000, internet:true,
+      parking:{ car:2, moto:true },
+      has:{ aircon:true, furnished:true, privateBath:true, lift:false, washer:true, pets:true, balcony:true, security:true, kitchen:true },
+      reports:0, verified:true, lastConfirmed:5,
+      landlord:{ name:"Ouk Sovannara", since:2016, listings:9 , phone:"01 740 961", telegram:"@sovannara" },
+      photos:["bkk2-villa-a","bkk2-villa-b","bkk2-villa-c"] }
+  ];
+  var photoUrl = function (seed, w, h) {
+    return "https://picsum.photos/seed/" + seed + "/" + (w || 800) + "/" + (h || 600);
+  };
+
+  /* ============================================================== i18n */
+  var T = {
+    km: {
+      tagline: "ឃើញថ្ងៃបញ្ជាក់ចុងក្រោយ មុនពេលហៅ",
+      searchPh: "ទួលគោក, បឹងកេងកង, ស្ទឹងមានជ័យ…",
+      clearSearch: "លុបការស្វែងរក", themeToggle: "ប្តូរពណ៌ផ្ទៃ", close: "បិទ", back: "ថយក្រោយ",
+      share: "ចែករំលែក", save: "រក្សាទុក", call: "ហៅទូរស័ព្ទ",
+      filters: "តម្រង", clearAll: "លុបទាំងអស់", showResults: "បង្ហាញ {n} បន្ទប់",
+      sortBy: "តម្រៀបតាម",
+      sortFresh: "បញ្ជាក់ថ្មីបំផុត", sortCheap: "ថោកបំផុត", sortDear: "ថ្លៃបំផុត", sortBig: "ធំបំផុត",
+      results: "បន្ទប់", resultsOne: "បន្ទប់",
+      emptyH: "រកមិនឃើញបន្ទប់", emptyP: "សាកល្បងបន្ថយតម្រង ឬដំឡើងថវិកាបន្តិច។",
+      fPrice: "ថវិកាក្នុងមួយខែ", fFresh: "ការបញ្ជាក់", fType: "ប្រភេទ", fBeds: "បន្ទប់គេង", fHas: "មានអ្វីខ្លះ",
+      anyPrice: "រហូតដល់ ${n}", freshAny: "ទាំងអស់", fresh3: "ក្នុង 3 ថ្ងៃ", fresh7: "ក្នុង 1 សប្តាហ៍",
+      tStudio: "ស្ទូឌីយោ", tRoom: "បន្ទប់", tApt: "អាផាតមិន", tHouse: "ផ្ទះ",
+      bedsStudio: "ស្ទូឌីយោ", beds1: "1 បន្ទប់", beds2: "2 បន្ទប់", beds3: "3+ បន្ទប់",
+      hAircon: "ម៉ាស៊ីនត្រជាក់", hFurnished: "មានគ្រឿងសង្ហារិម", hWasher: "ម៉ាស៊ីនបោកគក់",
+      hParking: "ចំណតឡាន", hPets: "ចិញ្ចឹមសត្វបាន", hBalcony: "រានហាល",
+      today: "បញ្ជាក់ថ្ងៃនេះ", yest: "បញ្ជាក់ម្សិលមិញ", daysAgo: "បញ្ជាក់ {n} ថ្ងៃមុន",
+      freshNow: "ម្ចាស់ផ្ទះបញ្ជាក់ថានៅទំនេរ <b>ថ្ងៃនេះ</b>។ ហៅទូរស័ព្ទបានតែម្តង។",
+      freshWeek: "បញ្ជាក់ចុងក្រោយ <b>{n} ថ្ងៃមុន</b>។ ភាគច្រើននៅទំនេរនៅឡើយ។",
+      freshOld: "មិនបានបញ្ជាក់ <b>{n} ថ្ងៃ</b> ហើយ។ សួរមុនពេលធ្វើដំណើរទៅមើល។",
+      secCost: "តម្លៃសរុប", secRoom: "អំពីបន្ទប់", secHas: "មានអ្វីខ្លះ", secWho: "ម្ចាស់ផ្ទះ",
+      cRent: "ថ្លៃជួល", cDeposit: "ប្រាក់កក់", cFirst: "ត្រូវបង់ថ្ងៃចូល", perMonth: "/ ខែ",
+      months: "ខែ", sqm: "ម²", floorN: "ជាន់ទី {n}", ground: "ជាន់ផ្ទាល់ដី",
+      sSize: "ទំហំ", sBeds: "បន្ទប់គេង", sFloor: "ជាន់", sMin: "ជួលអប្បបរមា", sPower: "ភ្លើង", sWater: "ទឹក",
+      riel: "៛/kWh", waterIncl: "រួមបញ្ចូល",
+      sinceY: "ជួលតាំងពីឆ្នាំ {y} · {n} បន្ទប់",
+      saved: "រក្សាទុកហើយ", unsaved: "ដកចេញហើយ", copied: "ចម្លងតំណហើយ",
+      tabBrowse: "រុករក", tabSaved: "រក្សាទុក", tabPost: "ដាក់ជួល", tabMe: "អ្នក",
+      savedEmptyH: "មិនទាន់មានអ្វីរក្សាទុក", savedEmptyP: "ចុចរូបបេះដូងលើបន្ទប់ណាដែលចូលចិត្ត វានឹងរង់ចាំនៅទីនេះ។",
+      soonH: "កំពុងរៀបចំ", soonP: "ផ្នែកនេះនៅក្នុងការសាកល្បង។ ឥឡូវនេះសូមប្រើការរុករកសិន។"
+    },
+    en: {
+      tagline: "see the last confirmed date before you call",
+      searchPh: "Toul Kork, BKK, Sen Sok…",
+      clearSearch: "Clear search", themeToggle: "Switch theme", close: "Close", back: "Back",
+      share: "Share", save: "Save", call: "Call",
+      filters: "Filters", clearAll: "Clear all", showResults: "Show {n} rooms",
+      sortBy: "Sort by",
+      sortFresh: "Confirmed most recently", sortCheap: "Cheapest first", sortDear: "Most expensive", sortBig: "Largest first",
+      results: "rooms", resultsOne: "room",
+      emptyH: "No rooms match", emptyP: "Try removing a filter, or raising the budget a little.",
+      fPrice: "Budget per month", fFresh: "Confirmed", fType: "Type", fBeds: "Bedrooms", fHas: "Must have",
+      anyPrice: "Up to ${n}", freshAny: "Any", fresh3: "Within 3 days", fresh7: "Within a week",
+      tStudio: "Studio", tRoom: "Room", tApt: "Apartment", tHouse: "House",
+      bedsStudio: "Studio", beds1: "1 bed", beds2: "2 beds", beds3: "3+ beds",
+      hAircon: "Air conditioning", hFurnished: "Furnished", hWasher: "Washing machine",
+      hParking: "Car parking", hPets: "Pets allowed", hBalcony: "Balcony",
+      today: "confirmed today", yest: "confirmed yesterday", daysAgo: "confirmed {n} days ago",
+      freshNow: "The landlord confirmed this is free <b>today</b>. Worth calling now.",
+      freshWeek: "Last confirmed <b>{n} days ago</b>. Usually still available.",
+      freshOld: "Not confirmed for <b>{n} days</b>. Ask before travelling to see it.",
+      secCost: "What it costs", secRoom: "The room", secHas: "What it has", secWho: "Landlord",
+      cRent: "Rent", cDeposit: "Deposit", cFirst: "Due on move-in", perMonth: "/ mo",
+      months: "months", sqm: "m²", floorN: "Floor {n}", ground: "Ground floor",
+      sSize: "Size", sBeds: "Bedrooms", sFloor: "Floor", sMin: "Minimum stay", sPower: "Power", sWater: "Water",
+      riel: "riel/kWh", waterIncl: "Included",
+      sinceY: "Renting since {y} · {n} rooms",
+      saved: "Saved", unsaved: "Removed", copied: "Link copied",
+      tabBrowse: "Browse", tabSaved: "Saved", tabPost: "List a room", tabMe: "You",
+      savedEmptyH: "Nothing saved yet", savedEmptyP: "Tap the heart on any room you like and it will wait for you here.",
+      soonH: "Not built yet", soonP: "This part is still in progress. Use Browse for now."
+    }
+  };
+  var lang = "km";
+  function t(k, v) {
+    var s = (T[lang] && T[lang][k]) != null ? T[lang][k] : (T.en[k] != null ? T.en[k] : k);
+    if (v) Object.keys(v).forEach(function (n) { s = s.split("{" + n + "}").join(v[n]); });
+    return s;
+  }
+  function esc(v) {
+    return String(v == null ? "" : v)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function $(id) { return document.getElementById(id); }
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function read(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  /* =========================================================== state */
+  var F = { q: "", max: 1000, fresh: 0, types: [], beds: [], has: [] };
+  var sortBy = "fresh";
+  var tab = "browse";
+  var current = null;
+  var saved = [];
+  try { saved = JSON.parse(read("pteas-next-saved") || "[]"); if (!Array.isArray(saved)) saved = []; } catch (e) { saved = []; }
+  var PRICE_MAX = LISTINGS.reduce(function (m, l) { return Math.max(m, l.price); }, 0);
+  F.max = PRICE_MAX;
+
+  var TYPES = [["studio","tStudio"],["room","tRoom"],["apartment","tApt"],["house","tHouse"]];
+  var BEDS  = [["0","bedsStudio"],["1","beds1"],["2","beds2"],["3","beds3"]];
+  var HAS   = [["aircon","hAircon"],["furnished","hFurnished"],["washer","hWasher"],
+               ["parking","hParking"],["pets","hPets"],["balcony","hBalcony"]];
+
+  /* Freshness is the product. Four bands, named once, used by the sort,
+     the row chip, the filter and the sentence on the detail screen. */
+  function band(l) {
+    if (l.lastConfirmed <= 1) return "now";
+    if (l.lastConfirmed <= 7) return "week";
+    if (l.lastConfirmed <= 14) return "old";
+    return "cold";
+  }
+  function freshShort(l) {
+    if (l.lastConfirmed === 0) return t("today");
+    if (l.lastConfirmed === 1) return t("yest");
+    return t("daysAgo", { n: l.lastConfirmed });
+  }
+  function typeLabel(l) {
+    var m = { studio: "tStudio", room: "tRoom", apartment: "tApt", house: "tHouse" };
+    return t(m[l.type] || "tRoom");
+  }
+  function bedLabel(l) { return l.beds === 0 ? t("bedsStudio") : (l.beds + " " + (lang === "km" ? "បន្ទប់" : (l.beds === 1 ? "bed" : "beds"))); }
+  function hasFlag(l, key) {
+    if (key === "parking") return !!(l.parking && l.parking.car);
+    return !!(l.has && l.has[key]);
+  }
+
+  function matches(l) {
+    if (l.price > F.max) return false;
+    if (F.fresh && l.lastConfirmed > F.fresh) return false;
+    if (F.types.length && F.types.indexOf(l.type) === -1) return false;
+    if (F.beds.length) {
+      var b = l.beds >= 3 ? "3" : String(l.beds);
+      if (F.beds.indexOf(b) === -1) return false;
+    }
+    for (var i = 0; i < F.has.length; i++) if (!hasFlag(l, F.has[i])) return false;
+    if (F.q) {
+      var hay = [l.title.km, l.title.en, l.area.km, l.area.en, String(l.price), typeLabel(l)].join(" ").toLowerCase();
+      var words = F.q.toLowerCase().split(/\s+/).filter(Boolean);
+      for (var w = 0; w < words.length; w++) if (hay.indexOf(words[w]) === -1) return false;
+    }
+    return true;
+  }
+  function activeCount() {
+    return (F.max < PRICE_MAX ? 1 : 0) + (F.fresh ? 1 : 0) + F.types.length + F.beds.length + F.has.length;
+  }
+  function visible() {
+    var rows = LISTINGS.filter(matches);
+    if (tab === "saved") rows = rows.filter(function (l) { return saved.indexOf(l.id) !== -1; });
+    rows.sort(function (a, b) {
+      if (sortBy === "cheap") return a.price - b.price;
+      if (sortBy === "dear")  return b.price - a.price;
+      if (sortBy === "big")   return b.size - a.size;
+      return a.lastConfirmed - b.lastConfirmed || a.price - b.price;
+    });
+    return rows;
+  }
+
+  /* ========================================================= filters
+     One builder, rendered into the desktop rail and the mobile sheet, so
+     the two can never drift apart. */
+  function filtersHTML() {
+    function opts(list, sel, kind) {
+      return list.map(function (p) {
+        var on = sel.indexOf(p[0]) !== -1;
+        var n = LISTINGS.filter(function (l) {
+          if (kind === "types") return l.type === p[0];
+          if (kind === "beds") return (l.beds >= 3 ? "3" : String(l.beds)) === p[0];
+          return hasFlag(l, p[0]);
+        }).length;
+        return '<button type="button" class="opt" data-f="' + kind + '" data-v="' + esc(p[0]) +
+               '" aria-pressed="' + on + '">' + esc(t(p[1])) + '<span class="n">' + n + '</span></button>';
+      }).join("");
+    }
+    return '' +
+      '<div class="fgroup"><h3>' + esc(t("fPrice")) + '</h3>' +
+        '<div class="range"><output class="price-out">' + esc(t("anyPrice", { n: F.max })) + '</output>' +
+        '<input type="range" class="price-range" min="100" max="' + PRICE_MAX + '" step="20" value="' + F.max + '" aria-label="' + esc(t("fPrice")) + '"></div></div>' +
+      '<div class="fgroup"><h3>' + esc(t("fFresh")) + '</h3><div class="opts">' +
+        [[0,"freshAny"],[3,"fresh3"],[7,"fresh7"]].map(function (p) {
+          return '<button type="button" class="opt" data-f="fresh" data-v="' + p[0] + '" aria-pressed="' + (F.fresh === p[0]) + '">' + esc(t(p[1])) + '</button>';
+        }).join("") + '</div></div>' +
+      '<div class="fgroup"><h3>' + esc(t("fType")) + '</h3><div class="opts">' + opts(TYPES, F.types, "types") + '</div></div>' +
+      '<div class="fgroup"><h3>' + esc(t("fBeds")) + '</h3><div class="opts">' + opts(BEDS, F.beds, "beds") + '</div></div>' +
+      '<div class="fgroup"><h3>' + esc(t("fHas")) + '</h3><div class="opts">' + opts(HAS, F.has, "has") + '</div></div>';
+  }
+  function paintFilters() {
+    $("rail-filters").innerHTML = filtersHTML();
+    $("sheet-filters").innerHTML = filtersHTML();
+    var n = activeCount();
+    $("fcount").textContent = n; $("fcount").hidden = !n;
+  }
+
+  /* ============================================================ rows */
+  function rowHTML(l, i) {
+    var b = band(l), on = saved.indexOf(l.id) !== -1;
+    return '<li class="row" style="--i:' + i + '" data-id="' + esc(l.id) + '"' + (current && current.id === l.id ? ' aria-current="true"' : '') + '>' +
+      '<button class="row-hit" type="button" data-open="' + esc(l.id) + '">' +
+        '<span class="row-thumb"><img src="' + esc(photoUrl(l.photos[0], 240, 240)) + '" alt="" loading="lazy"></span>' +
+        '<span class="row-main">' +
+          '<span class="row-head"><span class="price num">$' + l.price + '</span><span class="per">' + esc(t("perMonth")) + '</span>' +
+            '<span class="fresh ' + b + '"><i class="pip"></i>' + esc(freshShort(l)) + '</span></span>' +
+          '<span class="row-title">' + esc(l.title[lang]) + '</span>' +
+          '<span class="row-where">' + esc(l.area[lang]) + '</span>' +
+          '<span class="row-tags">' +
+            '<span class="tag">' + esc(typeLabel(l)) + '</span>' +
+            (bedLabel(l) === typeLabel(l) ? '' : '<span class="tag">' + esc(bedLabel(l)) + '</span>') +
+            '<span class="tag"><span class="num">' + l.size + '</span> ' + esc(t("sqm")) + '</span>' +
+          '</span>' +
+        '</span>' +
+      '</button>' +
+      '<button class="row-save" type="button" data-save="' + esc(l.id) + '" aria-pressed="' + on + '" aria-label="' + esc(t("save")) + '">' +
+        '<svg class="ic" width="19" height="19" aria-hidden="true"><use href="#i-heart"/></svg></button>' +
+    '</li>';
+  }
+  function paintRows() {
+    var rows = visible();
+    var host = $("rows"), empty = $("empty");
+    if (tab === "post" || tab === "me") {
+      host.innerHTML = "";
+      empty.hidden = false;
+      empty.querySelector("h3").textContent = t("soonH");
+      empty.querySelector("p").textContent = t("soonP");
+      $("empty-reset").hidden = true;
+      $("count").textContent = "";
+      return;
+    }
+    host.innerHTML = rows.map(rowHTML).join("");
+    var none = rows.length === 0;
+    empty.hidden = !none;
+    $("empty-reset").hidden = false;
+    if (none) {
+      var savedEmpty = tab === "saved" && activeCount() === 0 && !F.q;
+      empty.querySelector("h3").textContent = t(savedEmpty ? "savedEmptyH" : "emptyH");
+      empty.querySelector("p").textContent  = t(savedEmpty ? "savedEmptyP" : "emptyP");
+      $("empty-reset").hidden = savedEmpty;
+    }
+    $("count").innerHTML = '<b class="num">' + rows.length + '</b> ' +
+      esc(rows.length === 1 ? t("resultsOne") : t("results"));
+    $("sheet-apply").textContent = t("showResults", { n: rows.length });
+  }
+
+  /* ========================================================== detail */
+  function detailHTML(l) {
+    var b = band(l), n = l.lastConfirmed;
+    var freshCopy = b === "now" ? t("freshNow") : (b === "week" ? t("freshWeek", { n: n }) : t("freshOld", { n: n }));
+    var firstDue = l.price * (1 + l.deposit);
+    var initials = l.landlord.name.split(" ").map(function (w) { return w[0]; }).slice(0, 2).join("");
+    var amen = [["aircon","hAircon"],["furnished","hFurnished"],["washer","hWasher"],["balcony","hBalcony"],["pets","hPets"]]
+      .filter(function (p) { return hasFlag(l, p[0]); })
+      .map(function (p) { return '<span class="tag">' + esc(t(p[1])) + '</span>'; }).join("");
+    if (l.parking && l.parking.car) amen += '<span class="tag">' + esc(t("hParking")) + '</span>';
+
+    return '' +
+      '<div class="gallery-wrap">' +
+        '<div class="gallery" id="gallery">' + l.photos.map(function (p) {
+          return '<img src="' + esc(photoUrl(p, 900, 560)) + '" alt="">'; }).join("") + '</div>' +
+        (l.photos.length > 1 ? '<div class="dots" id="dots">' + l.photos.map(function (_, i) {
+          return '<i class="' + (i === 0 ? "on" : "") + '"></i>'; }).join("") + '</div>' : '') +
+      '</div>' +
+      '<div class="dhead">' +
+        '<div class="dprice"><span class="price num">$' + l.price + '</span><span class="per">' + esc(t("perMonth")) + '</span></div>' +
+        '<h2 class="dtitle">' + esc(l.title[lang]) + '</h2>' +
+        '<p class="dwhere">' + esc(l.area[lang]) + '</p>' +
+      '</div>' +
+      '<p class="dfresh ' + b + '"><svg class="ic" width="19" height="19" aria-hidden="true"><use href="#' +
+        (b === "now" ? "i-check" : (b === "cold" || b === "old" ? "i-alert" : "i-clock")) + '"/></svg><span>' + freshCopy + '</span></p>' +
+
+      '<section class="dsec"><h3>' + esc(t("secCost")) + '</h3><dl class="costs">' +
+        '<div><dt>' + esc(t("cRent")) + '</dt><dd>$' + l.price + '</dd></div>' +
+        '<div><dt>' + esc(t("cDeposit")) + '</dt><dd>$' + (l.price * l.deposit) + '</dd></div>' +
+        '<div class="total"><dt>' + esc(t("cFirst")) + '</dt><dd>$' + firstDue + '</dd></div>' +
+      '</dl></section>' +
+
+      '<section class="dsec"><h3>' + esc(t("secRoom")) + '</h3><dl class="specs">' +
+        '<div class="spec"><dt>' + esc(t("sSize")) + '</dt><dd><span class="num">' + l.size + '</span> ' + esc(t("sqm")) + '</dd></div>' +
+        '<div class="spec"><dt>' + esc(t("sBeds")) + '</dt><dd>' + esc(bedLabel(l)) + '</dd></div>' +
+        '<div class="spec"><dt>' + esc(t("sFloor")) + '</dt><dd>' + esc(l.floor ? t("floorN", { n: l.floor }) : t("ground")) + '</dd></div>' +
+        '<div class="spec"><dt>' + esc(t("sMin")) + '</dt><dd><span class="num">' + l.minStay + '</span> ' + esc(t("months")) + '</dd></div>' +
+        '<div class="spec"><dt>' + esc(t("sPower")) + '</dt><dd><span class="num">' + l.power + '</span> ' + esc(t("riel")) + '</dd></div>' +
+        '<div class="spec"><dt>' + esc(t("sWater")) + '</dt><dd>' + (l.water ? '<span class="num">' + l.water + '</span> ' + esc(t("riel")).replace("kWh", "m³") : esc(t("waterIncl"))) + '</dd></div>' +
+      '</dl></section>' +
+
+      (amen ? '<section class="dsec"><h3>' + esc(t("secHas")) + '</h3><div class="amen">' + amen + '</div></section>' : '') +
+
+      '<section class="dsec"><h3>' + esc(t("secWho")) + '</h3><div class="who">' +
+        '<span class="av">' + esc(initials) + '</span>' +
+        '<span><span class="who-name">' + esc(l.landlord.name) + '</span>' +
+        '<span class="who-sub" style="display:block">' + esc(t("sinceY", { y: l.landlord.since, n: l.landlord.listings })) + '</span></span>' +
+      '</div></section>';
+  }
+
+  function openRoom(id, push) {
+    var l = LISTINGS.filter(function (x) { return x.id === id; })[0];
+    if (!l) return;
+    current = l;
+    $("detail-in").innerHTML = detailHTML(l);
+    $("detail-actions").hidden = false;
+    $("d-call").href = "tel:" + String(l.landlord.phone).replace(/\s/g, "");
+    paintSaveBtn();
+    $("detail-scroll").scrollTop = 0;
+    var d = $("detail");
+    d.hidden = false;
+    requestAnimationFrame(function () { requestAnimationFrame(function () { d.classList.add("is-open"); }); });
+    document.querySelectorAll(".row").forEach(function (r) {
+      if (r.dataset.id === id) r.setAttribute("aria-current", "true"); else r.removeAttribute("aria-current");
+    });
+    wireGallery();
+    if (push !== false) { try { history.replaceState(null, "", "#" + id); } catch (e) {} }
+  }
+  function closeRoom() {
+    var d = $("detail");
+    d.classList.remove("is-open");
+    current = null;
+    document.querySelectorAll(".row[aria-current]").forEach(function (r) { r.removeAttribute("aria-current"); });
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+    if (window.matchMedia("(min-width: 900px)").matches) { showBlankDetail(); return; }
+    setTimeout(function () { if (!d.classList.contains("is-open")) d.hidden = true; }, 360);
+  }
+  /* On desktop the right pane always exists, so "nothing selected" needs a
+     composed state rather than an empty column. */
+  function showBlankDetail() {
+    $("detail-in").innerHTML =
+      '<div class="empty" style="padding-top:22vh">' +
+        '<span class="ico"><svg class="ic" width="22" height="22" aria-hidden="true"><use href="#i-bed"/></svg></span>' +
+        '<h3>' + esc(lang === "km" ? "ជ្រើសរើសបន្ទប់មួយ" : "Pick a room") + '</h3>' +
+        '<p>' + esc(lang === "km"
+          ? "ចុចបន្ទប់ណាមួយខាងឆ្វេង ដើម្បីមើលតម្លៃសរុប និងថ្ងៃបញ្ជាក់ចុងក្រោយ។"
+          : "Choose one on the left to see the full cost and when the landlord last confirmed it.") + '</p>' +
+      '</div>';
+    $("detail-actions").hidden = true;
+    $("detail").hidden = false;
+  }
+  function wireGallery() {
+    var g = $("gallery"), dots = $("dots");
+    if (!g || !dots) return;
+    g.addEventListener("scroll", function () {
+      var i = Math.round(g.scrollLeft / g.clientWidth);
+      dots.querySelectorAll("i").forEach(function (d, n) { d.classList.toggle("on", n === i); });
+    }, { passive: true });
+  }
+  function paintSaveBtn() {
+    if (!current) return;
+    var on = saved.indexOf(current.id) !== -1;
+    var b = $("d-save");
+    b.setAttribute("aria-pressed", String(on));
+    b.setAttribute("aria-label", t(on ? "saved" : "save"));
+  }
+
+  /* ============================================================ misc */
+  var toastT = null;
+  function toast(msg) {
+    var el = $("toast"); el.textContent = msg; el.classList.add("up");
+    clearTimeout(toastT); toastT = setTimeout(function () { el.classList.remove("up"); }, 1900);
+  }
+  function toggleSave(id) {
+    var i = saved.indexOf(id);
+    if (i === -1) saved.push(id); else saved.splice(i, 1);
+    store("pteas-next-saved", JSON.stringify(saved));
+    document.querySelectorAll('[data-save="' + id + '"]').forEach(function (b) {
+      b.setAttribute("aria-pressed", String(i === -1));
+    });
+    paintSaveBtn();
+    toast(t(i === -1 ? "saved" : "unsaved"));
+    if (tab === "saved") paintRows();
+  }
+
+  /* ===================================================== sheet + tabs */
+  function openSheet() {
+    $("scrim").hidden = false; $("sheet").hidden = false;
+    requestAnimationFrame(function () { requestAnimationFrame(function () {
+      $("scrim").classList.add("is-open"); $("sheet").classList.add("is-open");
+    }); });
+  }
+  function closeSheet() {
+    $("scrim").classList.remove("is-open"); $("sheet").classList.remove("is-open");
+    setTimeout(function () {
+      if (!$("sheet").classList.contains("is-open")) { $("sheet").hidden = true; $("scrim").hidden = true; }
+    }, 360);
+  }
+  function setTab(name) {
+    tab = name;
+    document.querySelectorAll(".tab").forEach(function (b) {
+      b.setAttribute("aria-selected", String(b.dataset.tab === name));
+    });
+    paintRows();
+    if (window.matchMedia("(min-width: 900px)").matches) showBlankDetail();
+  }
+  function resetFilters() {
+    F = { q: F.q, max: PRICE_MAX, fresh: 0, types: [], beds: [], has: [] };
+    paintFilters(); paintRows();
+  }
+
+  /* ========================================================= wiring */
+  document.addEventListener("click", function (e) {
+    var open = e.target.closest("[data-open]");
+    if (open) { openRoom(open.dataset.open); return; }
+    var sv = e.target.closest("[data-save]");
+    if (sv) { e.stopPropagation(); toggleSave(sv.dataset.save); return; }
+    var opt = e.target.closest(".opt");
+    if (opt) {
+      var f = opt.dataset.f, v = opt.dataset.v;
+      if (f === "fresh") { F.fresh = Number(v); }
+      else {
+        var list = F[f], i = list.indexOf(v);
+        if (i === -1) list.push(v); else list.splice(i, 1);
+      }
+      paintFilters(); paintRows(); return;
+    }
+    var tb = e.target.closest(".tab");
+    if (tb) { setTab(tb.dataset.tab); return; }
+  });
+
+  document.addEventListener("input", function (e) {
+    if (e.target.classList.contains("price-range")) {
+      F.max = Number(e.target.value);
+      document.querySelectorAll(".price-out").forEach(function (o) { o.textContent = t("anyPrice", { n: F.max }); });
+      document.querySelectorAll(".price-range").forEach(function (r) { if (r !== e.target) r.value = F.max; });
+      paintRows();
+      $("fcount").textContent = activeCount(); $("fcount").hidden = !activeCount();
+    }
+  });
+
+  var qT = null;
+  $("q").addEventListener("input", function () {
+    F.q = this.value.trim();
+    $("q-clear").hidden = !F.q;
+    clearTimeout(qT); qT = setTimeout(paintRows, 110);
+  });
+  $("q-clear").addEventListener("click", function () {
+    $("q").value = ""; F.q = ""; this.hidden = true; paintRows(); $("q").focus();
+  });
+  $("sort").addEventListener("change", function () { sortBy = this.value; paintRows(); });
+  $("open-filters").addEventListener("click", openSheet);
+  $("sheet-close").addEventListener("click", closeSheet);
+  $("sheet-apply").addEventListener("click", closeSheet);
+  $("scrim").addEventListener("click", closeSheet);
+  $("sheet-reset").addEventListener("click", resetFilters);
+  $("empty-reset").addEventListener("click", function () { resetFilters(); $("q").value = ""; F.q = ""; $("q-clear").hidden = true; paintRows(); });
+  $("detail-back").addEventListener("click", closeRoom);
+  $("d-save").addEventListener("click", function () { if (current) toggleSave(current.id); });
+  $("d-share").addEventListener("click", function () {
+    if (!current) return;
+    var url = location.origin + location.pathname + "#" + current.id;
+    if (navigator.share) { navigator.share({ title: current.title[lang], url: url }).catch(function () {}); return; }
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { toast(t("copied")); });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (!$("sheet").hidden && $("sheet").classList.contains("is-open")) { closeSheet(); return; }
+    if (current) closeRoom();
+  });
+  /* A drag down on the grab handle closes the sheet, which is the gesture
+     an iPhone user will try first. touch-action:none on .grab keeps the
+     browser from claiming the first move for a scroll. */
+  (function () {
+    var y0 = null, g = $("grab");
+    g.addEventListener("pointerdown", function (e) { y0 = e.clientY; g.setPointerCapture(e.pointerId); });
+    g.addEventListener("pointerup", function (e) { if (y0 != null && e.clientY - y0 > 44) closeSheet(); y0 = null; });
+  })();
+
+  /* ================================================ language + theme */
+  function applyLang() {
+    root.lang = lang;
+    document.querySelectorAll("[data-t]").forEach(function (el) { el.textContent = t(el.dataset.t); });
+    document.querySelectorAll("[data-t-ph]").forEach(function (el) { el.placeholder = t(el.dataset.tPh); });
+    document.querySelectorAll("[data-t-aria]").forEach(function (el) { el.setAttribute("aria-label", t(el.dataset.tAria)); });
+    document.querySelectorAll("[data-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.lang === lang)); });
+    var s = $("sort");
+    s.options[0].textContent = t("sortFresh"); s.options[1].textContent = t("sortCheap");
+    s.options[2].textContent = t("sortDear");  s.options[3].textContent = t("sortBig");
+    document.title = "Pteas · " + (lang === "km" ? "រកបន្ទប់ជួល ភ្នំពេញ" : "Rooms to rent in Phnom Penh");
+    paintFilters(); paintRows();
+    if (current) openRoom(current.id, false); else if (window.matchMedia("(min-width: 900px)").matches) showBlankDetail();
+  }
+  document.querySelectorAll("[data-lang]").forEach(function (b) {
+    b.addEventListener("click", function () { lang = b.dataset.lang; store("pteas-next-lang", lang); applyLang(); });
+  });
+
+  function applyTheme(mode) {
+    if (mode === "auto") root.removeAttribute("data-theme"); else root.setAttribute("data-theme", mode);
+    store("pteas-next-theme", mode);
+  }
+  $("theme-btn").addEventListener("click", function () {
+    var now = read("pteas-next-theme") || "auto";
+    var next = now === "auto" ? "light" : (now === "light" ? "dark" : "auto");
+    applyTheme(next);
+    toast(next === "auto" ? (lang === "km" ? "តាមប្រព័ន្ធ" : "System") :
+          next === "light" ? (lang === "km" ? "ភ្លឺ" : "Light") : (lang === "km" ? "ងងឹត" : "Dark"));
+  });
+
+  /* ============================================================ boot */
+  var storedTheme = read("pteas-next-theme");
+  if (storedTheme && storedTheme !== "auto") root.setAttribute("data-theme", storedTheme);
+  var storedLang = read("pteas-next-lang");
+  if (storedLang === "km" || storedLang === "en") lang = storedLang;
+
+  applyLang();
+
+  var hash = decodeURIComponent((location.hash || "").slice(1));
+  if (hash && LISTINGS.some(function (l) { return l.id === hash; })) openRoom(hash, false);
+  else if (window.matchMedia("(min-width: 900px)").matches) showBlankDetail();
+
+  /* Crossing the two-pane breakpoint changes what "no room selected" means,
+     so the pane is re-resolved rather than left in the other layout's state. */
+  window.matchMedia("(min-width: 900px)").addEventListener("change", function (m) {
+    if (m.matches) { $("detail").hidden = false; if (!current) showBlankDetail(); }
+    else if (!current) { $("detail").hidden = true; $("detail").classList.remove("is-open"); }
+  });
+})();
+</script>
+</body>
+</html>

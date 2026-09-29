@@ -16,7 +16,8 @@
     "audit:app": "node rental-app/audit.mjs",
     "test:db": "supabase/tests/run.sh",
     "build:app": "node -e \"require('fs').copyFileSync('rental-app/pteas.html','rental-app/index.html')\"",
-    "build:scholarships": "node rental-app/tools/scholarships-data.mjs && node rental-app/tools/scholarships-build.mjs"
+    "build:scholarships": "node rental-app/tools/scholarships-data.mjs && node rental-app/tools/scholarships-build.mjs",
+    "test:next": "node rental-app/test/next.mjs"
   },
   "dependencies": {
     "express": "^4.19.2",
